@@ -39,7 +39,7 @@ module tb;
     end
   end
 
-  // Mismo criterio de exito que Single Cycle/testbench.v (requiere hazard unit completo)
+  // Mismo criterio de exito que Single Cycle/testbench.v (pero todavía falta el hazard)
   always @(negedge clk) begin
     if (memWriteM) begin
       if (dut.aluResultM === 32'd100 && dut.writeDataM === 32'd25) begin
@@ -55,7 +55,7 @@ module tb;
 
   initial begin
     #5000;
-    $display("*** TIMEOUT: revisar waveforms ***");
+    $display("TIMEOUT: revisar waveforms");
     $finish;
   end
 endmodule
