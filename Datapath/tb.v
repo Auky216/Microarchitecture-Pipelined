@@ -7,7 +7,7 @@ module tb;
 
   riscv_pipeline dut (
     .clk(clk), .reset(reset),
-    .pcF(pcF), .memWriteM(memWriteM)
+    .PCF(pcF), .MemWriteM(memWriteM)
   );
 
   initial begin
@@ -27,14 +27,14 @@ module tb;
       cycle <= cycle + 1;
       $display("============================================================");
       $display("CICLO %0d", cycle);
-      $display("  [IF ] PC=%08h  Instr=%08h", dut.pcF, dut.instrF);
+      $display("  [IF ] PC=%08h  Instr=%08h", dut.PCF, dut.InstrF);
       $display("  [ID ] Instr=%08h  PC+4=%08h  rs1=x%0d rs2=x%0d rd=x%0d",
-               dut.instrD, dut.pcPlus4D, dut.rs1D, dut.rs2D, dut.rdD);
+               dut.InstrD, dut.PCPlus4D, dut.Rs1D, dut.Rs2D, dut.RdD);
       $display("  [EX ] ALUResult=%08h  WriteData=%08h  Zero=%b  PCSrc=%b  rd=x%0d",
-               dut.aluResultE, dut.writeDataE, dut.zeroE, dut.pcSrcE, dut.rdE);
+               dut.ALUResultE, dut.WriteDataE, dut.ZeroE, dut.PCSrcE, dut.RdE);
       $display("  [MEM] ALUResult=%08h  WriteData=%08h  MemWrite=%b  rd=x%0d",
-               dut.aluResultM, dut.writeDataM, dut.memWriteM, dut.rdM);
-      $display("  [WB ] Result=%08h  rd=x%0d", dut.resultW, dut.rdW);
+               dut.ALUResultM, dut.WriteDataM, dut.MemWriteM, dut.RdM);
+      $display("  [WB ] Result=%08h  rd=x%0d", dut.ResultW, dut.RdW);
       $display("============================================================");
     end
   end
@@ -42,11 +42,11 @@ module tb;
   // Mismo criterio de exito que Single Cycle/testbench.v (pero todavía falta el hazard)
   always @(negedge clk) begin
     if (memWriteM) begin
-      if (dut.aluResultM === 32'd100 && dut.writeDataM === 32'd25) begin
+      if (dut.ALUResultM === 32'd100 && dut.WriteDataM === 32'd25) begin
         $display("*** SIMULACION EXITOSA: mem[100] = 25 ***");
         #20;
         $finish;
-      end else if (dut.aluResultM !== 32'd96) begin
+      end else if (dut.ALUResultM !== 32'd96) begin
         $display("*** SIMULACION FALLIDA ***");
         $stop;
       end

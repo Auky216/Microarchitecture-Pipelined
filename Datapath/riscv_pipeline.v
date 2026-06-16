@@ -1,69 +1,109 @@
 module riscv_pipeline (
   input  logic clk, reset,
-  output logic [31:0] pcF,
-  output logic        memWriteM
+  output logic [31:0] PCF,
+  output logic        MemWriteM
 );
-  logic [31:0] instrF, instrD, readDataM;
-  logic [31:0] aluResultM, writeDataM, resultW;
-  logic [31:0] aluResultE, writeDataE, pcPlus4D;
-  logic [1:0]  resultSrcD, resultSrcE, forwardAE, forwardBE;
-  logic [3:0]  aluControlD;
-  logic [1:0]  immSrcD;
-  logic        memWriteD, branchD, aluSrcD, regWriteD, jumpD;
-  logic        stallF, stallD, flushD, flushE, pcSrcE, zeroE;
-  logic [4:0]  rs1D, rs2D, rdD, rdE, rdM, rdW;
+  // Cables para conectar las etapas
+  // IF -> ID
+  logic [31:0] InstrF, PCPlus4F;
+  
+  // ID -> EX
+  logic [31:0] InstrD, PCD, PCPlus4D, RD1D, RD2D, ExtImmD;
+  logic [4:0]  Rs1D, Rs2D, RdD;
+  logic        RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD;
+  logic [1:0]  ResultSrcD;
+  logic [3:0]  ALUControlD;
+  
+  // EX -> MEM / Hazard
+  logic        RegWriteE, MemWriteE, PCSrcE;
+  logic [1:0]  ResultSrcE;
+  logic [31:0] ALUResultE, WriteDataE, PCPlus4E, PCTargetE;
+  logic [4:0]  RdE, Rs1E, Rs2E;
+  logic        ZeroE;
+  
+  // MEM -> WB / Hazard
+  logic        RegWriteM_internal;
+  logic [1:0]  ResultSrcM;
+  logic [31:0] ALUResultM, ReadDataM, PCPlus4M, WriteDataM;
+  logic [4:0]  RdM;
+  
+  // WB -> Hazard / Decode
+  logic        RegWriteW;
+  logic [31:0] ResultW;
+  logic [4:0]  RdW;
+  
+  // Hazard Unit
+  logic        StallF, StallD, FlushD, FlushE;
+  logic [1:0]  ForwardAE, ForwardBE;
 
-  // Sin hazard unit: sin stall ni forwarding
-  assign stallF    = 1'b0;
-  assign stallD    = 1'b0;
-  assign forwardAE = 2'b00;
-  assign forwardBE = 2'b00;
-
-  // Flush minimo para branches/jumps (=== evita propagar X)
-  assign flushD = (pcSrcE === 1'b1);
-  assign flushE = (pcSrcE === 1'b1);
-
-  imem imemInst (
-    .a(pcF), .rd(instrF)
-  );
-
-  controller ctrl (
-    .op(instrD[6:0]),
-    .funct3(instrD[14:12]),
-    .funct7(instrD[31:25]),
-    .ResultSrc(resultSrcD),
-    .MemWrite(memWriteD),
-    .Branch(branchD),
-    .ALUSrc(aluSrcD),
-    .RegWrite(regWriteD),
-    .Jump(jumpD),
-    .ImmSrc(immSrcD),
-    .ALUControl(aluControlD)
-  );
-
-  datapath dp (
+  // Instanciación de la etapa Fetch
+  fetch fetchStage (
     .clk(clk), .reset(reset),
-    .stallF(stallF), .stallD(stallD),
-    .flushD(flushD), .flushE(flushE),
-    .forwardAE(forwardAE), .forwardBE(forwardBE),
-    .resultSrcD(resultSrcD),
-    .memWriteD(memWriteD), .branchD(branchD),
-    .aluSrcD(aluSrcD), .regWriteD(regWriteD), .jumpD(jumpD),
-    .immSrcD(immSrcD), .aluControlD(aluControlD),
-    .instrF(instrF), .readDataM(readDataM),
-    .pcF(pcF), .aluResultM(aluResultM),
-    .writeDataM(writeDataM), .memWriteM(memWriteM),
-    .rs1D(rs1D), .rs2D(rs2D), .rdD(rdD),
-    .rdE(rdE), .rdM(rdM), .rdW(rdW),
-    .resultSrcE(resultSrcE),
-    .pcSrcE(pcSrcE),
-    .instrD(instrD), .pcPlus4D(pcPlus4D),
-    .aluResultE(aluResultE), .writeDataE(writeDataE),
-    .resultW(resultW), .zeroE(zeroE)
+    .StallF(StallF), .PCSrcE(PCSrcE), .PCTargetE(PCTargetE),
+    .InstrF(InstrF), .PCF(PCF), .PCPlus4F(PCPlus4F)
   );
 
-  dmem dmemInst (
-    .clk(clk), .we(memWriteM),
-    .a(aluResultM), .wd(writeDataM), .rd(readDataM)
+  // Instanciación de la etapa Decode
+  decode decodeStage (
+    .clk(clk), .reset(reset),
+    .StallD(StallD), .FlushD(FlushD),
+    .InstrF(InstrF), .PCF(PCF), .PCPlus4F(PCPlus4F),
+    .RegWriteW(RegWriteW), .RdW(RdW), .ResultW(ResultW),
+    .InstrD(InstrD), .PCD(PCD), .PCPlus4D(PCPlus4D),
+    .RD1D(RD1D), .RD2D(RD2D), .ExtImmD(ExtImmD),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdD(RdD),
+    .RegWriteD(RegWriteD), .ResultSrcD(ResultSrcD), .MemWriteD(MemWriteD),
+    .JumpD(JumpD), .BranchD(BranchD), .ALUControlD(ALUControlD), .ALUSrcD(ALUSrcD)
   );
+
+  // Instanciación de la etapa Execute
+  execute executeStage (
+    .clk(clk), .reset(reset),
+    .FlushE(FlushE), .ForwardAE(ForwardAE), .ForwardBE(ForwardBE),
+    .RegWriteD(RegWriteD), .ResultSrcD(ResultSrcD), .MemWriteD(MemWriteD),
+    .JumpD(JumpD), .BranchD(BranchD), .ALUControlD(ALUControlD), .ALUSrcD(ALUSrcD),
+    .RD1D(RD1D), .RD2D(RD2D), .PCD(PCD),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdD(RdD),
+    .ExtImmD(ExtImmD), .PCPlus4D(PCPlus4D),
+    .ALUResultM(ALUResultM), .ResultW(ResultW),
+    .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E),
+    .PCSrcE(PCSrcE), .PCTargetE(PCTargetE), .Rs1E(Rs1E), .Rs2E(Rs2E)
+  );
+
+  // Para conectar ZeroE que está interno a Execute si lo necesitamos en TB
+  assign ZeroE = executeStage.ZeroE;
+
+  // Instanciación de la etapa Memory
+  memory_stage memStage (
+    .clk(clk), .reset(reset),
+    .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E),
+    .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M)
+  );
+  
+  // Extraemos variables internas de Memory para el Hazard Unit y el Testbench
+  assign MemWriteM  = memStage.MemWriteM;
+  assign WriteDataM = memStage.WriteDataM;
+
+  // Instanciación de la etapa Writeback
+  writeback wbStage (
+    .clk(clk), .reset(reset),
+    .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M),
+    .RegWriteW(RegWriteW), .ResultW(ResultW), .RdW(RdW)
+  );
+
+  // Instanciación de la Hazard Unit
+  hunit hazardUnit (
+    .Rs1E(Rs1E), .Rs2E(Rs2E), .RdM(RdM), .RdW(RdW),
+    .RegWriteM(RegWriteM_internal), .RegWriteW(RegWriteW),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdE(RdE),
+    .ResultSrcE0(ResultSrcE[0]), .PCSrcE(PCSrcE),
+    .ForwardAE(ForwardAE), .ForwardBE(ForwardBE),
+    .StallF(StallF), .StallD(StallD),
+    .FlushD(FlushD), .FlushE(FlushE)
+  );
+
 endmodule
