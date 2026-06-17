@@ -1,7 +1,7 @@
 module flopr #(parameter WIDTH = 8) (
-    input  wire clk, reset,
-    input  wire [WIDTH-1:0] d, 
-    output reg  [WIDTH-1:0] q
+  input  logic clk, reset,
+  input  logic [WIDTH-1:0] d, 
+  output logic [WIDTH-1:0] q
 );
 
   always @(posedge clk or posedge reset) begin 

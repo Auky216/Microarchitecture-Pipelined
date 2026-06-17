@@ -1,0 +1,6 @@
+00500113 // 00: addi x2, x0, 5
+00210663 // 04: beq  x2, x2, 12 (Salta a la linea 10 hexadecimal)
+00100193 // 08: addi x3, x0, 1 (¡Flushed!)
+00100193 // 0C: addi x3, x0, 1 (¡Flushed!)
+00200233 // 10: add  x4, x0, x2 (Etiqueta skip)
+0c402423 // 14: sw   x4, 200(x0)
