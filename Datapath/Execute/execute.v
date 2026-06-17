@@ -21,6 +21,7 @@ module execute (
   input  logic [4:0]  Rs1D, Rs2D, RdD,
   input  logic [31:0] ExtImmD,
   input  logic [31:0] PCPlus4D,
+  input  logic [31:0] InstrD,
   
   // Entradas desde Memory y Writeback (para Forwarding)
   input  logic [31:0] ALUResultM, ResultW,
@@ -32,6 +33,7 @@ module execute (
   output logic [31:0] ALUResultE, WriteDataE,
   output logic [4:0]  RdE,
   output logic [31:0] PCPlus4E,
+  output logic [31:0] InstrE,
   
   // Salidas hacia Fetch y Hazard Unit
   output logic        PCSrcE,
@@ -53,15 +55,15 @@ module execute (
   // Este registro separa la etapa de Decode de Execute. 
   // Ojo: En el diagrama no tiene Stall (siempre habilitado, en = 1'b1), pero sí tiene FlushE
   // para vaciarse cuando hay un salto fallido.
-  // Tiene un total de 186 bits (Control + Datos).
+  // Tiene un total de 218 bits (Control + Datos).
   
-  flopenrc #(186) idexReg (
+  flopenrc #(218) idexReg (
     .clk(clk), .reset(reset), .en(1'b1), .clear(FlushE),
     .d({RegWriteD, ResultSrcD, MemWriteD, JumpD, BranchD, ALUControlD, ALUSrcD, 
-        RD1D, RD2D, PCD, Rs1D, Rs2D, RdD, ExtImmD, PCPlus4D}),
+        RD1D, RD2D, PCD, Rs1D, Rs2D, RdD, ExtImmD, PCPlus4D, InstrD}),
     .q({RegWriteE, ResultSrcE, MemWriteE, JumpE, BranchE, ALUControlE, ALUSrcE, 
-        RD1E, RD2E, PCE, Rs1E, Rs2E, RdE, ExtImmE, PCPlus4E})
-  );                      
+        RD1E, RD2E, PCE, Rs1E, Rs2E, RdE, ExtImmE, PCPlus4E, InstrE})
+  );
 
   // ==========================================================================
   // COMPONENTES DE LA ETAPA EXECUTE

@@ -32,17 +32,17 @@ module tb;
       $display("  [IF ] PC=%08h  Instr=%08h", dut.PCF, dut.InstrF);
       $display("  [ID ] Instr=%08h  PC+4=%08h  rs1=x%0d rs2=x%0d rd=x%0d",
                dut.InstrD, dut.PCPlus4D, dut.Rs1D, dut.Rs2D, dut.RdD);
-      $display("  [EX ] ALUResult=%08h  WriteData=%08h  Zero=%b  PCSrc=%b  rd=x%0d",
-               dut.ALUResultE, dut.WriteDataE, dut.ZeroE, dut.PCSrcE, dut.RdE);
-      $display("  [MEM] ALUResult=%08h  WriteData=%08h  MemWrite=%b  rd=x%0d",
-               dut.ALUResultM, dut.WriteDataM, dut.MemWriteM, dut.RdM);
-      $display("  [WB ] Result=%08h  rd=x%0d", dut.ResultW, dut.RdW);
+      $display("  [EX ] Instr=%08h  ALUResult=%08h  WriteData=%08h  Zero=%b  PCSrc=%b  rd=x%0d",
+               dut.InstrE, dut.ALUResultE, dut.WriteDataE, dut.ZeroE, dut.PCSrcE, dut.RdE);
+      $display("  [MEM] Instr=%08h  ALUResult=%08h  WriteData=%08h  MemWrite=%b  rd=x%0d",
+               dut.InstrM, dut.ALUResultM, dut.WriteDataM, dut.MemWriteM, dut.RdM);
+      $display("  [WB ] Instr=%08h  Result=%08h  rd=x%0d", dut.InstrW, dut.ResultW, dut.RdW);
       $display("============================================================");
     end
   end
 
   always @(posedge clk) begin
-    if (cycle == 20) begin
+    if (cycle == 30) begin
       $display("*** SIMULACION MINI-TEST COMPLETADA ***");
       $finish;
     end

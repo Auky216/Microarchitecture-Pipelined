@@ -9,6 +9,7 @@ module memory_stage (
   input  logic [31:0] ALUResultE, WriteDataE,
   input  logic [4:0]  RdE,
   input  logic [31:0] PCPlus4E,
+  input  logic [31:0] InstrE,
   
   // Salidas hacia la etapa Writeback (W) y Forwarding
   output logic        RegWriteM,
@@ -16,7 +17,8 @@ module memory_stage (
   output logic [31:0] ALUResultM,
   output logic [31:0] ReadDataM,
   output logic [4:0]  RdM,
-  output logic [31:0] PCPlus4M
+  output logic [31:0] PCPlus4M,
+  output logic [31:0] InstrM
 );
 
   // Cables internos
@@ -28,12 +30,12 @@ module memory_stage (
   // ==========================================================================
   // Separa la etapa de Execute de Memory. 
   // En el diagrama base de RISC-V, este registro NO tiene Stall ni Flush.
-  // Pasan 105 bits en total: 4 bits de Control + 101 bits de Datos.
+  // Pasan 137 bits en total: 5 bits de Control + 132 bits de Datos.
   
-  flopr #(105) exmemReg (
+  flopr #(137) exmemReg (
     .clk(clk), .reset(reset),
-    .d({RegWriteE, ResultSrcE, MemWriteE, ALUResultE, WriteDataE, RdE, PCPlus4E}),
-    .q({RegWriteM, ResultSrcM, MemWriteM, ALUResultM, WriteDataM, RdM, PCPlus4M})
+    .d({RegWriteE, ResultSrcE, MemWriteE, ALUResultE, WriteDataE, RdE, PCPlus4E, InstrE}),
+    .q({RegWriteM, ResultSrcM, MemWriteM, ALUResultM, WriteDataM, RdM, PCPlus4M, InstrM})
   );
 
   // ==========================================================================

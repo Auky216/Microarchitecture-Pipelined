@@ -17,19 +17,19 @@ module riscv_pipeline (
   // EX -> MEM / Hazard
   logic        RegWriteE, MemWriteE, PCSrcE;
   logic [1:0]  ResultSrcE;
-  logic [31:0] ALUResultE, WriteDataE, PCPlus4E, PCTargetE;
+  logic [31:0] ALUResultE, WriteDataE, PCPlus4E, PCTargetE, InstrE;
   logic [4:0]  RdE, Rs1E, Rs2E;
   logic        ZeroE;
   
   // MEM -> WB / Hazard
   logic        RegWriteM_internal;
   logic [1:0]  ResultSrcM;
-  logic [31:0] ALUResultM, ReadDataM, PCPlus4M, WriteDataM;
+  logic [31:0] ALUResultM, ReadDataM, PCPlus4M, WriteDataM, InstrM;
   logic [4:0]  RdM;
   
   // WB -> Hazard / Decode
   logic        RegWriteW;
-  logic [31:0] ResultW;
+  logic [31:0] ResultW, InstrW;
   logic [4:0]  RdW;
   
   // Hazard Unit
@@ -64,10 +64,10 @@ module riscv_pipeline (
     .JumpD(JumpD), .BranchD(BranchD), .ALUControlD(ALUControlD), .ALUSrcD(ALUSrcD),
     .RD1D(RD1D), .RD2D(RD2D), .PCD(PCD),
     .Rs1D(Rs1D), .Rs2D(Rs2D), .RdD(RdD),
-    .ExtImmD(ExtImmD), .PCPlus4D(PCPlus4D),
+    .ExtImmD(ExtImmD), .PCPlus4D(PCPlus4D), .InstrD(InstrD),
     .ALUResultM(ALUResultM), .ResultW(ResultW),
     .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
-    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E), .InstrE(InstrE),
     .PCSrcE(PCSrcE), .PCTargetE(PCTargetE), .Rs1E(Rs1E), .Rs2E(Rs2E)
   );
 
@@ -78,9 +78,9 @@ module riscv_pipeline (
   memory_stage memStage (
     .clk(clk), .reset(reset),
     .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
-    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E), .InstrE(InstrE),
     .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
-    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M)
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M), .InstrM(InstrM)
   );
   
   // Extraemos variables internas de Memory para el Hazard Unit y el Testbench
@@ -91,8 +91,8 @@ module riscv_pipeline (
   writeback wbStage (
     .clk(clk), .reset(reset),
     .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
-    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M),
-    .RegWriteW(RegWriteW), .ResultW(ResultW), .RdW(RdW)
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M), .InstrM(InstrM),
+    .RegWriteW(RegWriteW), .ResultW(ResultW), .RdW(RdW), .InstrW(InstrW)
   );
 
   // Instanciación de la Hazard Unit
