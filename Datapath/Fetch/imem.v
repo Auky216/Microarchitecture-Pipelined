@@ -4,7 +4,7 @@ module imem(input  [31:0] a,
   reg [31:0] RAM[63:0]; 
 
   initial begin
-      $readmemh("Single Cycle/riscvtest.txt",RAM); 
+      $readmemh("Tests/comprehensive_test.txt",RAM);
   end
 
   assign rd = RAM[a[31:2]]; // word aligned

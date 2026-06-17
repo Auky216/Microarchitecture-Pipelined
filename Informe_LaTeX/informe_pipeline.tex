@@ -1,0 +1,1100 @@
+\documentclass[12pt, a4paper]{article}
+
+% ============================================================================
+% PAQUETES
+% ============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{float}
+
+% ============================================================================
+% TIKZ Y LIBRERIAS
+% ============================================================================
+\usepackage{tikz}
+\usetikzlibrary{
+  positioning,
+  arrows.meta,
+  calc,
+  decorations.pathreplacing
+}
+
+% ============================================================================
+% COLORES PERSONALIZADOS
+% ============================================================================
+\definecolor{penblue}{RGB}{20, 60, 180} % Azul lapicero
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codegreen}{RGB}{0,128,0}
+\definecolor{codepurple}{RGB}{128,0,128}
+\definecolor{codegray}{RGB}{100,100,100}
+\definecolor{codeblue}{RGB}{0,0,180}
+
+% ============================================================================
+% CONFIGURACION DE LISTINGS
+% ============================================================================
+\lstdefinestyle{verilogstyle}{
+  language=Verilog,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{codegreen}\itshape,
+  stringstyle=\color{codepurple},
+  numberstyle=\tiny\color{codegray},
+  numbers=left,
+  numbersep=8pt,
+  frame=single,
+  framesep=5pt,
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b,
+  morekeywords={logic, always_ff, always_comb, assign, module, endmodule, 
+                parameter, input, output, reg, wire, begin, end, case,
+                endcase, if, else, posedge, negedge, default, initial},
+}
+\lstset{style=verilogstyle}
+
+\lstdefinestyle{pseudo}{
+  language={},
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{codegreen}\itshape,
+  frame=single,
+  framesep=5pt,
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b,
+  morekeywords={si, sino, para, mientras, retornar, funcion, fin, entonces, hacer},
+}
+
+% ============================================================================
+% MACROS TIKZ PERFECTAS PARA FORMAS LOGICAS
+% ============================================================================
+\tikzset{
+  % Caja estandar
+  box/.style={
+    draw, thick, fill=white,
+    minimum height=1.5cm,
+    minimum width=2cm,
+    font=\small\sffamily,
+    align=center
+  },
+  % Flip-Flop
+  ffbox/.style={
+    draw, thick, fill=white,
+    minimum width=3cm,
+    minimum height=2cm,
+    font=\small\sffamily,
+    align=center
+  },
+  % Cables
+  signal/.style={-{Stealth[length=2mm]}, thick, penblue},
+  wirelabel/.style={font=\tiny\sffamily, text=black, midway, above}
+}
+
+% 1. Triangulo de reloj para flip-flops
+\newcommand{\clkpin}[1]{
+  \draw[thick] ([yshift=-4mm, xshift=0mm]#1.west) -- ++(2.5mm, 2.5mm) -- ++(-2.5mm, 2.5mm);
+}
+
+% 2. MUX Perfecto (Trapecio vertical dibujado a mano)
+\newcommand{\drawmux}[4]{
+  % #1: x, #2: y (centro), #3: id, #4: Texto (ignorado para ahorrar espacio)
+  \draw[thick, fill=white] (#1-0.4,#2+0.8) -- (#1+0.4,#2+0.4) -- (#1+0.4,#2-0.4) -- (#1-0.4,#2-0.8) -- cycle;
+  \node[font=\tiny\sffamily] at (#1-0.15, #2+0.4) {0};
+  \node[font=\tiny\sffamily] at (#1-0.15, #2-0.4) {1};
+  \coordinate (#3_in0) at (#1-0.4, #2+0.4);
+  \coordinate (#3_in1) at (#1-0.4, #2-0.4);
+  \coordinate (#3_in2) at (#1-0.4, #2); % center input
+  \coordinate (#3_out) at (#1+0.4, #2);
+  \coordinate (#3_sel) at (#1, #2+0.6);
+}
+
+% 2.5 MUX de 3 Entradas para Forwarding
+\newcommand{\drawmuxthree}[4]{
+  \draw[thick, fill=white] (#1-0.4,#2+1.0) -- (#1+0.4,#2+0.6) -- (#1+0.4,#2-0.6) -- (#1-0.4,#2-1.0) -- cycle;
+  \node[font=\tiny\sffamily] at (#1-0.15, #2+0.6) {00};
+  \node[font=\tiny\sffamily] at (#1-0.15, #2) {01};
+  \node[font=\tiny\sffamily] at (#1-0.15, #2-0.6) {10};
+  \coordinate (#3_in0) at (#1-0.4, #2+0.6);
+  \coordinate (#3_in1) at (#1-0.4, #2);
+  \coordinate (#3_in2) at (#1-0.4, #2-0.6);
+  \coordinate (#3_out) at (#1+0.4, #2);
+  \coordinate (#3_sel) at (#1, #2+0.8);
+}
+
+% 2.6 Compuerta AND
+\newcommand{\drawand}[3]{
+  \draw[thick, fill=white] (#1-0.4, #2+0.4) -- (#1, #2+0.4) arc (90:-90:0.4) -- (#1-0.4, #2-0.4) -- cycle;
+  \coordinate (#3_in1) at (#1-0.4, #2+0.2);
+  \coordinate (#3_in2) at (#1-0.4, #2-0.2);
+  \coordinate (#3_out) at (#1+0.4, #2);
+}
+
+% 2.7 Compuerta OR
+\newcommand{\drawor}[3]{
+  \draw[thick, fill=white] (#1-0.4, #2+0.4) .. controls (#1-0.1, #2+0.4) and (#1+0.4, #2+0.1) .. (#1+0.4, #2) .. controls (#1+0.4, #2-0.1) and (#1-0.1, #2-0.4) .. (#1-0.4, #2-0.4) .. controls (#1-0.2, #2-0.1) and (#1-0.2, #2+0.1) .. (#1-0.4, #2+0.4) -- cycle;
+  \coordinate (#3_in1) at (#1-0.25, #2+0.2);
+  \coordinate (#3_in2) at (#1-0.25, #2-0.2);
+  \coordinate (#3_out) at (#1+0.4, #2);
+}
+
+% 3. ALU Perfecta (Poligono con muesca en V)
+\newcommand{\drawalu}[3]{
+  % #1: x, #2: y (centro), #3: id
+  \draw[thick, fill=white] 
+    (#1-0.8, #2+1.5) -- 
+    (#1-0.8, #2+0.3) -- 
+    (#1-0.4, #2) -- 
+    (#1-0.8, #2-0.3) -- 
+    (#1-0.8, #2-1.5) -- 
+    (#1+0.8, #2-0.8) -- 
+    (#1+0.8, #2+0.8) -- cycle;
+  \node[font=\small\sffamily] (#3) at (#1+0.1, #2) {ALU};
+  \coordinate (#3_in1) at (#1-0.8, #2+0.8);
+  \coordinate (#3_in2) at (#1-0.8, #2-0.8);
+  \coordinate (#3_out) at (#1+0.8, #2);
+  \coordinate (#3_zero) at (#1+0.8, #2+0.5);
+  \coordinate (#3_sel) at (#1, #2+1.1);
+}
+
+% 4. Sumador (+4)
+\newcommand{\drawadder}[3]{
+  % #1: x, #2: y (centro), #3: id
+  \draw[thick, fill=white] 
+    (#1-0.6, #2+1.0) -- 
+    (#1-0.6, #2+0.2) -- 
+    (#1-0.3, #2) -- 
+    (#1-0.6, #2-0.2) -- 
+    (#1-0.6, #2-1.0) -- 
+    (#1+0.6, #2-0.5) -- 
+    (#1+0.6, #2+0.5) -- cycle;
+  \node[font=\small\sffamily] (#3) at (#1+0.1, #2) {$+$};
+  \coordinate (#3_in1) at (#1-0.6, #2+0.5);
+  \coordinate (#3_in2) at (#1-0.6, #2-0.5);
+  \coordinate (#3_out) at (#1+0.6, #2);
+}
+
+% 5. Extend (Trapecio horizontal)
+\newcommand{\drawextend}[3]{
+  % #1: x, #2: y (centro), #3: id
+  \draw[thick, fill=white] 
+    (#1-1.2, #2+0.3) -- 
+    (#1+1.2, #2+0.6) -- 
+    (#1+1.2, #2-0.6) -- 
+    (#1-1.2, #2-0.3) -- cycle;
+  \node[font=\small\sffamily] (#3) at (#1, #2) {Extend};
+  \coordinate (#3_in) at (#1-1.2, #2);
+  \coordinate (#3_out) at (#1+1.2, #2);
+}
+
+% ============================================================================
+% CONFIGURACION DE PAGINA
+% ============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Procesador RISC-V Pipelined}
+\fancyhead[R]{\small Arquitectura de Computadoras}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14pt}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=penblue,
+  urlcolor=penblue,
+}
+
+% ============================================================================
+% INICIO DEL DOCUMENTO
+% ============================================================================
+\begin{document}
+
+% --------------------------------------------------------------------------
+% PORTADA
+% --------------------------------------------------------------------------
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries Procesador RISC-V con\\[0.3cm]Arquitectura Pipelined\\[0.3cm](Segmentada)\par}
+\vspace{1.5cm}
+{\Large Informe T\'ecnico Completo\par}
+\vspace{2cm}
+{\large\textbf{Materia:} Arquitectura de Computadoras\par}
+\vspace{0.5cm}
+{\large\textbf{Tema:} Implementaci\'on de un Procesador RISC-V RV32I\\con Pipeline de 5 Etapas, Forwarding y Hazard Detection\par}
+\vspace{3cm}
+{\large \today\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+% SECCION 1: INTRODUCCION
+% ============================================================================
+\section{Introducci\'on}
+
+\subsection{¿Qué es un Procesador Pipelined?}
+
+Un procesador \textbf{pipelined} (segmentado) divide la ejecución de cada instrucción en varias etapas independientes que trabajan en paralelo. Mientras una instrucción está siendo decodificada, la siguiente ya está siendo leída de la memoria, y la anterior ya está realizando su operación aritmética.
+
+\textbf{Teoría del Paralelismo a Nivel de Instrucción (ILP):} El pipelining es la forma más pura de ILP. En un procesador \textbf{de ciclo único}, cada instrucción tarda un ciclo completo (cuyo reloj se calibra según la instrucción más lenta, como \texttt{lw}). La latencia total y el periodo del reloj limitan drásticamente la frecuencia (MHz/GHz). En contraste, el pipeline divide ese largo camino combinacional en \textbf{5 etapas} más cortas separadas por registros. 
+
+Esto reduce drásticamente el periodo del reloj y aumenta la frecuencia. Idealmente, el \textbf{throughput} (rendimiento) se incrementa por un factor igual al número de etapas ($k=5$). Aunque la \textit{latencia} de una instrucción individual no mejora (incluso empeora ligeramente por el retardo de los registros), el hecho de que termine \textbf{una instrucción por cada ciclo de reloj} hace que el procesador sea inmensamente más rápido a gran escala.
+
+\subsection{Teoría de los Riesgos (Hazards)}
+Al solapar instrucciones, se rompe la ilusión de ejecución secuencial pura, creando \textbf{riesgos} que pueden corromper el estado del procesador si no se manejan:
+\begin{itemize}
+    \item \textbf{Riesgos Estructurales (Structural Hazards):} Ocurren cuando dos etapas distintas intentan acceder al mismo recurso de hardware simultáneamente. En nuestra arquitectura, esto se resuelve con la \textit{Arquitectura Harvard}, teniendo memorias separadas para Instrucciones (Fetch) y Datos (Memory), evitando colisiones.
+    \item \textbf{Riesgos de Datos (Data Hazards):} Surgen cuando una instrucción depende del resultado de una instrucción anterior que aún no ha terminado de cruzar el pipeline. Específicamente la dependencia RAW (Read After Write).
+    \item \textbf{Riesgos de Control (Control Hazards):} Causados por instrucciones de salto (\texttt{beq}, \texttt{jal}). Al estar en Fetch, el procesador no sabe si se debe saltar o no hasta la etapa de Execute. Si se equivoca, ejecutará instrucciones incorrectas que deben ser anuladas.
+\end{itemize}
+
+\subsection{Las 5 Etapas del Pipeline}
+
+\begin{enumerate}
+  \item \textbf{Fetch (IF)}: Lectura de la instrucci\'on desde la memoria de instrucciones.
+  \item \textbf{Decode (ID)}: Decodificaci\'on de la instrucci\'on, lectura de registros y generaci\'on de se\~nales de control.
+  \item \textbf{Execute (EX)}: Ejecuci\'on de la operaci\'on aritm\'etico-l\'ogica en la ALU.
+  \item \textbf{Memory (MEM)}: Acceso a la memoria de datos.
+  \item \textbf{Writeback (WB)}: Escritura del resultado final en el banco de registros.
+\end{enumerate}
+
+\subsection{Diagrama Temporal del Pipeline}
+
+El siguiente diagrama muestra c\'omo 5 instrucciones se solapan en el pipeline:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1.5cm, y=-0.9cm,
+  stage/.style={draw, thick, minimum width=1.3cm, minimum height=0.65cm, font=\scriptsize\sffamily\bfseries, align=center},
+  ilabel/.style={font=\scriptsize\ttfamily, anchor=east},
+  clabel/.style={font=\tiny\sffamily, text=gray},
+]
+% Eje de tiempo
+\draw[-{Stealth}, thick] (0.5, -0.5) -- (8.5, -0.5) node[right, font=\small\sffamily] {Tiempo (ciclos)};
+\foreach \c in {1,...,8} {
+  \node[clabel] at (\c, -0.3) {\c};
+}
+
+% Instruccion 1
+\node[ilabel] at (0.4, 0.5) {I1: addi};
+\node[stage] at (1, 0.5) {IF};
+\node[stage] at (2, 0.5) {ID};
+\node[stage] at (3, 0.5) {EX};
+\node[stage] at (4, 0.5) {MEM};
+\node[stage] at (5, 0.5) {WB};
+
+% Instruccion 2
+\node[ilabel] at (0.4, 1.5) {I2: add};
+\node[stage] at (2, 1.5) {IF};
+\node[stage] at (3, 1.5) {ID};
+\node[stage] at (4, 1.5) {EX};
+\node[stage] at (5, 1.5) {MEM};
+\node[stage] at (6, 1.5) {WB};
+
+% Instruccion 3
+\node[ilabel] at (0.4, 2.5) {I3: sub};
+\node[stage] at (3, 2.5) {IF};
+\node[stage] at (4, 2.5) {ID};
+\node[stage] at (5, 2.5) {EX};
+\node[stage] at (6, 2.5) {MEM};
+\node[stage] at (7, 2.5) {WB};
+
+% Instruccion 4
+\node[ilabel] at (0.4, 3.5) {I4: or};
+\node[stage] at (4, 3.5) {IF};
+\node[stage] at (5, 3.5) {ID};
+\node[stage] at (6, 3.5) {EX};
+\node[stage] at (7, 3.5) {MEM};
+\node[stage] at (8, 3.5) {WB};
+
+% Instruccion 5
+\node[ilabel] at (0.4, 4.5) {I5: and};
+\node[stage] at (5, 4.5) {IF};
+\node[stage] at (6, 4.5) {ID};
+\node[stage] at (7, 4.5) {EX};
+\node[stage] at (8, 4.5) {MEM};
+
+% Lineas verticales de ciclo
+\foreach \c in {1,...,8} {
+  \draw[gray!30, thin] (\c+0.5, -0.3) -- (\c+0.5, 5.0);
+}
+
+% Anotacion
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick, penblue] (1-0.5, 5.3) -- (5.5, 5.3) node[midway, below=5pt, font=\scriptsize\sffamily, text=penblue] {5 ciclos para completar I1};
+\draw[{Stealth}-{Stealth}, thick, black] (5+0.5, -0.8) -- (6+0.5, -0.8) node[midway, below=1pt, font=\scriptsize\sffamily, text=black] {1 instr/ciclo};
+
+\end{tikzpicture}
+\caption{Diagrama temporal: cada instrucci\'on tarda 5 ciclos, pero se completa 1 instrucci\'on por ciclo.}
+\end{figure}
+
+\subsection{ISA Implementada: RISC-V RV32I}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Tipo} & \textbf{Instrucciones} & \textbf{Opcode} & \textbf{Ejemplo} \\
+\midrule
+R-type  & add, sub, and, or, sll, slt & \texttt{0110011} & \texttt{add x4, x2, x3} \\
+I-type  & addi, lw, ori, slti         & \texttt{0010011} / \texttt{0000011} & \texttt{addi x2, x0, 5} \\
+S-type  & sw                          & \texttt{0100011} & \texttt{sw x7, 100(x3)} \\
+B-type  & beq                         & \texttt{1100011} & \texttt{beq x4, x0, L} \\
+J-type  & jal                         & \texttt{1101111} & \texttt{jal x3, func} \\
+\bottomrule
+\end{tabular}
+\caption{Instrucciones soportadas por el procesador.}
+\end{table}
+
+% ============================================================================
+% SECCION 2: REGISTROS PIPELINE
+% ============================================================================
+\section{Los Registros Pipeline}
+
+\subsection{?`Qu\'e son y por qu\'e son necesarios?}
+
+Los registros pipeline \textbf{separan f\'isicamente} una etapa de la siguiente. Sin ellos, las se\~nales se mezclar\'ian. Se ubican entre cada par de etapas.
+
+\subsection{Tres Tipos de Flip-Flops}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  pin/.style={font=\tiny\sffamily, text=gray!80!black},
+  arrow/.style={-{Stealth}, thick, penblue},
+]
+
+% flopr
+\node[ffbox] (flopr) at (0, 0) {\textbf{flopr}\\(Registro est\'andar)};
+\clkpin{flopr} % Agrega el triangulo de reloj
+\draw[arrow] (-3, 0.3) -- (flopr.west |- {0,0.3}) node[midway, above, pin] {d};
+\draw[arrow] (flopr.east |- {0,0.3}) -- (3, 0.3) node[midway, above, pin] {q};
+\node[pin, below] at (0, -1.2) {Usado en: \textbf{EX/MEM, MEM/WB}};
+\node[pin, below] at (0, -1.6) {(sin stall ni flush)};
+
+% flopenr
+\node[ffbox] (flopenr) at (7, 0) {\textbf{flopenr}\\(Con Enable)};
+\clkpin{flopenr}
+\draw[arrow] (4, 0.3) -- (flopenr.west |- {7,0.3}) node[midway, above, pin] {d};
+\draw[arrow] (flopenr.east |- {7,0.3}) -- (10, 0.3) node[midway, above, pin] {q};
+\draw[arrow, black] (7, 1.5) -- (7, 1.0) node[midway, right, pin] {en};
+\node[pin, below] at (7, -1.2) {Usado en: \textbf{Registro PC}};
+\node[pin, below] at (7, -1.6) {(con stall, sin flush)};
+
+% flopenrc
+\node[ffbox] (flopenrc) at (14, 0) {\textbf{flopenrc}\\(Enable y Clear)};
+\clkpin{flopenrc}
+\draw[arrow] (11, 0.3) -- (flopenrc.west |- {14,0.3}) node[midway, above, pin] {d};
+\draw[arrow] (flopenrc.east |- {14,0.3}) -- (17, 0.3) node[midway, above, pin] {q};
+\draw[arrow, black] (13.5, 1.5) -- (13.5, 1.0) node[midway, right, pin] {en};
+\draw[arrow, black] (14.5, 1.5) -- (14.5, 1.0) node[midway, right, pin] {clear};
+\node[pin, below] at (14, -1.2) {Usado en: \textbf{IF/ID, ID/EX}};
+\node[pin, below] at (14, -1.6) {(con stall y flush)};
+
+\end{tikzpicture}
+\caption{Los tres tipos de flip-flops usados. Observa el tri\'angulo s\'imbolo de la se\~nal de reloj sincronizada por flanco.}
+\end{figure}
+
+\subsection{?`Por qu\'e IF/ID usa flopenrc y MEM/WB usa flopr?}
+
+Las etapas tempranas (Fetch, Decode, Execute) son \textbf{especulativas}: las instrucciones pueden ser descartadas (flush) si un salto cambia el flujo, o detenidas (stall) si hay una dependencia de datos sin resolver.
+
+Las etapas tard\'ias (Memory, Writeback) ejecutan instrucciones que ya \textbf{pasaron todos los filtros}: ya se resolvieron los saltos y los riesgos. Nunca hay raz\'on para detenerlas ni vaciarlas, de ah\'i que solo requieran un \texttt{flopr} b\'asico.
+
+\begin{lstlisting}[style=pseudo, caption={Comportamiento de los registros pipeline}]
+// flopenrc: Tiene clk, reset, enable y clear
+en cada flanco de subida de clk:
+  si reset:      q = 0
+  sino si clear: q = 0  // FLUSH: inserta burbuja NOP
+  sino si en:    q = d  // Avanza normalmente
+  // si en = 0:  q no cambia (CONGELADO - STALL)
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 3: TOP LEVEL
+% ============================================================================
+\section{M\'odulo Top-Level: \texttt{riscv\_pipeline}}
+
+El m\'odulo \texttt{riscv\_pipeline} es el \textbf{ensamblaje principal} que conecta las 5 etapas con la Hazard Unit. Es puramente estructural, cableando todos los subm\'odulos.
+
+\begin{lstlisting}[style=pseudo, caption={Pseudoc\'odigo del m\'odulo top-level}]
+modulo riscv_pipeline(clk, reset):
+  // 1. Instanciar Fetch
+  fetchStage(clk, reset, StallF, PCSrcE, PCTargetE ...)
+
+  // 2. Instanciar Decode 
+  decodeStage(clk, reset, StallD, FlushD, ...)
+
+  // 3. Instanciar Execute
+  executeStage(clk, reset, FlushE, ForwardAE, ForwardBE, ...)
+
+  // 4. Instanciar Memory
+  memStage(clk, reset, senales_Execute ...)
+
+  // 5. Instanciar Writeback
+  wbStage(clk, reset, senales_Memory ...)
+
+  // 6. Instanciar Hazard Unit
+  hazardUnit(Rs1D, Rs2D, Rs1E, Rs2E, RdE, RdM, RdW, ...)
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 4: ETAPA FETCH
+% ============================================================================
+\section{Etapa 1: Fetch (IF)}
+
+\subsection{Componentes Activos}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  signal/.style={-{Stealth[length=2mm]}, thick, penblue},
+  wirelabel/.style={font=\tiny\sffamily, text=black, midway, above},
+]
+
+% MUX y PC
+\drawmux{0}{1}{pcmux}{MUX PC}
+\node[box, minimum height=2.5cm, minimum width=1.5cm] (pcreg) at (3, 1) {};
+\node[font=\small\sffamily, align=center] at (3, 1) {PC\\Reg};
+\clkpin{pcreg}
+\node[font=\tiny\sffamily, below] at (pcreg.north) {CLK};
+\node[font=\tiny\sffamily, above] at (pcreg.south) {EN};
+
+% Memoria
+\node[box, minimum height=3cm, minimum width=2.5cm] (imem) at (8, 1) {};
+\node[font=\small\sffamily, align=center] at (8, 1) {Instruction\\Memory};
+\node[font=\small\sffamily, right] at (imem.west |- {0,1}) {A};
+\node[font=\small\sffamily, left] at (imem.east |- {0,1}) {RD};
+
+% Adder
+\drawadder{8}{-2}{add4}
+
+% Conexiones
+\draw[signal] (-2, 1.8) -- (pcmux_in0) node[wirelabel, pos=0.2] {PCTargetE};
+\draw[signal] (-2, 0.2) -- (pcmux_in1) node[wirelabel, pos=0.2] {PCPlus4F};
+\draw[signal] (pcmux_out) -- (pcreg.west) node[wirelabel] {PCF\_next};
+\draw[signal] (pcreg.east) -- (imem.west |- {0,1}) node[wirelabel] {PCF};
+
+% Feedback
+\draw[signal] (5, 1) |- (add4_in1) node[wirelabel, pos=0.8] {PCF};
+\node[font=\scriptsize\sffamily, left] at (add4_in2) {4};
+\draw[thick] (add4_in2) ++(-0.4,0) -- (add4_in2);
+\draw[signal] (add4_out) -- ++(1.5,0) node[wirelabel, right] {PCPlus4F $\rightarrow$ IF/ID} |- (-2.5, -2) -- (-2.5, 0.2) -- (pcmux_in1);
+\draw[signal] (imem.east |- {0,1}) -- ++(2,0) node[wirelabel, right] {InstrF $\rightarrow$ IF/ID};
+
+% Control
+\draw[-{Stealth}, thick, dashed] (pcmux_sel) -- ++(0, 1) node[font=\tiny\sffamily, right] {PCSrcE};
+\draw[-{Stealth}, thick, dashed] (3, 2.8) -- (pcreg.north) node[font=\tiny\sffamily, midway, right] {$\sim$StallF (en)};
+
+\end{tikzpicture}
+\caption{Etapa Fetch aislada con sus componentes operativos.}
+\end{figure}
+
+\subsection{Pseudoc\'odigo}
+
+\begin{lstlisting}[style=pseudo, caption={Pseudoc\'odigo de la etapa Fetch}]
+FETCH(clk, reset, StallF, PCSrcE, PCTargetE):
+  // 1. Seleccionar el proximo PC
+  si PCSrcE == 1:
+    PCF_next = PCTargetE      // Salto tomado
+  sino:
+    PCF_next = PCPlus4F       // Secuencial (PC + 4)
+
+  // 2. Actualizar el PC (solo si no hay stall)
+  en cada flanco de subida de clk:
+    si reset:          PCF = 0
+    sino si !StallF:   PCF = PCF_next
+
+  // 3. Leer la instruccion de la memoria
+  InstrF = InstrMemoria[PCF / 4]
+
+  // 4. Calcular PC + 4
+  PCPlus4F = PCF + 4
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 5: ETAPA DECODE
+% ============================================================================
+\section{Etapa 2: Decode (ID)}
+
+\subsection{Componentes Activos}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  signal/.style={-{Stealth[length=2mm]}, thick, penblue},
+  wirelabel/.style={font=\tiny\sffamily, text=black, midway, above},
+]
+
+% IF/ID y ID/EX Pipeline Registers
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (ifid_reg) at (0, 0) {\rotatebox{90}{IF/ID}};
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (idex_reg) at (11, 0) {\rotatebox{90}{ID/EX}};
+
+% Componentes
+% Control Unit (Rounded Box)
+\node[draw, thick, fill=white, rounded corners=3mm, minimum height=3.5cm, minimum width=1.5cm, font=\small\sffamily, align=center] (ctrl) at (6.0, 5.0) {Control\\Unit};
+\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,6.0}) {op};
+\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,5.0}) {funct3};
+\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,4.0}) {funct7$_5$};
+
+% Register File
+\node[box, minimum height=4.5cm, minimum width=2.5cm] (regfile) at (6.0, 0) {};
+\node[font=\small\sffamily, align=center] at (6.0, 0) {Register\\File};
+\node[font=\tiny\sffamily, right] at (regfile.west |- {0, 1.5}) {A1};
+\node[font=\tiny\sffamily, right] at (regfile.west |- {0, 0.0}) {A2};
+\node[font=\tiny\sffamily, right] at (regfile.west |- {0, -1.5}) {A3};
+\node[font=\tiny\sffamily, right] at (regfile.west |- {0, -2.0}) {WD3};
+\node[font=\tiny\sffamily, left]  at (regfile.east |- {0, 1.5}) {RD1};
+\node[font=\tiny\sffamily, left]  at (regfile.east |- {0, 0.0}) {RD2};
+\node[font=\tiny\sffamily, below] at (regfile.north -| {6.5, 0}) {WE3};
+
+% Clock with falling edge circle
+\draw[thick] (5.0, 2.25) circle (1mm);
+\draw[thick] (5.0, 2.35) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
+\draw[thick] (4.8, 2.25) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
+
+% Extend
+\drawextend{6.0}{-4.5}{ext}
+
+% -------------------------------------------------------------
+% Tronco principal InstrD
+% -------------------------------------------------------------
+\draw[thick, penblue] (ifid_reg.east |- {0,2.5}) -- (1.5, 2.5) node[midway, above, text=black, font=\small\sffamily] {InstrD};
+\draw[thick, penblue] (1.5, 6.0) -- (1.5, -4.5);
+\draw[fill=penblue] (1.5, 2.5) circle (1.5pt);
+
+% Conexiones desde el tronco hacia Control Unit
+\draw[signal] (1.5, 6.0) -- (ctrl.west |- {0,6.0}) node[wirelabel, pos=0.1] {InstrD[6:0]};
+\draw[fill=penblue] (1.5, 6.0) circle (1.5pt);
+\draw[signal] (1.5, 5.0) -- (ctrl.west |- {0,5.0}) node[wirelabel, pos=0.1] {InstrD[14:12]};
+\draw[fill=penblue] (1.5, 5.0) circle (1.5pt);
+\draw[signal] (1.5, 4.0) -- (ctrl.west |- {0,4.0}) node[wirelabel, pos=0.1] {InstrD[30]};
+\draw[fill=penblue] (1.5, 4.0) circle (1.5pt);
+
+% Conexiones desde el tronco hacia RegFile
+\draw[signal] (1.5, 1.5) -- (regfile.west |- {0,1.5}) node[wirelabel, pos=0.2] {InstrD[19:15]};
+\draw[fill=penblue] (1.5, 1.5) circle (1.5pt);
+\draw[signal] (1.5, 0.0) -- (regfile.west |- {0,0.0}) node[wirelabel, pos=0.2] {InstrD[24:20]};
+\draw[fill=penblue] (1.5, 0.0) circle (1.5pt);
+
+% Conexiones desde el tronco hacia ID/EX y Extend
+\draw[signal] (1.5, -2.5) -- (idex_reg.west |- {0,-2.5}) node[wirelabel, pos=0.15] {InstrD[11:7] (RdD)};
+\draw[fill=penblue] (1.5, -2.5) circle (1.5pt);
+\draw[signal] (1.5, -4.5) -- (ext_in) node[wirelabel, pos=0.2] {InstrD[31:7]};
+
+% -------------------------------------------------------------
+% Bypass cables (Rs1D, Rs2D) que saltan sobre el RegFile
+% -------------------------------------------------------------
+\draw[signal] (2.5, 1.5) |- (idex_reg.west |- {0, 3.0}) node[wirelabel, pos=0.8] {Rs1D};
+\draw[fill=penblue] (2.5, 1.5) circle (1.5pt);
+
+\draw[signal] (3.2, 0.0) |- (idex_reg.west |- {0, 2.6}) node[wirelabel, pos=0.8] {Rs2D};
+\draw[fill=penblue] (3.2, 0.0) circle (1.5pt);
+
+% -------------------------------------------------------------
+% Conexiones directas desde IF/ID
+% -------------------------------------------------------------
+\draw[signal] (ifid_reg.east |- {0,-5.5}) -- (idex_reg.west |- {0,-5.5}) node[wirelabel, pos=0.15] {PCD};
+\draw[signal] (ifid_reg.east |- {0,-6.5}) -- (idex_reg.west |- {0,-6.5}) node[wirelabel, pos=0.15] {PCPlus4D};
+
+% -------------------------------------------------------------
+% Conexiones de salida de componentes a ID/EX
+% -------------------------------------------------------------
+\draw[signal] (ctrl.east |- {0,5.0}) -- (idex_reg.west |- {0,5.0}) node[wirelabel, pos=0.3] {Control Signals};
+\draw[signal] (regfile.east |- {0,1.5}) -- (idex_reg.west |- {0,1.5}) node[wirelabel, pos=0.3] {RD1D};
+\draw[signal] (regfile.east |- {0,0.0}) -- (idex_reg.west |- {0,0.0}) node[wirelabel, pos=0.3] {RD2D};
+\draw[signal] (ext_out) -- (idex_reg.west |- ext_out) node[wirelabel, pos=0.3] {ExtImmD};
+
+% -------------------------------------------------------------
+% Conexiones hacia Register File (desde Writeback)
+% -------------------------------------------------------------
+\draw[signal, dashed] (2.0, 7.5) node[font=\tiny\sffamily, above] {ResultW (from WB)} |- (regfile.west |- {0,-2.0});
+\draw[-{Stealth}, thick, dashed] (4.0, 7.5) node[font=\tiny\sffamily, above] {RdW} |- (regfile.west |- {0,-1.5});
+\draw[-{Stealth}, thick, dashed] (7.5, 7.5) node[font=\tiny\sffamily, above] {RegWriteW} |- (6.5, 2.25);
+
+\end{tikzpicture}
+\caption{Etapa Decode aislada. Incluye el banco de registros y unidad de control.}
+\end{figure}
+
+\subsection{Unidad de Control}
+
+La Unidad de Control recibe el \texttt{opcode}, \texttt{funct3} y \texttt{funct7} de la instrucci\'on y genera todas las se\~nales de control.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{l|c|c|c|c|c|c|c|c}
+\toprule
+\textbf{Tipo} & \textbf{Opcode} & \textbf{RegW} & \textbf{ImmSrc} & \textbf{ALUSrc} & \textbf{MemW} & \textbf{ResSrc} & \textbf{Branch} & \textbf{ALUOp} \\
+\midrule
+lw      & 0000011 & 1 & 00 & 1 & 0 & 01 & 0 & 00 \\
+sw      & 0100011 & 0 & 01 & 1 & 1 & -- & 0 & 00 \\
+R-type  & 0110011 & 1 & xx & 0 & 0 & 00 & 0 & 10 \\
+I-type  & 0010011 & 1 & 00 & 1 & 0 & 00 & 0 & 10 \\
+beq     & 1100011 & 0 & 10 & 0 & 0 & -- & 1 & 01 \\
+jal     & 1101111 & 1 & 11 & 0 & 0 & 10 & 0 & xx \\
+\bottomrule
+\end{tabular}
+\caption{Tabla de verdad de la unidad de control principal.}
+\end{table}
+
+\textbf{Nota cr\'itica sobre el ALUControl:} El \texttt{ALUControl} usa \textbf{4 bits}, no 3. El bit [3] diferencia ADD (0000) de SUB (1000). Si se truncara a 3 bits, la resta se interpretar\'ia como suma y fallar\'ia la operaci\'on \texttt{sub} o la l\'ogica de comparaci\'on de \texttt{beq}.
+
+\subsection{Pseudoc\'odigo de Decode}
+
+\begin{lstlisting}[style=pseudo, caption={Pseudoc\'odigo de la etapa Decode}]
+DECODE(clk, reset, StallD, FlushD, InstrF, PCF, PCPlus4F):
+  // 1. Registros IF/ID (flopenrc: con stall y flush)
+  en cada flanco de subida de clk:
+    si reset o FlushD:
+      InstrD=0; PCD=0; PCPlus4D=0   // Insertar NOP
+    sino si !StallD:
+      InstrD=InstrF; PCD=PCF; PCPlus4D=PCPlus4F
+
+  // 2. Extraer campos
+  Rs1D = InstrD[19:15]; Rs2D = InstrD[24:20]; RdD = InstrD[11:7]
+
+  // 3. Leer banco de registros (combinacional)
+  RD1D = (Rs1D != 0) ? Registros[Rs1D] : 0
+  RD2D = (Rs2D != 0) ? Registros[Rs2D] : 0
+
+  // 4. Generar senales de control
+  {RegWriteD, MemWriteD, ALUSrcD, ...} = Decodificar(InstrD)
+
+  // 5. Extender inmediato
+  ExtImmD = ExtenderSigno(InstrD[31:7], ImmSrcD)
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 6: ETAPA EXECUTE
+% ============================================================================
+\section{Etapa 3: Execute (EX)}
+
+La etapa Execute es el núcleo de cálculo del procesador. Es aquí donde la ALU (Arithmetic Logic Unit) procesa los datos y toma decisiones críticas para el flujo del programa.
+
+\textbf{Teoría Operativa:}
+A diferencia de un procesador de ciclo único donde la decisión de saltar (Branch) se evalúa en Decode, en este pipeline se evalúa en Execute. La ALU realiza una resta (\texttt{sub}) entre los dos operandos y levanta la bandera \texttt{ZeroE} si son iguales. Esta bandera, al operarse mediante una compuerta AND con la señal \texttt{BranchE}, determina la señal \texttt{PCSrcE} (Branch Taken). 
+Este retraso arquitectónico significa que el salto no se resuelve hasta el tercer ciclo, lo que introduce una penalización de 2 ciclos (burbujas) en caso de que el salto sea tomado, los cuales son gestionados puramente por la \textit{Hazard Unit}.
+
+\subsection{Componentes Activos}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  signal/.style={-{Stealth[length=2mm]}, thick, penblue},
+  wirelabel/.style={font=\tiny\sffamily, text=black, midway, above},
+]
+
+% ID/EX y EX/MEM Pipeline Registers
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=18cm, font=\small\sffamily] (idex_reg) at (0, 1) {\rotatebox{90}{ID/EX}};
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=18cm, font=\small\sffamily] (exmem_reg) at (14, 1) {\rotatebox{90}{EX/MEM}};
+
+% Clocks
+\draw[thick] (0.0, 10.0) circle (1mm);
+\draw[thick] (0.0, 10.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
+\draw[thick] (-0.2, 10.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
+
+\draw[thick] (14.0, 10.0) circle (1mm);
+\draw[thick] (14.0, 10.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
+\draw[thick] (13.8, 10.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
+
+% Componentes
+\drawmuxthree{5.0}{2.0}{muxA}{}
+\drawmuxthree{5.0}{-0.4}{muxB}{}
+\drawmux{7.5}{-1.0}{muxS}{}
+
+\drawalu{10.5}{0.5}{myalu}
+\drawadder{10.5}{-4.0}{addT}
+
+% Puertas logicas PCSrc
+\drawand{5.0}{8.0}{and_gate}
+\drawor{7.5}{7.8}{or_gate}
+
+% Control signals top (straight through)
+\draw[signal] (idex_reg.east |- {0, 6.5}) -- (exmem_reg.west |- {0,6.5}) node[wirelabel, pos=0.15] {RegWriteE};
+\draw[signal] (idex_reg.east |- {0, 6.0}) -- (exmem_reg.west |- {0,6.0}) node[wirelabel, pos=0.15] {ResultSrcE$_{1:0}$};
+\draw[signal] (idex_reg.east |- {0, 5.5}) -- (exmem_reg.west |- {0,5.5}) node[wirelabel, pos=0.15] {MemWriteE};
+
+% Control inputs to MUX and ALU
+\draw[signal] (idex_reg.east |- {0, 5.0}) -| (myalu_sel) node[wirelabel, pos=0.2] {ALUControlE$_{2:0}$};
+\draw[signal] (idex_reg.east |- {0, 4.5}) -| (muxS_sel) node[wirelabel, pos=0.2] {ALUSrcE};
+
+% PCSrc Logic Wiring
+\draw[signal] (idex_reg.east |- {0, 8.2}) -- (and_gate_in1) node[wirelabel, pos=0.4] {BranchE};
+\draw[signal] (idex_reg.east |- {0, 7.6}) -- (or_gate_in2) node[wirelabel, pos=0.4] {JumpE};
+\draw[signal] (and_gate_out) -- (or_gate_in1 |- and_gate_out);
+\draw[signal] (or_gate_out) -- (13.5, 7.8) node[wirelabel, right] {PCSrcE $\rightarrow$ Logic};
+\draw[signal] (myalu_zero) -- (11.3, 9.0) -- (4.0, 9.0) |- (and_gate_in2) node[wirelabel, pos=0.15] {ZeroE};
+
+% RD1E and RD2E
+\draw[signal] (idex_reg.east |- muxA_in0) -- (muxA_in0) node[wirelabel, pos=0.15] {RD1E};
+\draw[signal] (idex_reg.east |- muxB_in0) -- (muxB_in0) node[wirelabel, pos=0.15] {RD2E};
+
+% MUX outputs -> ALU
+\draw[signal] (muxA_out) |- (myalu_in1) node[wirelabel, pos=0.7] {SrcAE};
+\draw[signal] (muxS_out) |- (myalu_in2) node[wirelabel, pos=0.7] {SrcBE};
+
+% WriteDataE
+\draw[signal] (muxB_out) -- (exmem_reg.west |- muxB_out) node[wirelabel, pos=0.15] {WriteDataE};
+\draw[fill=penblue] (6.0, -0.4) circle (1.5pt);
+\draw[signal] (6.0, -0.4) |- (muxS_in0);
+
+% PCE
+\draw[signal] (idex_reg.east |- addT_in0) -- (addT_in0) node[wirelabel, pos=0.15] {PCE};
+
+% ExtImmE
+\draw[signal] (idex_reg.east |- {0, -4.5}) -- (addT_in1) node[wirelabel, pos=0.15] {ExtImmE};
+\draw[fill=penblue] (6.0, -4.5) circle (1.5pt);
+\draw[signal] (6.0, -4.5) |- (muxS_in1);
+
+% Pass-through signals
+\draw[signal] (idex_reg.east |- {0, -1.5}) -- (2.5, -1.5) node[font=\tiny\sffamily, right] {$\rightarrow$ Hazard Unit} node[wirelabel, pos=0.4] {Rs1E};
+\draw[signal] (idex_reg.east |- {0, -2.0}) -- (2.5, -2.0) node[font=\tiny\sffamily, right] {$\rightarrow$ Hazard Unit} node[wirelabel, pos=0.4] {Rs2E};
+\draw[signal] (idex_reg.east |- {0, -2.5}) -- (exmem_reg.west |- {0,-2.5}) node[wirelabel, pos=0.15] {RdE};
+\draw[signal] (idex_reg.east |- {0, -5.5}) -- (exmem_reg.west |- {0,-5.5}) node[wirelabel, pos=0.15] {PCPlus4E};
+
+% Outputs from EX passing right (into EX/MEM and beyond)
+\draw[signal] (myalu_out) -- (exmem_reg.west |- myalu_out) node[wirelabel, pos=0.15] {ALUResultE};
+\draw[signal] (exmem_reg.east |- myalu_out) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {ALUResultM};
+\draw[signal] (addT_out) -- (13.5, -4.0) node[wirelabel, right] {PCTargetE $\rightarrow$ Fetch};
+
+\draw[signal] (exmem_reg.east |- muxB_out) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {WriteDataM};
+\draw[signal] (exmem_reg.east |- {0,-2.5}) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {RdM};
+\draw[signal] (exmem_reg.east |- {0,-5.5}) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {PCPlus4M};
+\draw[signal] (exmem_reg.east |- {0,6.5}) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {RegWriteM};
+\draw[signal] (exmem_reg.east |- {0,6.0}) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {ResultSrcM$_{1:0}$};
+\draw[signal] (exmem_reg.east |- {0,5.5}) -- ++(0.8, 0) node[right, font=\tiny\sffamily] {MemWriteM};
+
+% Forwarding inputs (from bottom)
+\draw[signal] (1.5, -8.0) node[font=\tiny\sffamily, below] {ALUResultM} -- (1.5, 1.4) -- (muxA_in2);
+\draw[fill=penblue] (1.5, -1.0) circle (1.5pt);
+\draw[signal] (1.5, -1.0) -- (muxB_in2);
+
+\draw[signal] (2.5, -8.0) node[font=\tiny\sffamily, below] {ResultW} -- (2.5, 2.0) -- (muxA_in1);
+\draw[fill=penblue] (2.5, -0.4) circle (1.5pt);
+\draw[signal] (2.5, -0.4) -- (muxB_in1);
+\draw[signal] (3.5, -8.0) node[font=\tiny\sffamily, below] {ForwardBE} -- (3.5, 0.4) -- (muxB_sel);
+\draw[signal] (4.2, -8.0) node[font=\tiny\sffamily, below] {ForwardAE} -- (4.2, 2.8) -- (muxA_sel);
+
+\end{tikzpicture}
+\caption{Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}
+\end{figure}
+
+
+
+\subsection{Pseudoc\'odigo Completo del Execute}
+
+\begin{lstlisting}[style=pseudo, caption={Pseudoc\'odigo de la etapa Execute}]
+EXECUTE(clk, reset, FlushE, ForwardAE, ForwardBE,
+        senales_control_D, datos_D, ALUResultM, ResultW):
+
+  // 1. Registro ID/EX (flopenrc: sin stall, con flush)
+  en cada flanco de subida de clk:
+    si reset o FlushE:
+      todas las senales = 0     // Insertar burbuja NOP
+    sino:
+      capturar todas las senales de Decode
+
+  // 2. Forwarding Mux A
+  si ForwardAE == 10:   SrcAE = ALUResultM  // de Memory
+  sino si ForwardAE == 01: SrcAE = ResultW  // de Writeback
+  sino:                 SrcAE = RD1E        // del registro
+
+  // 3. Forwarding Mux B
+  si ForwardBE == 10:   WriteDataE = ALUResultM
+  sino si ForwardBE == 01: WriteDataE = ResultW
+  sino:                 WriteDataE = RD2E
+
+  // 4. Seleccion del operando B de la ALU
+  si ALUSrcE == 1: SrcBE = ExtImmE    // Inmediato
+  sino:            SrcBE = WriteDataE  // Registro
+
+  // 5. Ejecutar ALU
+  ALUResultE = ALU(SrcAE, SrcBE, ALUControlE)
+  ZeroE = (ALUResultE == 0)
+
+  // 6. Calcular direccion de salto
+  PCTargetE = PCE + ExtImmE
+
+  // 7. Decidir si se toma el salto
+  PCSrcE = (BranchE AND ZeroE) OR JumpE
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 7: ETAPA MEMORY Y WRITEBACK
+% ============================================================================
+\section{Etapas Memory (MEM) y Writeback (WB)}
+
+Estas dos etapas finales son responsables de confirmar los resultados arquitectónicos, ya sea interactuando con la jerarquía de memoria o actualizando el banco de registros.
+
+\textbf{Teoría de Memoria y Sincronismo:}
+La Memoria de Datos representa típicamente la caché L1 de datos en un procesador real. En nuestra implementación, la memoria es \textbf{síncrona para escritura y asíncrona para lectura}. 
+\begin{itemize}
+    \item \textbf{Escritura:} Solo ocurre en el flanco de subida del reloj cuando \texttt{MemWriteM} está en alto. Esto evita que señales inestables modifiquen el estado de la memoria.
+    \item \textbf{Lectura:} Las memorias reales modernas suelen ser síncronas para lectura también (añadiendo latencia), pero nuestra implementación combinacional simplificada asume que el dato se lee instantáneamente si la dirección (\texttt{ALUResultM}) es válida.
+\end{itemize}
+
+\subsection{Componentes Activos}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  signal/.style={-{Stealth[length=2mm]}, thick, penblue},
+  wirelabel/.style={font=\tiny\sffamily, text=black, midway, above},
+]
+
+% EX/MEM y MEM/WB Pipeline Registers
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (exmem_reg) at (0, 0) {\rotatebox{90}{EX/MEM}};
+\node[draw, fill=gray!20, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (memwb_reg) at (8, 0) {\rotatebox{90}{MEM/WB}};
+
+% Clocks
+\draw[thick] (0.0, 7.0) circle (1mm);
+\draw[thick] (0.0, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
+\draw[thick] (-0.2, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
+
+\draw[thick] (8.0, 7.0) circle (1mm);
+\draw[thick] (8.0, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
+\draw[thick] (7.8, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
+
+% Componentes
+\node[draw, thick, fill=white, minimum height=3cm, minimum width=2.5cm, font=\small\sffamily, align=center] (dmem) at (4.0, -1.0) {Data\\Memory};
+\draw[thick] (2.75, -2.2) -- ++(2.5mm, 2.5mm) -- ++(-2.5mm, 2.5mm); % clk pin
+
+% MUX de ResultW (ResultSrc) - es un MUX de 3 entradas
+\drawmuxthree{11.0}{0.0}{muxR}{}
+
+% Control signals passing straight through EX/MEM -> MEM/WB
+\draw[signal] (exmem_reg.east |- {0, 6.5}) -- (memwb_reg.west |- {0,6.5}) node[wirelabel, pos=0.15] {RegWriteM} node[wirelabel, pos=0.85] {RegWriteW};
+\draw[signal] (exmem_reg.east |- {0, 6.0}) -- (memwb_reg.west |- {0,6.0}) node[wirelabel, pos=0.15] {ResultSrcM$_{1:0}$} node[wirelabel, pos=0.85] {ResultSrcW$_{1:0}$};
+
+% MemWriteM
+\draw[signal] (exmem_reg.east |- {0, 5.5}) -| (dmem.north) node[wirelabel, pos=0.2] {MemWriteM};
+
+% Address and WriteData to Memory
+\draw[signal] (exmem_reg.east |- {0, 0.5}) -- (memwb_reg.west |- {0, 0.5}) node[wirelabel, pos=0.15] {ALUResultM};
+\draw[fill=penblue] (1.5, 0.5) circle (1.5pt);
+\draw[signal] (1.5, 0.5) |- (dmem.west |- {0, 0.0}) node[wirelabel, pos=0.8] {Address};
+
+\draw[signal] (exmem_reg.east |- {0, -0.4}) -- (dmem.west |- {0,-0.4}) node[wirelabel, pos=0.5] {WriteDataM (Data In)};
+
+% ReadData to MEM/WB
+\draw[signal] (dmem.east |- {0, -1.5}) -- (memwb_reg.west |- {0,-1.5}) node[wirelabel, pos=0.5] {ReadDataM};
+
+% Passing signals RdM, PCPlus4M
+\draw[signal] (exmem_reg.east |- {0, -2.5}) -- (memwb_reg.west |- {0, -2.5}) node[wirelabel, pos=0.15] {RdM} node[wirelabel, pos=0.85] {RdW};
+\draw[signal] (exmem_reg.east |- {0, -5.5}) -- (memwb_reg.west |- {0, -5.5}) node[wirelabel, pos=0.15] {PCPlus4M} node[wirelabel, pos=0.85] {PCPlus4W};
+
+% From MEM/WB to Writeback MUX and beyond
+% MUX ResultSrcW (3-to-1)
+% in0 = ALUResultW, in1 = ReadDataW, in2 = PCPlus4W
+\draw[signal] (memwb_reg.east |- {0, 0.5}) -- (9.0, 0.5) node[wirelabel, pos=0.5] {ALUResultW} |- (muxR_in0);
+\draw[signal] (memwb_reg.east |- {0, -1.5}) -- (9.5, -1.5) node[wirelabel, pos=0.5] {ReadDataW} |- (muxR_in1);
+\draw[signal] (memwb_reg.east |- {0, -5.5}) -- (10.0, -5.5) node[wirelabel, pos=0.5] {PCPlus4W} |- (muxR_in2);
+
+% ResultSrcW selector
+\draw[signal] (memwb_reg.east |- {0, 6.0}) -| (muxR_sel) node[wirelabel, pos=0.2] {ResultSrcW$_{1:0}$};
+
+% RegWriteW passes forward
+\draw[signal] (memwb_reg.east |- {0, 6.5}) -- (14.0, 6.5) node[right, font=\tiny\sffamily] {RegWriteW $\rightarrow$ RegFile / Hazard};
+
+% RdW passes forward
+\draw[signal] (memwb_reg.east |- {0, -2.5}) -- (14.0, -2.5) node[right, font=\tiny\sffamily] {RdW $\rightarrow$ RegFile / Hazard};
+
+% ResultW output
+\draw[signal] (muxR_out) -- (14.0, 0.0) node[right, font=\tiny\sffamily] {ResultW $\rightarrow$ RegFile};
+
+% Forwarding branches
+\draw[fill=penblue] (6.0, 0.5) circle (1.5pt);
+\draw[signal] (6.0, 0.5) -- (6.0, 1.5) node[right, font=\tiny\sffamily] {ALUResultM $\rightarrow$ Forwarding};
+
+\draw[fill=penblue] (13.0, 0.0) circle (1.5pt);
+\draw[signal] (13.0, 0.0) -- (13.0, 1.0) node[right, font=\tiny\sffamily] {ResultW $\rightarrow$ Forwarding};
+
+\end{tikzpicture}
+\caption{Etapas Memory y Writeback. La memoria de datos tiene escritura s\'incrona.}
+\end{figure}
+
+\subsection{Pseudoc\'odigo de ambas etapas}
+
+\begin{lstlisting}[style=pseudo, caption={Pseudoc\'odigo de Memory y Writeback}]
+MEMORY(clk, reset, senales_Execute):
+  // 1. Registro EX/MEM (flopr: siempre avanza)
+  en cada flanco de subida de clk:
+    si reset: todo = 0
+    sino:     capturar senales de Execute
+
+  // 2. Acceso a Memoria de Datos
+  ReadDataM = DataMemoria[ALUResultM / 4]  // Lectura combinacional
+  si MemWriteM == 1:                       // Escritura sincrona
+    DataMemoria[ALUResultM / 4] = WriteDataM
+
+WRITEBACK(clk, reset, senales_Memory):
+  // 1. Registro MEM/WB (flopr: siempre avanza)
+  en cada flanco de subida de clk:
+    si reset: todo = 0
+    sino:     capturar senales de Memory
+
+  // 2. Seleccionar resultado final
+  si ResultSrcW == 00:  ResultW = ALUResultW   // Aritmetica
+  sino si ResultSrcW == 01: ResultW = ReadDataW // Load (lw)
+  sino si ResultSrcW == 10: ResultW = PCPlus4W  // JAL
+\end{lstlisting}
+
+% ============================================================================
+% SECCION 8: HAZARD UNIT
+% ============================================================================
+\section{Unidad de Riesgos (Hazard Unit)}
+
+La Hazard Unit monitorea las instrucciones en curso y resuelve dependencias a trav\'es de tres mecanismos: Forwarding, Stalls y Flushes.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  hubox/.style={draw, thick, fill=white, minimum width=8cm, minimum height=2.5cm, font=\small\sffamily\bfseries, align=center},
+  signalin/.style={-{Stealth}, thick},
+  signalout/.style={-{Stealth}, thick, penblue},
+  lblin/.style={font=\tiny\sffamily, above},
+  lblout/.style={font=\tiny\sffamily, right},
+]
+
+\node[hubox] (hu) at (0, 0) {Hazard Unit};
+
+% Entradas (arriba y laterales)
+\draw[signalin] (-3, 2.5) -- (-3, 1.25) node[lblin, pos=0] {Rs1E, Rs2E};
+\draw[signalin] (-1, 2.5) -- (-1, 1.25) node[lblin, pos=0] {RdM, RdW};
+\draw[signalin] (1, 2.5) -- (1, 1.25) node[lblin, pos=0] {RegWriteM/W};
+\draw[signalin] (3, 2.5) -- (3, 1.25) node[lblin, pos=0] {Rs1D, Rs2D, RdE};
+
+\draw[signalin] (-5.5, 0.5) -- (-4, 0.5) node[lblin, pos=0, left] {ResultSrcE[0]};
+\draw[signalin] (-5.5, -0.5) -- (-4, -0.5) node[lblin, pos=0, left] {PCSrcE};
+
+% Salidas (abajo)
+\draw[signalout] (-3, -1.25) -- (-3, -2.5) node[lblout, pos=1] {ForwardAE[1:0]};
+\draw[signalout] (-1.5, -1.25) -- (-1.5, -2.5) node[lblout, pos=1] {ForwardBE[1:0]};
+\draw[signalout] (0, -1.25) -- (0, -2.5) node[lblout, pos=1] {StallF};
+\draw[signalout] (1, -1.25) -- (1, -2.5) node[lblout, pos=1] {StallD};
+\draw[signalout] (2, -1.25) -- (2, -2.5) node[lblout, pos=1] {FlushD};
+\draw[signalout] (3, -1.25) -- (3, -2.5) node[lblout, pos=1] {FlushE};
+
+\end{tikzpicture}
+\caption{Diagrama de la Hazard Unit y sus m\'ultiples conexiones.}
+\end{figure}
+
+\subsection{Mecanismo 1: Forwarding (Reenvío de Datos)}
+El forwarding (o bypassing) es la solución de hardware más elegante para resolver los \textbf{Data Hazards} tipo RAW. Teóricamente, un resultado se calcula en la etapa Execute (ALU), pero arquitectónicamente no se escribe en el Register File hasta la etapa de Writeback (2 ciclos después). Si una instrucción posterior necesita este resultado inmediatamente, no puede leer el registro porque contiene un valor "viejo".
+
+La Hazard Unit detecta que el registro destino de una instrucción en MEM o WB ($RdM$ o $RdW$) coincide con los registros fuente de la instrucción actualmente en Execute ($Rs1E$ o $Rs2E$). Al detectarlo, \textbf{cortocircuita} los multiplexores para inyectar el dato recién salido de la ALU (o de la Memoria) directamente en la entrada de la ALU de la instrucción actual, saltándose la espera por el Writeback.
+
+\begin{lstlisting}[style=pseudo, caption={L\'ogica de Forwarding}]
+// Forwarding para operando A (SrcAE)
+si (Rs1E == RdM) Y RegWriteM Y (Rs1E != 0):
+    ForwardAE = 10    // Tomar resultado de Memory
+sino si (Rs1E == RdW) Y RegWriteW Y (Rs1E != 0):
+    ForwardAE = 01    // Tomar resultado de Writeback
+sino:
+    ForwardAE = 00    // Sin forwarding (usar registro)
+
+// Forwarding para operando B (misma logica con Rs2E)
+\end{lstlisting}
+
+\subsection{Mecanismo 2: Stall (Load-Use Hazard)}
+El forwarding no puede resolver el Load-Use hazard (cuando un \texttt{lw} es seguido inmediatamente por una instrucci\'on que lo usa). En ese caso, la Hazard Unit congela (stall) el PC y el IF/ID, e inserta una burbuja (flush) en el ID/EX.
+
+\begin{lstlisting}[style=pseudo, caption={L\'ogica de detecci\'on de Load-Use Hazard}]
+// ResultSrcE[0] == 1 indica que la instruccion es un lw
+lwStall = ResultSrcE[0] Y ((Rs1D == RdE) O (Rs2D == RdE))
+
+StallF = lwStall    // Congelar PC (no avanza)
+StallD = lwStall    // Congelar IF/ID (mantener instruccion)
+FlushE = lwStall    // Vaciar ID/EX (insertar burbuja NOP)
+\end{lstlisting}
+
+\subsection{Mecanismo 3: Flush (Control Hazard por Saltos)}
+Cuando se toma un salto (\texttt{PCSrcE=1}), las instrucciones que entraron especulativamente al Fetch y Decode deben descartarse, vaciando sus registros.
+
+\begin{lstlisting}[style=pseudo, caption={L\'ogica de flush por salto tomado}]
+FlushD = PCSrcE           // Vaciar IF/ID (descarta especulativa)
+FlushE = lwStall O PCSrcE // Vaciar ID/EX
+\end{lstlisting}
+
+\subsection{Resumen de Mecanismos}
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l|l|c}
+\toprule
+\textbf{Problema} & \textbf{Soluci\'on} & \textbf{Se\~nales} & \textbf{Penalizaci\'on} \\
+\midrule
+Data Hazard (R-type) & Forwarding & ForwardAE, ForwardBE & 0 ciclos \\
+Load-Use Hazard & Stall + Forwarding & StallF, StallD, FlushE & 1 ciclo \\
+Control Hazard & Flush & FlushD, FlushE & 2 ciclos \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+% SECCION 9: VERIFICACION
+% ============================================================================
+\section{Verificaci\'on: Testbench}
+El procesador se verific\'o con un testbench que ejecuta \texttt{riscvtest.txt}. El criterio de \'exito es alcanzar el ciclo donde se escribe el valor \texttt{25} en la direcci\'on \texttt{100} de la memoria.
+Resultado final de simulaci\'on:
+\begin{verbatim}
+  *** SIMULACION EXITOSA: mem[100] = 25 ***
+\end{verbatim}
+
+% ============================================================================
+% SECCION 10: JERARQUIA
+% ============================================================================
+\section{Jerarqu\'ia de Archivos}
+
+\begin{verbatim}
+Microarchitecture-Pipelined/
+|-- Datapath/
+|   |-- riscv_pipeline.v       (Top module)
+|   |-- tb.v                   (Testbench)
+|   |-- flopr.v, flopenr.v, flopenrc.v  (Flip-flops)
+|   |-- mux2.v, mux3.v, adder.v, alu.v, extend.v
+|   |-- Fetch/    fetch.v, imem.v
+|   |-- Decode/   decode.v, regfile.v
+|   |-- Execute/  execute.v
+|   |-- Memory/   memory.v, dmem.v
+|   |-- WriteBack/ writeback.v
+|-- Controller/   controller.v
+|-- Hazard Unit/  hunit.v
+|-- Single Cycle/ riscvtest.txt
+\end{verbatim}
+
+% ============================================================================
+% SECCION 11: CONCLUSIONES
+% ============================================================================
+\section{Conclusiones}
+
+\begin{enumerate}
+  \item \textbf{Pipeline vs.\ Single-Cycle}: La arquitectura pipelined incrementa significativamente el rendimiento dividiendo la ejecuci\'on en 5 etapas solapadas, al coste de a\~nadir complejidad con la Hazard Unit.
+  \item \textbf{Manejo de Riesgos}: El forwarding es eficiente porque evita ciclos perdidos, pero el procesador a\'un debe detenerse 1 ciclo ante un Load-Use hazard y perder 2 ciclos ante saltos tomados.
+  \item \textbf{Modularidad}: El dise\~no permite abstraer completamente los detalles de forwarding dentro de la etapa Execute mediante los multiplexores dedicados (\texttt{MUX FwdA/B}).
+\end{enumerate}
+
+\end{document}
