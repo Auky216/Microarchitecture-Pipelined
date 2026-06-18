@@ -107,16 +107,39 @@ module execute (
     .result(ALUResultE), 
     .zero(ZeroE)
   );
+  logic        isJALRE;
+  logic [31:0] pcTargetBaseE;
+  logic [31:0] pcTargetAddOutE;
+  logic        TakeBranchE;
 
-  // Sumador para la dirección de salto (PC + Inmediato Extendido)
+  // Detección local de JALR en Execute
+  assign isJALRE = (InstrE[6:0] == 7'b1100111);
+  assign pcTargetBaseE = isJALRE ? SrcAE : PCE;
+
+  // Sumador para la dirección de salto (PC o registro base + Inmediato Extendido)
   adder pcTargetAdd (
-    .a(PCE), 
+    .a(pcTargetBaseE), 
     .b(ExtImmE), 
-    .y(PCTargetE)
+    .y(pcTargetAddOutE)
   );
 
-  // Lógica para decidir si se toma el salto
-  // PCSrcE = 1 si ocurre un Branch válido (BranchE=1 y ZeroE=1) o si es un Jump
-  assign PCSrcE = (BranchE & ZeroE) | JumpE;
+  // El bit menos significativo de la dirección calculada por jalr se limpia
+  assign PCTargetE = {pcTargetAddOutE[31:1], 1'b0};
+
+  // Lógica para decidir si se toma el salto para distintas condiciones
+  always_comb begin
+    case (InstrE[14:12])
+      3'b000:  TakeBranchE = ZeroE;                     // beq
+      3'b001:  TakeBranchE = ~ZeroE;                    // bne
+      3'b100:  TakeBranchE = $signed(SrcAE) < $signed(SrcBE); // blt
+      3'b101:  TakeBranchE = $signed(SrcAE) >= $signed(SrcBE); // bge
+      3'b110:  TakeBranchE = SrcAE < SrcBE;             // bltu
+      3'b111:  TakeBranchE = SrcAE >= SrcBE;            // bgeu
+      default: TakeBranchE = 1'b0;
+    endcase
+  end
+
+  // PCSrcE = 1 si ocurre un Branch válido y se cumple la condición, o si es un Jump
+  assign PCSrcE = (BranchE & TakeBranchE) | JumpE;
 
 endmodule

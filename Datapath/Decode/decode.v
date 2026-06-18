@@ -73,7 +73,7 @@ module decode (
   );
 
   // ImmSrcD es una señal de control local (solo se usa dentro de Decode)
-  logic [1:0] ImmSrcD;
+  logic [2:0] ImmSrcD;
 
   // Control Unit: Decodifica la instrucción y genera las señales de control
   controller ctrl (

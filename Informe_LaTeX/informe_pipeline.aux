@@ -17,76 +17,83 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.4}ISA Implementada: RISC-V RV32I}{4}{subsection.1.4}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Instrucciones soportadas por el procesador.}}{4}{table.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Implementación de Instrucciones (Cuadro 1) (1.0 pts)}{4}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Descripción de Cambios en el Código}{4}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Diagrama de Datapath Final (Básico)}{5}{subsection.2.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama del Datapath Pipelined básico del procesador (sin la Hazard Unit).}}{6}{figure.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Los Registros Pipeline}{6}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}¿Qué son y por qué son necesarios?}{6}{subsubsection.2.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{7}{subsubsection.2.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Los tres tipos de flip-flops usados. Observa el triángulo símbolo de la señal de reloj sincronizada por flanco.}}{7}{figure.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{7}{subsubsection.2.3.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Comportamiento de los registros pipeline}{7}{lstlisting.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt  {riscv\_pipeline}}{7}{subsection.2.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Pseudocódigo del módulo top-level}{7}{lstlisting.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{8}{subsection.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{8}{subsubsection.2.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Etapa Fetch aislada con sus componentes operativos.}}{8}{figure.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}Pseudocódigo}{8}{subsubsection.2.5.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Pseudocódigo de la etapa Fetch}{8}{lstlisting.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{9}{subsection.2.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Componentes Activos}{9}{subsection.2.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Etapa Decode aislada. Incluye el banco de registros y unidad de control.}}{9}{figure.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{9}{subsubsection.2.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Tabla de verdad de la unidad de control principal.}}{10}{table.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}Pseudocódigo de Decode}{10}{subsubsection.2.7.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Pseudocódigo de la etapa Decode}{10}{lstlisting.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{10}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Componentes Activos}{11}{subsection.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}}{11}{figure.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Pseudocódigo Completo del Execute}{11}{subsection.3.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Pseudocódigo de la etapa Execute}{11}{lstlisting.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{12}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Componentes Activos}{13}{subsection.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}}{13}{figure.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Pseudocódigo de ambas etapas}{13}{subsection.4.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Pseudocódigo de Memory y Writeback}{13}{lstlisting.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{14}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{14}{subsection.5.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}Programa 1: ISA sin dependencias (test\_isa\_sin\_dependencias.mem)}{14}{lstlisting.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{14}{subsection.5.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Waveform del Programa 1 (ISA sin dependencias). Las señales ForwardAE, ForwardBE, StallD y FlushE permanecen en 0 durante toda la ejecución.}}{14}{figure.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{15}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{15}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{15}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{15}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{16}{subsubsection.6.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt  {add} los necesita.}}{16}{figure.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{16}{subsubsection.6.2.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Programa 3 SIN Hazard Unit. El \texttt  {add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}}{16}{figure.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{16}{subsubsection.6.2.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt  {beq}.}}{16}{figure.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{17}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{17}{subsection.7.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Diagrama de la Hazard Unit y sus múltiples conexiones.}}{17}{figure.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{17}{subsection.7.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Lógica de Forwarding}{18}{lstlisting.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{18}{subsection.7.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}Lógica de detección de Load-Use Hazard}{18}{lstlisting.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{18}{subsection.7.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Lógica de flush por salto tomado}{18}{lstlisting.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{18}{subsection.7.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{19}{subsection.7.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Diagrama del Datapath Pipelined completo del procesador (incluyendo la Hazard Unit).}}{19}{figure.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{20}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{20}{subsection.8.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}Programa 2: test\_forwarding.mem}{20}{lstlisting.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Programa 2 CON Hazard Unit. ForwardBE=10 reenvía x3 desde Memory; ForwardAE=01 reenvía x2 desde Writeback.}}{20}{figure.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{20}{subsection.8.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}Programa 3: test\_stalling.mem}{20}{lstlisting.12}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Programa 3 CON Hazard Unit. StallD congela Decode y Fetch durante 1 ciclo; FlushE inserta una burbuja en Execute.}}{21}{figure.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{21}{subsection.8.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}Programa 4: test\_flushing.mem}{21}{lstlisting.13}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Programa 4 CON Hazard Unit. FlushE y FlushD se activan cuando PCSrcE=1, descartando las instrucciones especulativas.}}{21}{figure.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Jerarquía de Archivos}{21}{section.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusiones}{22}{section.10}\protected@file@percent }
-\gdef \@abspage@last{24}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Instrucciones evaluadas e implementadas en el pipeline y su estado de soporte.}}{5}{table.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Descripción de Cambios en el Código}{6}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Diagrama de Datapath Final (Básico)}{6}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama del Datapath Pipelined básico del procesador (sin la Hazard Unit).}}{7}{figure.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Los Registros Pipeline}{7}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}¿Qué son y por qué son necesarios?}{7}{subsubsection.2.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{8}{subsubsection.2.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Los tres tipos de flip-flops usados. Observa el triángulo símbolo de la señal de reloj sincronizada por flanco.}}{8}{figure.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{8}{subsubsection.2.3.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Comportamiento de los registros pipeline}{8}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt  {riscv\_pipeline}}{8}{subsection.2.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Pseudocódigo del módulo top-level}{8}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{9}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{9}{subsubsection.2.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Etapa Fetch aislada con sus componentes operativos.}}{9}{figure.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}Pseudocódigo}{9}{subsubsection.2.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Pseudocódigo de la etapa Fetch}{9}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{10}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Componentes Activos}{10}{subsection.2.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Etapa Decode aislada. Incluye el banco de registros y unidad de control.}}{10}{figure.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{10}{subsubsection.2.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Tabla de verdad de la unidad de control principal.}}{11}{table.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}Pseudocódigo de Decode}{11}{subsubsection.2.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Pseudocódigo de la etapa Decode}{11}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{11}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Componentes Activos}{12}{subsection.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}}{12}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Pseudocódigo Completo del Execute}{12}{subsection.3.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Pseudocódigo de la etapa Execute}{12}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{13}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Componentes Activos}{14}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}}{14}{figure.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Pseudocódigo de ambas etapas}{14}{subsection.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Pseudocódigo de Memory y Writeback}{14}{lstlisting.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{15}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{15}{subsection.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}Programa 1: ISA sin dependencias (test\_isa\_sin\_dependencias.mem)}{15}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{15}{subsection.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Waveform del Programa 1 (ISA sin dependencias). Las señales ForwardAE, ForwardBE, StallD y FlushE permanecen en 0 durante toda la ejecución.}}{15}{figure.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{16}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{16}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{16}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{16}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{17}{subsubsection.6.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Programa 2: test\_forwarding.mem (para deshabilitado)}{17}{lstlisting.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt  {add} los necesita.}}{17}{figure.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{17}{subsubsection.6.2.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}Programa 3: test\_stalling.mem (para deshabilitado)}{17}{lstlisting.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Programa 3 SIN Hazard Unit. El \texttt  {add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}}{17}{figure.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{18}{subsubsection.6.2.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Programa 4: test\_flushing.mem (para deshabilitado)}{18}{lstlisting.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt  {beq}.}}{18}{figure.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{18}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{18}{subsection.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Diagrama de la Hazard Unit y sus múltiples conexiones.}}{19}{figure.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{19}{subsection.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}Lógica de Forwarding}{19}{lstlisting.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{19}{subsection.7.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}Lógica de detección de Load-Use Hazard}{20}{lstlisting.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{20}{subsection.7.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}Lógica de flush por salto tomado}{20}{lstlisting.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{20}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{20}{subsection.7.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Diagrama del Datapath Pipelined completo del procesador (incluyendo la Hazard Unit).}}{21}{figure.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{22}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{22}{subsection.8.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}Programa 2: test\_forwarding.mem}{22}{lstlisting.14}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Programa 2 CON Hazard Unit. ForwardBE=10 reenvía x3 desde Memory; ForwardAE=01 reenvía x2 desde Writeback.}}{22}{figure.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{22}{subsection.8.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}Programa 3: test\_stalling.mem}{22}{lstlisting.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Programa 3 CON Hazard Unit. StallD congela Decode y Fetch durante 1 ciclo; FlushE inserta una burbuja en Execute.}}{23}{figure.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{23}{subsection.8.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}Programa 4: test\_flushing.mem}{23}{lstlisting.16}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Programa 4 CON Hazard Unit. FlushE y FlushD se activan cuando PCSrcE=1, descartando las instrucciones especulativas.}}{23}{figure.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Programa Extra: Set Completo de Operaciones y Validación del Datapath}{23}{subsection.8.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}Programa Extra: test\_remaining\_ops.mem}{24}{lstlisting.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Formas de onda del Programa Extra. Se verifica el cálculo correcto y la escritura/lectura en memoria sin insertar ningún ciclo de parada (stall).}}{24}{figure.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Jerarquía de Archivos}{25}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusiones}{25}{section.10}\protected@file@percent }
+\gdef \@abspage@last{28}

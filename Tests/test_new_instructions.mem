@@ -1,0 +1,19 @@
+12345137 // 00: lui x2, 0x12345
+00201463 // 04: bne x0, x2, 8
+00100293 // 08: addi x5, x0, 1 (¡Flushed!)
+01400193 // 0C: addi x3, x0, 20
+008180e7 // 10: jalr x1, x3, 8
+00200293 // 14: addi x5, x0, 2 (¡Flushed!)
+00300293 // 18: addi x5, x0, 3 (¡Flushed!)
+00008233 // 1C: add x4, x1, x0 (Se ejecuta tras salto, x4 recibe el valor de x1 que es 20)
+ff600393 // 20: addi x7, x0, -10 (x7 = -10)
+00500413 // 24: addi x8, x0, 5   (x8 = 5)
+0083c463 // 28: blt x7, x8, 8   (Salta a la linea 38 hexadecimal porque -10 < 5)
+00400293 // 2C: addi x5, x0, 4 (¡Flushed!)
+00745463 // 30: bge x8, x7, 8   (Salta a la linea 38 hexadecimal porque 5 >= -10)
+00500293 // 34: addi x5, x0, 5 (¡Flushed!)
+06402223 // 38: sw x4, 100(x0)  (Escribe x4 en la direccion 100 de memoria)
+00000000 // 3C: nop
+00000000 // 40: nop
+00000000 // 44: nop
+00000000 // 48: nop

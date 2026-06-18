@@ -397,6 +397,48 @@ J-type  & jal                         & \texttt{1101111} & \texttt{jal x3, func}
 % ============================================================================
 \section{Implementación de Instrucciones (Cuadro 1) (1.0 pts)}
 
+A continuación se presenta el listado de las instrucciones que se solicitó evaluar e implementar en el pipeline base (Cuadro 1) junto con un análisis detallado de su soporte en la arquitectura actual del procesador:
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{3.0cm} c >{\raggedright\arraybackslash}p{6.4cm}}
+\toprule
+\textbf{Instrucción} & \textbf{Descripción} & \textbf{Soportada} & \textbf{Detalle / Estado en el Proyecto} \\
+
+
+\midrule
+\texttt{lw rd, imm(rs1)} & Load word & Sí & Opcode \texttt{0000011} decodificado en el controlador. \\
+\texttt{addi rd, rs1, imm} & Add immediate & Sí & Decodificado. ALU ejecuta suma (\texttt{ALUControl = 0000}). \\
+\texttt{slli rd, rs1, shamt} & Shift left logical imm. & Sí & Decodificado. ALU ejecuta desplazamiento izquierdo (\texttt{0001}). \\
+\texttt{xori rd, rs1, imm} & XOR immediate & Sí & Decodificado. ALU ejecuta XOR (\texttt{0100}). \\
+\texttt{srli rd, rs1, shamt} & Shift right logical imm. & Sí & Decodificado. ALU ejecuta desplazamiento derecho lógico (\texttt{0101}). \\
+\texttt{srai rd, rs1, shamt} & Shift right arithmetic imm. & Sí & Decodificado. ALU ejecuta desp. derecho aritmético (\texttt{1101}). \\
+\texttt{ori rd, rs1, imm} & OR immediate & Sí & Decodificado. ALU ejecuta OR (\texttt{0110}). \\
+\texttt{andi rd, rs1, imm} & AND immediate & Sí & Decodificado. ALU ejecuta AND (\texttt{0111}). \\
+\texttt{sw rs2, imm(rs1)} & Store word & Sí & Opcode \texttt{0100011} decodificado en el controlador. \\
+\texttt{add rd, rs1, rs2} & Add & Sí & R-type decodificado. ALU ejecuta suma. \\
+\texttt{sub rd, rs1, rs2} & Subtract & Sí & R-type decodificado. ALU ejecuta resta (\texttt{ALUControl = 1000}). \\
+\texttt{sll rd, rs1, rs2} & Shift left logical & Sí & R-type decodificado. ALU ejecuta desplazamiento izquierdo. \\
+\texttt{xor rd, rs1, rs2} & XOR & Sí & R-type decodificado. ALU ejecuta XOR. \\
+\texttt{srl rd, rs1, rs2} & Shift right logical & Sí & R-type decodificado. ALU ejecuta desp. derecho lógico. \\
+\texttt{sra rd, rs1, rs2} & Shift right arithmetic & Sí & R-type decodificado. ALU ejecuta desp. derecho aritmético. \\
+\texttt{or rd, rs1, rs2} & OR & Sí & R-type decodificado. ALU ejecuta OR. \\
+\texttt{and rd, rs1, rs2} & AND & Sí & R-type decodificado. ALU ejecuta AND. \\
+\texttt{lui rd, imm} & Load upper immediate & Sí & Decodificado (\texttt{ImmSrc=3'b100}). ALU en modo pasarela del operando B (\texttt{ALUControl=1111}). \\
+\texttt{beq rs1, rs2, offset} & Branch if equal & Sí & Decodificado. Comparación por resta y decisión por \texttt{ZeroE}. \\
+\texttt{bne rs1, rs2, offset} & Branch if not equal & Sí & Decodificado. Lógica combinacional en Execute evalúa desigualdad (\texttt{~ZeroE}). \\
+\texttt{blt rs1, rs2, offset} & Branch if less than & Sí & Decodificado. Lógica en Execute evalúa comparación signada menor que (\texttt{\$signed(SrcAE) < \$signed(SrcBE)}). \\
+\texttt{bge rs1, rs2, offset} & Branch if greater or equal & Sí & Decodificado. Lógica en Execute evalúa comparación signada mayor o igual (\texttt{\$signed(SrcAE) >= \$signed(SrcBE)}). \\
+\texttt{jalr rd, rs1, imm} & Jump and link register & Sí & Decodificado. Dirección de salto calculada con base en registro (\texttt{SrcAE}), con el bit menos significativo en 0. \\
+\texttt{jal rd, offset} & Jump and link & Sí & Opcode \texttt{1101111} decodificado. Escribe \texttt{PC+4} en banco de registros. \\
+\bottomrule
+\end{tabular}
+\caption{Instrucciones evaluadas e implementadas en el pipeline y su estado de soporte.}
+\end{table}
+
+
 \subsection{Descripción de Cambios en el Código}
 
 Para transformar la arquitectura de ciclo único a una segmentada (pipelined) que soporte el conjunto de instrucciones del Cuadro 1 sin degradar la correctitud, se realizaron los siguientes cambios estructurales en el código Verilog:
@@ -527,68 +569,7 @@ module riscv_pipeline(clk, reset):
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-  x=1cm, y=1cm,
-  signal/.style={-{Stealth[length=2mm]}, thick, black},
-  lbl/.style={font=\tiny\sffamily, text=black},
-  lblcenter/.style={font=\small\sffamily, align=center},
-]
-
-% MUX y PC (MUX en x=0, y=1.0)
-\drawmux{0}{1}{pcmux}{MUX PC}
-
-\node[box, minimum height=2.5cm, minimum width=1.5cm] (pcreg) at (3, 1) {};
-\node[lblcenter] at (3, 1) {PC\\Reg};
-\clkpin{pcreg}
-\node[font=\tiny\sffamily, below] at (pcreg.north) {CLK};
-\node[font=\tiny\sffamily, above] at (pcreg.south) {EN};
-
-% Memoria (en x=8, y=1.0)
-\node[box, minimum height=3cm, minimum width=2.5cm] (imem) at (8, 1) {};
-\node[lblcenter] at (8, 1) {Instruction\\Memory};
-\node[font=\small\sffamily, right] at (imem.west |- {0,1}) {A};
-\node[font=\small\sffamily, left] at (imem.east |- {0,1}) {RD};
-
-% Adder (en x=8, y=-2.0)
-\drawadder{8}{-2}{add4}
-
-% Conexiones
-% PCTargetE viene de Execute (a la izquierda para modularidad)
-\draw[signal] (-2.0, 1.4) -- (pcmux_in0);
-\node[left, lbl] at (-2.0, 1.4) {PCTargetE};
-
-% Feedback PCPlus4F entra al Mux por la entrada 1 (y=0.6)
-\draw[signal] (-2.0, 0.6) -- (pcmux_in1);
-
-% MUX a PC Reg
-\draw[signal] (pcmux_out) -- (pcreg.west) node[midway, above, lbl] {PCF\_next};
-
-% PC Reg a Imem Address
-\draw[signal] (pcreg.east) -- (imem.west |- {0,1}) node[midway, above, lbl] {PCF};
-
-% Tap de PCF al Adder entrada 1 (add4_in1 está en 7.4, -1.5)
-\draw[fill=black] (5.0, 1.0) circle (1.5pt);
-\draw[signal] (5.0, 1.0) |- (add4_in1);
-
-% Adder entrada 2 (constante 4)
-\draw[thick] (6.5, -2.5) -- (add4_in2);
-\node[left, lbl] at (6.5, -2.5) {4};
-
-% Adder salida (add4_out está en 8.6, -2.0)
-\draw[signal] (add4_out) -- ++(1.4, 0) node[right, lbl] {PCPlus4F $\rightarrow$ IF/ID};
-
-% Lazo de realimentación ortogonal
-\draw[fill=black] (9.3, -2.0) circle (1.5pt);
-\draw[signal] (9.3, -2.0) |- (9.3, -3.2) -| (-2.0, -3.2) -- (-2.0, 0.6);
-
-% Instrucción de salida
-\draw[signal] (imem.east |- {0,1}) -- ++(1.5, 0) node[right, lbl] {InstrF $\rightarrow$ IF/ID};
-
-% Líneas de Control (dashed)
-\draw[signal, dashed] (0.0, 2.5) node[above, lbl] {PCSrcE} -- (pcmux_sel);
-\draw[signal, dashed] (3.0, 3.0) node[above, lbl] {$\sim$StallF (en)} -- (pcreg.north);
-
-\end{tikzpicture}
+\includegraphics[width=0.85\textwidth]{../Images/fetch_stage.png}
 \caption{Etapa Fetch aislada con sus componentes operativos.}
 \end{figure}
 
@@ -620,102 +601,7 @@ FETCH(clk, reset, StallF, PCSrcE, PCTargetE):
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-  x=1cm, y=1cm,
-  signal/.style={-{Stealth[length=2mm]}, thick, black},
-  lbl/.style={font=\tiny\sffamily, text=black},
-  lblcenter/.style={font=\small\sffamily, align=center},
-]
-
-% IF/ID y ID/EX Pipeline Registers
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (ifid_reg) at (0, 0) {\rotatebox{90}{IF/ID}};
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (idex_reg) at (11, 0) {\rotatebox{90}{ID/EX}};
-
-% Componentes
-% Control Unit (Rounded Box)
-\node[draw, thick, fill=white, rounded corners=3mm, minimum height=3.0cm, minimum width=2.4cm, font=\small\sffamily, align=center] (ctrl) at (6.0, 4.5) {Control\\Unit};
-\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,5.2}) {op};
-\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,4.5}) {funct3};
-\node[font=\tiny\sffamily, right] at (ctrl.west |- {0,3.8}) {funct7$_5$};
-
-% Register File (Centro en x=6.0, y=-0.4)
-\node[draw, thick, fill=white, minimum height=4.2cm, minimum width=2.6cm] (regfile) at (6.0, -0.4) {};
-\node[lblcenter] at (6.0, -0.4) {Register\\File};
-\node[font=\tiny\sffamily, right] at (regfile.west |- {0, 1.0}) {A1};
-\node[font=\tiny\sffamily, right] at (regfile.west |- {0, 0.0}) {A2};
-\node[font=\tiny\sffamily, right] at (regfile.west |- {0, -1.0}) {A3};
-\node[font=\tiny\sffamily, right] at (regfile.west |- {0, -1.6}) {WD3};
-\node[font=\tiny\sffamily, left]  at (regfile.east |- {0, 1.0}) {RD1};
-\node[font=\tiny\sffamily, left]  at (regfile.east |- {0, 0.0}) {RD2};
-\node[font=\tiny\sffamily, below] at (regfile.north -| {6.4, 0}) {WE3};
-
-% Clock con circulo
-\draw[thick] (4.9, 1.7) circle (1mm);
-\draw[thick] (4.9, 1.8) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
-\draw[thick] (4.7, 1.7) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
-
-% Extend
-\drawextend{6.0}{-4.0}{ext}
-
-% -------------------------------------------------------------
-% Tronco principal InstrD
-% -------------------------------------------------------------
-\draw[thick, black] (ifid_reg.east |- {0,2.5}) -- (1.5, 2.5) node[midway, above, text=black, font=\small\sffamily] {InstrD};
-\draw[thick, black] (1.5, 5.2) -- (1.5, -4.0);
-\draw[fill=black] (1.5, 2.5) circle (1.5pt);
-
-% Conexiones desde el tronco hacia Control Unit
-\draw[signal] (1.5, 5.2) -- (ctrl.west |- {0,5.2}) node[lbl, midway, above] {InstrD[6:0]};
-\draw[fill=black] (1.5, 5.2) circle (1.5pt);
-\draw[signal] (1.5, 4.5) -- (ctrl.west |- {0,4.5}) node[lbl, midway, above] {InstrD[14:12]};
-\draw[fill=black] (1.5, 4.5) circle (1.5pt);
-\draw[signal] (1.5, 3.8) -- (ctrl.west |- {0,3.8}) node[lbl, midway, above] {InstrD[30]};
-\draw[fill=black] (1.5, 3.8) circle (1.5pt);
-
-% Conexiones desde el tronco hacia RegFile
-\draw[signal] (1.5, 1.0) -- (regfile.west |- {0,1.0}) node[lbl, midway, above] {InstrD[19:15]};
-\draw[fill=black] (1.5, 1.0) circle (1.5pt);
-\draw[signal] (1.5, 0.0) -- (regfile.west |- {0,0.0}) node[lbl, midway, above] {InstrD[24:20]};
-\draw[fill=black] (1.5, 0.0) circle (1.5pt);
-
-% Conexiones desde el tronco hacia ID/EX y Extend
-\draw[signal] (1.5, -2.5) -- (idex_reg.west |- {0,-2.5}) node[lbl, midway, above] {InstrD[11:7] (RdD)};
-\draw[fill=black] (1.5, -2.5) circle (1.5pt);
-\draw[signal] (1.5, -4.0) -- (ext_in) node[lbl, midway, above] {InstrD[31:7]};
-
-% -------------------------------------------------------------
-% Cables de Bypass (Rs1D, Rs2D) rutados por el canal central libre
-% -------------------------------------------------------------
-\draw[fill=black] (2.2, 1.0) circle (1.5pt);
-\draw[signal] (2.2, 1.0) |- (2.2, 2.3) -- (10.4, 2.3) -| (idex_reg.west |- {0, 2.7});
-\node[lbl, above] at (3.5, 2.3) {Rs1D};
-
-\draw[fill=black] (2.8, 0.0) circle (1.5pt);
-\draw[signal] (2.8, 0.0) |- (2.8, 2.6) -- (10.4, 2.6) -| (idex_reg.west |- {0, 2.3});
-\node[lbl, above] at (3.5, 2.6) {Rs2D};
-
-% -------------------------------------------------------------
-% Conexiones directas desde IF/ID
-% -------------------------------------------------------------
-\draw[signal] (ifid_reg.east |- {0,-5.0}) -- (idex_reg.west |- {0,-5.0}) node[lbl, pos=0.15, above] {PCD};
-\draw[signal] (ifid_reg.east |- {0,-5.8}) -- (idex_reg.west |- {0,-5.8}) node[lbl, pos=0.15, above] {PCPlus4D};
-
-% -------------------------------------------------------------
-% Conexiones de salida de componentes a ID/EX
-% -------------------------------------------------------------
-\draw[signal] (ctrl.east |- {0,4.5}) -- (idex_reg.west |- {0,4.5}) node[lbl, midway, above] {Control Signals};
-\draw[signal] (regfile.east |- {0,1.0}) -- (idex_reg.west |- {0,1.0}) node[lbl, midway, above] {RD1D};
-\draw[signal] (regfile.east |- {0,0.0}) -- (idex_reg.west |- {0,0.0}) node[lbl, midway, above] {RD2D};
-\draw[signal] (ext_out) -- (idex_reg.west |- ext_out) node[lbl, midway, above] {ExtImmD};
-
-% -------------------------------------------------------------
-% Conexiones hacia Register File (desde Writeback - desde arriba)
-% -------------------------------------------------------------
-\draw[signal, dashed] (3.4, 6.5) node[above, lbl] {ResultW} -- (3.4, -1.6) -- (regfile.west |- {0,-1.6});
-\draw[signal, dashed] (4.0, 6.5) node[above, lbl] {RdW} -- (4.0, -1.0) -- (regfile.west |- {0,-1.0});
-\draw[signal, dashed] (7.5, 6.5) node[above, lbl] {RegWriteW} -- (7.5, 2.2) |- (regfile.north);
-
-\end{tikzpicture}
+\includegraphics[width=0.85\textwidth]{../Images/decode_stage.png}
 \caption{Etapa Decode aislada. Incluye el banco de registros y unidad de control.}
 \end{figure}
 
@@ -731,12 +617,14 @@ La Unidad de Control recibe el \texttt{opcode}, \texttt{funct3} y \texttt{funct7
 \toprule
 \textbf{Tipo} & \textbf{Opcode} & \textbf{RegW} & \textbf{ImmSrc} & \textbf{ALUSrc} & \textbf{MemW} & \textbf{ResSrc} & \textbf{Branch} & \textbf{ALUOp} \\
 \midrule
-lw      & 0000011 & 1 & 00 & 1 & 0 & 01 & 0 & 00 \\
-sw      & 0100011 & 0 & 01 & 1 & 1 & -- & 0 & 00 \\
-R-type  & 0110011 & 1 & xx & 0 & 0 & 00 & 0 & 10 \\
-I-type  & 0010011 & 1 & 00 & 1 & 0 & 00 & 0 & 10 \\
-beq     & 1100011 & 0 & 10 & 0 & 0 & -- & 1 & 01 \\
-jal     & 1101111 & 1 & 11 & 0 & 0 & 10 & 0 & xx \\
+lw      & 0000011 & 1 & 000 & 1 & 0 & 01 & 0 & 00 \\
+sw      & 0100011 & 0 & 001 & 1 & 1 & -- & 0 & 00 \\
+R-type  & 0110011 & 1 & xxx & 0 & 0 & 00 & 0 & 10 \\
+I-type  & 0010011 & 1 & 000 & 1 & 0 & 00 & 0 & 10 \\
+beq     & 1100011 & 0 & 010 & 0 & 0 & -- & 1 & 01 \\
+jal     & 1101111 & 1 & 011 & 0 & 0 & 10 & 0 & xx \\
+lui     & 0110111 & 1 & 100 & 1 & 0 & 00 & 0 & 11 \\
+jalr    & 1100111 & 1 & 000 & 1 & 0 & 10 & 0 & 00 \\
 \bottomrule
 \end{tabular}
 \caption{Tabla de verdad de la unidad de control principal.}
@@ -784,103 +672,7 @@ Este retraso arquitectónico significa que el salto no se resuelve hasta el terc
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-  x=1cm, y=1cm,
-  signal/.style={-{Stealth[length=2mm]}, thick, black},
-  lbl/.style={font=\tiny\sffamily, text=black},
-  lblcenter/.style={font=\small\sffamily, align=center},
-]
-
-% ID/EX y EX/MEM Pipeline Registers
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (idex_reg) at (0, 0) {\rotatebox{90}{ID/EX}};
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (exmem_reg) at (13.2, 0) {\rotatebox{90}{EX/MEM}};
-
-% Clocks
-\draw[thick] (0.0, 7.0) circle (1mm);
-\draw[thick] (0.0, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
-\draw[thick] (-0.2, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
-
-\draw[thick] (13.2, 7.0) circle (1mm);
-\draw[thick] (13.2, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
-\draw[thick] (13.0, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
-
-% Componentes
-\drawmuxthree{5.0}{2.0}{muxA}{}
-\drawmuxthree{5.0}{-0.4}{muxB}{}
-\drawmux{8.2}{-1.0}{muxS}{}
-
-\drawalu{10.6}{0.5}{myalu}
-\drawadder{10.6}{-3.5}{addT}
-
-% Puertas logicas PCSrc
-\drawand{5.0}{6.4}{and_gate}
-\drawor{8.2}{5.4}{or_gate}
-
-% Control signals top (straight through, rerouted below the gates to avoid overlaps)
-\draw[signal] (idex_reg.east |- {0, 4.6}) -- (exmem_reg.west |- {0, 4.6}) node[lbl, pos=0.15, above] {RegWriteE};
-\draw[signal] (idex_reg.east |- {0, 4.2}) -- (exmem_reg.west |- {0, 4.2}) node[lbl, pos=0.15, above] {ResultSrcE$_{1:0}$};
-\draw[signal] (idex_reg.east |- {0, 3.8}) -- (exmem_reg.west |- {0, 3.8}) node[lbl, pos=0.15, above] {MemWriteE};
-
-% Control inputs to MUX and ALU
-\draw[signal] (idex_reg.east |- {0, 3.4}) |- (myalu_sel) node[lbl, pos=0.15, above] {ALUControlE};
-\draw[signal] (idex_reg.east |- {0, 2.8}) |- (muxS_sel) node[lbl, pos=0.15, above] {ALUSrcE};
-
-% PCSrc Logic Wiring (Rerouted to the left/back as feedback to avoid crossing EX/MEM)
-\draw[signal] (idex_reg.east |- {0, 6.6}) -- (and_gate_in1) node[lbl, pos=0.4, above] {BranchE};
-\draw[signal] (idex_reg.east |- {0, 5.2}) -- (or_gate_in2) node[lbl, pos=0.4, above] {JumpE};
-\draw[signal] (and_gate_out) -| (or_gate_in1);
-\draw[signal] (or_gate_out) -- (9.2, 5.4) |- (9.2, 7.2) -- (0.35, 7.2) node[lbl, midway, above] {PCSrcE $\rightarrow$ Fetch/Hazard};
-\draw[signal] (myalu_zero) |- (11.4, 6.8) -- (4.0, 6.8) -| (and_gate_in2) node[lbl, pos=0.15, above] {ZeroE};
-
-% RD1E and RD2E inputs to Forwarding Muxes
-\draw[signal] (idex_reg.east |- muxA_in0) -- (muxA_in0) node[lbl, pos=0.15, above] {RD1E};
-\draw[signal] (idex_reg.east |- muxB_in0) -- (muxB_in0) node[lbl, pos=0.15, above] {RD2E};
-
-% Forwarding inputs represented as clean short lines
-\draw[signal] (3.0, 1.4) -- (muxA_in2); \node[left, lbl] at (3.0, 1.4) {ALUResultM};
-\draw[signal] (3.0, 2.0) -- (muxA_in1); \node[left, lbl] at (3.0, 2.0) {ResultW};
-\draw[signal] (3.0, -1.0) -- (muxB_in2); \node[left, lbl] at (3.0, -1.0) {ALUResultM};
-\draw[signal] (3.0, -0.4) -- (muxB_in1); \node[left, lbl] at (3.0, -0.4) {ResultW};
-
-% Selector lines for Forwarding Muxes
-\draw[signal, dashed] (5.0, 3.4) node[above, lbl] {ForwardAE} -- (muxA_sel);
-\draw[signal, dashed] (5.0, -2.0) node[below, lbl] {ForwardBE} -- (5.0, -1.4);
-
-% MUX outputs -> ALU
-\draw[signal] (muxA_out) -| (myalu_in1) node[lbl, midway, above] {SrcAE};
-\draw[signal] (muxS_out) -| (myalu_in2) node[lbl, midway, above] {SrcBE};
-
-% WriteDataE (rerouted below muxS and ALU to avoid crossing through them, with wider spacing)
-\draw[signal] (muxB_out) -- (6.8, -0.4) |- (6.8, -2.2) -- (12.2, -2.2) -| (exmem_reg.west |- {0, -0.4}) node[lbl, pos=0.85, above] {WriteDataE};
-\draw[fill=black] (6.8, -0.4) circle (1.5pt);
-\draw[signal] (6.5, -0.4) -- (6.8, -0.4) -| (muxS_in0);
-
-% PCE and ExtImmE to Adder
-\draw[signal] (idex_reg.east |- {0, -3.0}) -- (addT_in1) node[lbl, pos=0.15, above] {PCE};
-\draw[signal] (idex_reg.east |- {0, -4.0}) -- (addT_in2) node[lbl, pos=0.15, above] {ExtImmE};
-\draw[fill=black] (6.2, -4.0) circle (1.5pt);
-\draw[signal] (6.2, -4.0) -| (muxS_in1);
-
-% Pass-through signals to Hazard Unit or next stage
-\draw[signal] (idex_reg.east |- {0, -1.5}) -- ++(1.5, 0) node[right, lbl] {Rs1E $\rightarrow$ Hazard};
-\draw[signal] (idex_reg.east |- {0, -2.0}) -- ++(1.5, 0) node[right, lbl] {Rs2E $\rightarrow$ Hazard};
-\draw[signal] (idex_reg.east |- {0, -2.5}) -- (exmem_reg.west |- {0,-2.5}) node[lbl, pos=0.15, above] {RdE};
-\draw[signal] (idex_reg.east |- {0, -5.0}) -- (exmem_reg.west |- {0,-5.0}) node[lbl, pos=0.15, above] {PCPlus4E};
-
-% Outputs from EX passing right (into EX/MEM and beyond)
-\draw[signal] (myalu_out) -- (exmem_reg.west |- myalu_out) node[lbl, pos=0.15, above] {ALUResultE};
-\draw[signal] (addT_out) -- (11.6, -3.5) |- (11.6, -4.6) -- (0.35, -4.6) node[lbl, midway, above] {PCTargetE $\rightarrow$ Fetch};
-
-% Labeled outputs on the east of EX/MEM register
-\draw[signal] (exmem_reg.east |- myalu_out) -- ++(1.0, 0) node[right, lbl] {ALUResultM};
-\draw[signal] (exmem_reg.east |- {0, -0.4}) -- ++(1.0, 0) node[right, lbl] {WriteDataM};
-\draw[signal] (exmem_reg.east |- {0,-2.5}) -- ++(1.0, 0) node[right, lbl] {RdM};
-\draw[signal] (exmem_reg.east |- {0,-5.0}) -- ++(1.0, 0) node[right, lbl] {PCPlus4M};
-\draw[signal] (exmem_reg.east |- {0,5.8}) -- ++(1.0, 0) node[right, lbl] {RegWriteM};
-\draw[signal] (exmem_reg.east |- {0,5.2}) -- ++(1.0, 0) node[right, lbl] {ResultSrcM$_{1:0}$};
-\draw[signal] (exmem_reg.east |- {0,4.6}) -- ++(1.0, 0) node[right, lbl] {MemWriteM};
-
-\end{tikzpicture}
+\includegraphics[width=0.85\textwidth]{../Images/execute_stage.png}
 \caption{Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}
 \end{figure}
 
@@ -915,11 +707,23 @@ EXECUTE(clk, reset, FlushE, ForwardAE, ForwardBE,
   ALUResultE = ALU(SrcAE, SrcBE, ALUControlE);
   ZeroE = (ALUResultE == 0);
 
-  // 6. Calcular direccion de salto
-  PCTargetE = PCE + ExtImmE;
+  // 6. Calcular direccion de salto (Multiplexacion JALR / Branch)
+  isJALRE = (InstrE[6:0] == 7'b1100111);
+  PCTargetBaseE = isJALRE ? SrcAE : PCE;
+  PCTargetE = (PCTargetBaseE + ExtImmE) & ~32'd1; // Limpiar LSB
 
-  // 7. Decidir si se toma el salto
-  PCSrcE = (BranchE && ZeroE) || JumpE;
+  // 7. Evaluar condicion de salto segun funct3 (InstrE[14:12])
+  case (InstrE[14:12]) of:
+    3'b000 (beq):  TakeBranchE = ZeroE;
+    3'b001 (bne):  TakeBranchE = ~ZeroE;
+    3'b100 (blt):  TakeBranchE = $signed(SrcAE) < $signed(SrcBE);
+    3'b101 (bge):  TakeBranchE = $signed(SrcAE) >= $signed(SrcBE);
+    3'b110 (bltu): TakeBranchE = SrcAE < SrcBE;
+    3'b111 (bgeu): TakeBranchE = SrcAE >= SrcBE;
+    default:       TakeBranchE = 0;
+
+  // 8. Decidir si se toma el salto
+  PCSrcE = (BranchE && TakeBranchE) || JumpE;
 \end{lstlisting}
 
 % ============================================================================
@@ -940,75 +744,7 @@ La Memoria de Datos representa típicamente la caché L1 de datos en un procesad
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-  x=1cm, y=1cm,
-  signal/.style={-{Stealth[length=2mm]}, thick, black},
-  lbl/.style={font=\tiny\sffamily, text=black},
-  lblcenter/.style={font=\small\sffamily, align=center},
-]
-
-% EX/MEM y MEM/WB Pipeline Registers
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (exmem_reg) at (0, 0) {\rotatebox{90}{EX/MEM}};
-\node[draw, fill=gray!10, thick, minimum width=0.7cm, minimum height=14cm, font=\small\sffamily] (memwb_reg) at (7.5, 0) {\rotatebox{90}{MEM/WB}};
-
-% Clocks
-\draw[thick] (0.0, 7.0) circle (1mm);
-\draw[thick] (0.0, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
-\draw[thick] (-0.2, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
-
-\draw[thick] (7.5, 7.0) circle (1mm);
-\draw[thick] (7.5, 7.1) -- ++(0, 3mm) node[above, font=\tiny\sffamily] {CLK};
-\draw[thick] (7.3, 7.0) -- ++(2mm, -2mm) -- ++(2mm, 2mm);
-
-% Componentes
-\node[draw, thick, fill=white, minimum height=3cm, minimum width=2.5cm, font=\small\sffamily, align=center] (dmem) at (3.7, -1.0) {Data\\Memory};
-\draw[thick] (2.45, -2.2) -- ++(2.5mm, 2.5mm) -- ++(-2.5mm, 2.5mm); % clk pin
-
-% MUX de ResultW (ResultSrc) - es un MUX de 3 entradas
-\drawmuxthree{10.5}{0.0}{muxR}{}
-
-% Control signals passing straight through EX/MEM -> MEM/WB
-\draw[signal] (exmem_reg.east |- {0, 5.8}) -- (memwb_reg.west |- {0,5.8}) node[lbl, pos=0.15, above] {RegWriteM} node[lbl, pos=0.85, above] {RegWriteW};
-\draw[signal] (exmem_reg.east |- {0, 5.2}) -- (memwb_reg.west |- {0,5.2}) node[lbl, pos=0.15, above] {ResultSrcM$_{1:0}$} node[lbl, pos=0.85, above] {ResultSrcW$_{1:0}$};
-
-% MemWriteM
-\draw[signal] (exmem_reg.east |- {0, 4.6}) |- (dmem.north) node[lbl, pos=0.2, above] {MemWriteM};
-
-% Address and WriteData to Memory
-\draw[signal] (exmem_reg.east |- {0, 0.5}) -- (memwb_reg.west |- {0, 0.5}) node[lbl, pos=0.15, above] {ALUResultM};
-\draw[fill=black] (1.5, 0.5) circle (1.5pt);
-\draw[signal] (1.5, 0.5) -| (dmem.west |- {0, 0.0}) node[lbl, pos=0.8, above] {Address};
-
-\draw[signal] (exmem_reg.east |- {0, -0.6}) -- (dmem.west |- {0,-0.6}) node[lbl, midway, above] {WriteDataM};
-
-% ReadData to MEM/WB
-\draw[signal] (dmem.east |- {0, -1.6}) -- (memwb_reg.west |- {0,-1.6}) node[lbl, midway, above] {ReadDataM};
-
-% Passing signals RdM, PCPlus4M
-\draw[signal] (exmem_reg.east |- {0, -2.5}) -- (memwb_reg.west |- {0, -2.5}) node[lbl, pos=0.15, above] {RdM} node[lbl, pos=0.85, above] {RdW};
-\draw[signal] (exmem_reg.east |- {0, -4.5}) -- (memwb_reg.west |- {0, -4.5}) node[lbl, pos=0.15, above] {PCPlus4M} node[lbl, pos=0.85, above] {PCPlus4W};
-
-% From MEM/WB to Writeback MUX and beyond
-\draw[signal] (memwb_reg.east |- {0, 0.5}) -- (9.0, 0.5) node[lbl, pos=0.4, above] {ALUResultW} -| (muxR_in0);
-\draw[signal] (memwb_reg.east |- {0, -1.6}) -- (9.4, -1.6) node[lbl, pos=0.4, above] {ReadDataW} -| (muxR_in1);
-\draw[signal] (memwb_reg.east |- {0, -4.5}) -- (9.8, -4.5) node[lbl, pos=0.4, above] {PCPlus4W} -| (muxR_in2);
-
-% ResultSrcW selector
-\draw[signal] (memwb_reg.east |- {0, 5.2}) |- (muxR_sel) node[lbl, pos=0.15, above] {ResultSrcW};
-
-% Signals passing out to top/right
-\draw[signal] (memwb_reg.east |- {0, 5.8}) -- (12.5, 5.8) node[right, lbl] {RegWriteW $\rightarrow$ RegFile/Hazard};
-\draw[signal] (memwb_reg.east |- {0, -2.5}) -- (12.5, -2.5) node[right, lbl] {RdW $\rightarrow$ RegFile/Hazard};
-\draw[signal] (muxR_out) -- (12.5, 0.0) node[right, lbl] {ResultW $\rightarrow$ RegFile};
-
-% Forwarding branches tap-offs (represented as outputs)
-\draw[fill=black] (5.2, 0.5) circle (1.5pt);
-\draw[signal] (5.2, 0.5) -- (5.2, 1.3) node[right, lbl] {ALUResultM $\rightarrow$ Forwarding};
-
-\draw[fill=black] (11.7, 0.0) circle (1.5pt);
-\draw[signal] (11.7, 0.0) -- (11.7, 0.8) node[right, lbl] {ResultW $\rightarrow$ Forwarding};
-
-\end{tikzpicture}
+\includegraphics[width=0.85\textwidth]{../Images/memory_writeback_stage.png}
 \caption{Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}
 \end{figure}
 
@@ -1071,7 +807,7 @@ Este programa prueba que las instrucciones básicas del procesador (\texttt{addi
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_isa.png}
+\includegraphics[width=0.88\textwidth]{../Images/waves_isa.png}
 \caption{Waveform del Programa 1 (ISA sin dependencias). Las señales ForwardAE, ForwardBE, StallD y FlushE permanecen en 0 durante toda la ejecución.}
 \end{figure}
 
@@ -1103,31 +839,65 @@ Al segmentar la ejecución de instrucciones, se solapan las etapas del datapath,
 Para demostrar de forma empírica la necesidad crítica de la Hazard Unit, se procedió a desactivar el control de riesgos utilizando el módulo alternativo \texttt{hunit\_disabled.v}. Este fuerza a cero los reenvíos y stalls. A continuación, se muestra el comportamiento de los programas de prueba bajo esta condición errónea:
 
 \subsubsection{Programa 2 SIN Hazard Unit (Forwarding)}
+
+Para este caso, se ejecuta el Programa 2, el cual intenta realizar operaciones aritméticas sobre registros cuyos resultados aún no han sido escritos en el banco de registros:
+
+\begin{lstlisting}[style=pseudo, caption={Programa 2: test\_forwarding.mem (para deshabilitado)}]
+00: addi x2, x0, 5       // x2 = 5
+04: addi x3, x0, 12      // x3 = 12
+08: add  x4, x2, x3      // x4 = 5 + 12 = 17 (Riesgo RAW)
+0C: sw   x4, 200(x0)     // MEM[200] = 17
+\end{lstlisting}
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_forwarding_NO_HAZARD.png}
+\includegraphics[width=0.80\textwidth]{../Images/waves_forwarding_NO_HAZARD.png}
 \caption{Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt{add} los necesita.}
 \end{figure}
 
 \textbf{Interpretación:} Sin forwarding, la instrucción \texttt{add x4, x2, x3} lee los registros \texttt{x2} y \texttt{x3} directamente del banco de registros. Como estas instrucciones previas (\texttt{addi x2} y \texttt{addi x3}) aún no han llegado a Writeback, la ALU recibe ceros y el resultado es incorrecto.
 
 \subsubsection{Programa 3 SIN Hazard Unit (Stalling)}
+
+En esta prueba se ejecuta el Programa 3, el cual presenta una dependencia de tipo Load-Use, requiriendo el uso inmediato de un dato cargado de memoria:
+
+\begin{lstlisting}[style=pseudo, caption={Programa 3: test\_stalling.mem (para deshabilitado)}]
+00: addi x2, x0, 5       // x2 = 5
+04: sw   x2, 100(x0)     // MEM[100] = 5
+08: lw   x3, 100(x0)     // x3 = MEM[100] = 5
+0C: add  x4, x3, x2      // Load-Use Hazard (add usa x3 inmediatamente)
+10: sw   x4, 200(x0)     // MEM[200] = 10
+\end{lstlisting}
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_stalling_NO_HAZARD.png}
+\includegraphics[width=0.82\textwidth]{../Images/waves_stalling_NO_HAZARD.png}
 \caption{Programa 3 SIN Hazard Unit. El \texttt{add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}
 \end{figure}
 
 \textbf{Interpretación:} El \texttt{lw x3, 100(x0)} carga un dato de memoria, pero el pipeline no se detiene. La instrucción \texttt{add x4, x3, x2} entra a Execute antes de que el dato esté disponible, produciendo un resultado corrupto.
 
 \subsubsection{Programa 4 SIN Hazard Unit (Flushing)}
+
+Para evaluar los riesgos de control se ejecuta el Programa 4, el cual realiza un salto condicional tomado que debería descartar las instrucciones siguientes cargadas de forma especulativa:
+
+\begin{lstlisting}[style=pseudo, caption={Programa 4: test\_flushing.mem (para deshabilitado)}]
+00: addi x2, x0, 5       // x2 = 5
+04: beq  x2, x2, 12      // Salta a linea 10 hex (siempre verdadero)
+08: addi x3, x0, 1       // FLUSHED (no debe ejecutarse)
+0C: addi x3, x0, 99      // FLUSHED (no debe ejecutarse)
+10: add  x4, x0, x2      // x4 = 5 (destino del salto)
+14: sw   x4, 200(x0)     // MEM[200] = 5
+\end{lstlisting}
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_flushing_NO_HAZARD.png}
+\includegraphics[width=0.84\textwidth]{../Images/waves_flushing_NO_HAZARD.png}
 \caption{Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt{beq}.}
 \end{figure}
 
 \textbf{Interpretación:} Sin la Hazard Unit, las instrucciones que preparan los operandos del \texttt{beq} no reciben los datos correctos vía forwarding. Esto puede causar que el salto se tome (o no) de forma errónea, ejecutando código que no debería ejecutarse.
+
 
 % ============================================================================
 % SECCION 5: IMPLEMENTACION DEL HAZARD UNIT (1.0 pts)
@@ -1270,7 +1040,7 @@ El programa prueba que la Hazard Unit detecta dependencias RAW y reenvía datos 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_forwarding.png}
+\includegraphics[width=0.90\textwidth]{../Images/waves_forwarding.png}
 \caption{Programa 2 CON Hazard Unit. ForwardBE=10 reenvía x3 desde Memory; ForwardAE=01 reenvía x2 desde Writeback.}
 \end{figure}
 
@@ -1290,7 +1060,7 @@ El programa fuerza un Load-Use Hazard donde un \texttt{lw} es seguido inmediatam
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_stalling.png}
+\includegraphics[width=0.92\textwidth]{../Images/waves_stalling.png}
 \caption{Programa 3 CON Hazard Unit. StallD congela Decode y Fetch durante 1 ciclo; FlushE inserta una burbuja en Execute.}
 \end{figure}
 
@@ -1311,11 +1081,45 @@ El programa fuerza un Control Hazard con un salto condicional (\texttt{beq}) que
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../Images/waves_flushing.png}
+\includegraphics[width=0.86\textwidth]{../Images/waves_flushing.png}
 \caption{Programa 4 CON Hazard Unit. FlushE y FlushD se activan cuando PCSrcE=1, descartando las instrucciones especulativas.}
 \end{figure}
 
 \textbf{Interpretación:} El \texttt{beq x2, x2} se resuelve en la etapa Execute (ciclo 3). La ALU confirma que \texttt{x2 == x2} y activa \texttt{PCSrcE=1}. La Hazard Unit responde activando \texttt{FlushD} y \texttt{FlushE}, convirtiendo las instrucciones especulativas (\texttt{addi x3, x0, 1} y \texttt{addi x3, x0, 99}) en burbujas NOP (\texttt{0x00000000}). El PC salta directamente a \texttt{0x10} y la ejecución continúa correctamente.
+
+\subsection{Programa Extra: Set Completo de Operaciones y Validación del Datapath}
+
+Para validar de forma integral el soporte de todas las operaciones de la ALU implementadas y la eficiencia de la red de reenvío de datos (Forwarding Unit) bajo alta densidad de dependencias de registros, se diseñó un programa adicional que ejecuta de manera consecutiva el repertorio completo de instrucciones aritmético-lógicas (tanto de tipo R como de tipo I), finalizando con un almacenamiento y lectura en memoria.
+
+\begin{lstlisting}[style=pseudo, caption={Programa Extra: test\_remaining\_ops.mem}]
+00: addi x2, x0, 15  // x2 = 15 (0x0F)
+04: addi x3, x0, 5   // x3 = 5
+08: add  x4, x2, x3  // x4 = 15 + 5 = 20 (0x14) (RAW Hazard en x2 y x3 -> Forwarding)
+0C: sub  x5, x2, x3  // x5 = 15 - 5 = 10 (0x0A) (RAW Hazard en x2 y x3 -> Forwarding)
+10: and  x6, x2, x3  // x6 = 15 & 5 = 5 (0x05)
+14: or   x7, x2, x3  // x7 = 15 | 5 = 15 (0x0F)
+18: xor  x8, x2, x3  // x8 = 15 ^ 5 = 10 (0x0A)
+1C: sll  x9, x2, x3  // x9 = 15 << 5 = 480 (0x1E0)
+20: srl  x10, x2, x3 // x10 = 15 >> 5 = 0
+24: sra  x11, x2, x3 // x11 = 15 >>> 5 = 0
+28: slt  x12, x2, x3 // x12 = (15 < 5 signed) ? 1 : 0 = 0
+2C: sltu x13, x2, x3 // x13 = (15 < 5 unsigned) ? 1 : 0 = 0
+30: sw   x4, 100(x0) // Mem[100] = x4 = 20 (0x14) (RAW Hazard en x4 -> Forwarding)
+34: lw   x14, 100(x0)// x14 = Mem[100] = 20 (0x14)
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../Images/waves_remaining_ops.png}
+\caption{Formas de onda del Programa Extra. Se verifica el cálculo correcto y la escritura/lectura en memoria sin insertar ningún ciclo de parada (stall).}
+\end{figure}
+
+\textbf{Interpretación:}
+\begin{itemize}
+  \item \textbf{Cálculos Correctos en la ALU}: Se observa que en la etapa de Writeback (\texttt{ResultW}), los resultados lógicos y aritméticos aparecen con un retraso exacto de 4 ciclos con respecto a su búsqueda (Fetch). Por ejemplo, el desplazamiento a la izquierda (\texttt{sll}) produce \texttt{0x000001e0} y la suma (\texttt{add}) produce \texttt{0x00000014} (20 decimal).
+  \item \textbf{Eficiencia de la red de Forwarding}: Aunque las instrucciones del bloque aritmético-lógico (líneas \texttt{08} a \texttt{2C}) dependen inmediatamente de los valores cargados en \texttt{x2} y \texttt{x3}, la Hazard Unit las resuelve de manera transparente. Las señales de control \texttt{ForwardAE} y \texttt{ForwardBE} actúan de forma continua reenviando los datos desde las etapas Memory y Writeback hacia la ALU, permitiendo que el Program Counter (\texttt{pcF}) avance de 4 en 4 cada ciclo de reloj sin provocar ninguna parada (\texttt{StallD=0}, \texttt{StallF=0}).
+  \item \textbf{Integridad de Memoria}: La instrucción \texttt{sw} escribe el valor \texttt{20} (calculado previamente) en la dirección \texttt{100} en el ciclo 15. Posteriormente, la instrucción \texttt{lw} lee exitosamente el valor \texttt{20} (\texttt{0x14}) desde la memoria de datos y lo escribe en el registro \texttt{x14} en el ciclo 17.
+\end{itemize}
 
 % ============================================================================
 % SECCION 7: JERARQUIA DE ARCHIVOS
@@ -1342,9 +1146,11 @@ Microarchitecture-Pipelined/
 |   |-- test_forwarding.mem            (Programa 2)
 |   |-- test_stalling.mem              (Programa 3)
 |   |-- test_flushing.mem              (Programa 4)
+|   |-- test_remaining_ops.mem         (Programa Extra)
 |-- Waves/
 |   |-- waves_isa.vcd, waves_forwarding.vcd,
-|   |   waves_stalling.vcd, waves_flushing.vcd
+|   |   waves_stalling.vcd, waves_flushing.vcd,
+|   |   waves_remaining_ops.vcd
 |   |-- waves_forwarding_NO_HAZARD.vcd,
 |   |   waves_stalling_NO_HAZARD.vcd,
 |   |   waves_flushing_NO_HAZARD.vcd

@@ -8,7 +8,7 @@ module controller(
   output logic       ALUSrc,
   output logic       RegWrite,
   output logic       Jump,
-  output logic [1:0] ImmSrc,
+  output logic [2:0] ImmSrc,
   output logic [3:0] ALUControl
 );
 
@@ -21,27 +21,33 @@ module controller(
     ResultSrc = 2'b00; 
     Branch    = 0; 
     Jump      = 0;
-    ImmSrc    = 2'b00;
+    ImmSrc    = 3'b000;
     ALUOp     = 2'b00;
 
     case(op)
-      7'b0000011: begin 
-        RegWrite=1; ImmSrc=2'b00; ALUSrc=1; ResultSrc=2'b01; ALUOp=2'b00; 
+      7'b0000011: begin // lw
+        RegWrite=1; ImmSrc=3'b000; ALUSrc=1; ResultSrc=2'b01; ALUOp=2'b00; 
       end
-      7'b0100011: begin 
-        MemWrite=1; ImmSrc=2'b01; ALUSrc=1; ALUOp=2'b00; 
+      7'b0100011: begin // sw
+        MemWrite=1; ImmSrc=3'b001; ALUSrc=1; ALUOp=2'b00; 
       end
-      7'b0110011: begin 
-        RegWrite=1; ImmSrc=2'bxx; ALUSrc=0; ResultSrc=2'b00; ALUOp=2'b10; 
+      7'b0110011: begin // R-type
+        RegWrite=1; ImmSrc=3'bxxx; ALUSrc=0; ResultSrc=2'b00; ALUOp=2'b10; 
       end
-      7'b0010011: begin 
-        RegWrite=1; ImmSrc=2'b00; ALUSrc=1; ResultSrc=2'b00; ALUOp=2'b10; 
+      7'b0010011: begin // I-type ALU
+        RegWrite=1; ImmSrc=3'b000; ALUSrc=1; ResultSrc=2'b00; ALUOp=2'b10; 
       end
-      7'b1100011: begin 
-        Branch=1; ImmSrc=2'b10; ALUSrc=0; ResultSrc=2'b00; ALUOp=2'b01; 
+      7'b1100011: begin // Branch (B-type)
+        Branch=1; ImmSrc=3'b010; ALUSrc=0; ResultSrc=2'b00; ALUOp=2'b01; 
       end
-      7'b1101111: begin 
-        RegWrite=1; ImmSrc=2'b11; ALUSrc=0; ResultSrc=2'b10; Jump=1; ALUOp=2'bxx; 
+      7'b1101111: begin // jal (J-type)
+        RegWrite=1; ImmSrc=3'b011; ALUSrc=0; ResultSrc=2'b10; Jump=1; ALUOp=2'bxx; 
+      end
+      7'b0110111: begin // lui (U-type)
+        RegWrite=1; ImmSrc=3'b100; ALUSrc=1; ResultSrc=2'b00; ALUOp=2'b11;
+      end
+      7'b1100111: begin // jalr
+        RegWrite=1; ImmSrc=3'b000; ALUSrc=1; ResultSrc=2'b10; Jump=1; ALUOp=2'b00;
       end
       default: ;
     endcase
@@ -70,7 +76,9 @@ module controller(
           default:ALUControl = 4'b0000;
         endcase
       end
+      2'b11: ALUControl = 4'b1111; // pasarela ALU para operandos (lui)
       default: ALUControl = 4'b0000;
     endcase
   end
 endmodule
+

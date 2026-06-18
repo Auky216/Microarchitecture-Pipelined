@@ -24,6 +24,7 @@ module alu (
       4'b0111: result = a & b;
       4'b1000: result = sum;
       4'b1101: result = $signed(a) >>> b[4:0];
+      4'b1111: result = b;
       default: result = 'x;
     endcase
   end
