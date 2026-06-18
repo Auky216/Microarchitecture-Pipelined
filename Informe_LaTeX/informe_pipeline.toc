@@ -1,0 +1,50 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Teoría del Procesador Pipeline: Datapath y Control (0.5 pts)}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}¿Qué es un Procesador Pipelined?}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Las 5 Etapas del Pipeline}{3}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Diagrama Temporal del Pipeline}{3}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}ISA Implementada: RISC-V RV32I}{4}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Implementación de Instrucciones (Cuadro 1) (1.0 pts)}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Descripción de Cambios en el Código}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Diagrama de Datapath Final (Básico)}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Los Registros Pipeline}{6}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}¿Qué son y por qué son necesarios?}{6}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{7}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{7}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt {riscv\_pipeline}}{7}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{8}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{8}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Pseudocódigo}{8}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{9}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Componentes Activos}{9}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{9}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}Pseudocódigo de Decode}{10}{subsubsection.2.7.2}%
+\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Componentes Activos}{11}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Pseudocódigo Completo del Execute}{11}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Componentes Activos}{13}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Pseudocódigo de ambas etapas}{13}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{14}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{14}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{14}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{15}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{15}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{15}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{15}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{16}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{16}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{16}{subsubsection.6.2.3}%
+\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{17}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{17}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{17}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{18}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{18}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{18}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{19}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{20}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{20}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{20}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{21}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Jerarquía de Archivos}{21}{section.9}%
+\contentsline {section}{\numberline {10}Conclusiones}{22}{section.10}%
