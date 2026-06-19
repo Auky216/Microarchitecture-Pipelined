@@ -392,6 +392,18 @@ J-type  & jal                         & \texttt{1101111} & \texttt{jal x3, func}
 \caption{Instrucciones soportadas por el procesador.}
 \end{table}
 
+\subsection{El Camino de Control en el Pipeline}
+
+A diferencia de un procesador monociclo donde las señales de control generadas por la Unidad de Control se aplican de forma inmediata a todos los componentes, en un procesador segmentado (pipelined) el camino de control debe ser también segmentado.
+
+La decodificación de la instrucción y la generación de señales se realizan exclusivamente en la etapa de decodificación (\textbf{Decode, ID}). No obstante, las acciones que estas señales comandan ocurren en etapas posteriores. Por lo tanto, las señales de control deben ser almacenadas en los registros de pipeline correspondientes y propagarse en sincronía con la instrucción asociada a lo largo del procesador:
+\begin{itemize}
+  \item \textbf{Señales para Execute (EX)}: Controlan operaciones en la ALU (\texttt{ALUControl}, \texttt{ALUSrc}). Pasan por el registro \texttt{IF/ID} y se almacenan en el registro \texttt{ID/EX} para aplicarse en Execute. Luego se descartan al pasar a la siguiente etapa.
+  \item \textbf{Señales para Memory (MEM)}: Controlan lecturas o escrituras en la memoria de datos (\texttt{MemWrite}). Deben viajar por el registro \texttt{ID/EX} hasta la etapa EX, y luego registrarse en el buffer \texttt{EX/MEM} para activarse durante la etapa MEM.
+  \item \textbf{Señales para Writeback (WB)}: Indican la escritura en el banco de registros (\texttt{RegWrite}, \texttt{ResultSrc}). Deben viajar consecutivamente por todos los registros del pipeline (\texttt{ID/EX}, \texttt{EX/MEM} y \texttt{MEM/WB}) hasta llegar a la etapa de Writeback para completar la operación.
+\end{itemize}
+Este esquema de control registrado asegura que las señales de habilitación de escritura o selección de multiplexores correspondan estrictamente a la instrucción que se encuentra activa en cada sección del datapath en un instante de tiempo dado.
+
 % ============================================================================
 % SECCION 2: IMPLEMENTACION DE INSTRUCCIONES (CUADRO 1)
 % ============================================================================
@@ -1087,9 +1099,9 @@ El programa fuerza un Control Hazard con un salto condicional (\texttt{beq}) que
 
 \textbf{Interpretación:} El \texttt{beq x2, x2} se resuelve en la etapa Execute (ciclo 3). La ALU confirma que \texttt{x2 == x2} y activa \texttt{PCSrcE=1}. La Hazard Unit responde activando \texttt{FlushD} y \texttt{FlushE}, convirtiendo las instrucciones especulativas (\texttt{addi x3, x0, 1} y \texttt{addi x3, x0, 99}) en burbujas NOP (\texttt{0x00000000}). El PC salta directamente a \texttt{0x10} y la ejecución continúa correctamente.
 
-\subsection{Programa Extra: Set Completo de Operaciones y Validación del Datapath}
+\subsection{Programa Extra: Set Completo de Operaciones y Validación de la ISA y Hazard Unit}
 
-Para validar de forma integral el soporte de todas las operaciones de la ALU implementadas y la eficiencia de la red de reenvío de datos (Forwarding Unit) bajo alta densidad de dependencias de registros, se diseñó un programa adicional que ejecuta de manera consecutiva el repertorio completo de instrucciones aritmético-lógicas (tanto de tipo R como de tipo I), finalizando con un almacenamiento y lectura en memoria.
+Para validar de forma integral el soporte de todas las operaciones de la ALU implementadas (incluyendo la red de inmediatos y desplazamientos) y todos los mecanismos de control (bifurcaciones condicionales y saltos incondicionales con flushing), se diseñó un programa adicional exhaustivo. Este programa ejecuta de manera consecutiva el repertorio RV32I completo, permitiendo visualizar riesgos de datos (RAW Hazards resueltos por reenvío) y riesgos de control (Control Hazards resueltos por vaciado de instrucciones).
 
 \begin{lstlisting}[style=pseudo, caption={Programa Extra: test\_remaining\_ops.mem}]
 00: addi x2, x0, 15  // x2 = 15 (0x0F)
@@ -1106,19 +1118,60 @@ Para validar de forma integral el soporte de todas las operaciones de la ALU imp
 2C: sltu x13, x2, x3 // x13 = (15 < 5 unsigned) ? 1 : 0 = 0
 30: sw   x4, 100(x0) // Mem[100] = x4 = 20 (0x14) (RAW Hazard en x4 -> Forwarding)
 34: lw   x14, 100(x0)// x14 = Mem[100] = 20 (0x14)
+38: lui  x15, 0x12345// x15 = 0x12345000 (Carga de inmediato alto, U-type)
+3C: slli x16, x14, 2 // x16 = 20 << 2 = 80 (0x50) (RAW Hazard en x14 -> Forwarding)
+40: xori x17, x16, 10// x17 = 80 ^ 10 = 90 (0x5A) (RAW Hazard en x16 -> Forwarding)
+44: srli x18, x16, 2 // x18 = 80 >> 2 = 20 (0x14) (RAW Hazard en x16)
+48: srai x19, x16, 2 // x19 = 80 >>> 2 = 20 (0x14) (RAW Hazard en x16)
+4C: ori  x20, x18, 5 // x20 = 20 | 5 = 21 (0x15) (RAW Hazard en x18)
+50: andi x21, x18, 8 // x21 = 20 & 8 = 0 (0x00) (RAW Hazard en x18)
+54: bne  x18, x19, 0x8C // no tomado (20 == 20). No altera el flujo del PC.
+58: beq  x18, x19, 0x64 // tomado (20 == 20). Salta a 0x64. (Flushea 0x5C y 0x60)
+5C: addi x5, x0, 99  // FLUSHED (burbuja NOP)
+60: addi x5, x0, 99  // FLUSHED (burbuja NOP)
+64: addi x22, x0, -10// x22 = -10 (0xfffffff6)
+68: addi x23, x0, 5  // x23 = 5
+6C: blt  x22, x23, 0x78 // tomado (-10 < 5, signed). Salta a 0x78. (Flushea 0x70 y 0x74)
+70: addi x5, x0, 99  // FLUSHED
+74: addi x5, x0, 99  // FLUSHED
+78: bge  x23, x22, 0x84 // tomado (5 >= -10, signed). Salta a 0x84. (Flushea 0x7C y 0x80)
+7C: addi x5, x0, 99  // FLUSHED
+80: addi x5, x0, 99  // FLUSHED
+84: jal  x1, 0x94    // Salto incondicional a 0x94. x1 = PC+4 = 0x88. (Flushea 0x88)
+88: addi x5, x0, 99  // FLUSHED
+8C: nop              // Trampa de error (no ejecutada)
+90: nop              // Trampa de error (no ejecutada)
+94: addi x24, x0, 172// x24 = 172 (0xAC)
+98: jalr x25, x24, 0 // Salto indirecto a x24 + 0 = 0xAC. x25 = PC+4 = 0x9C. (Flushea 0x9C, 0xA0, 0xA4, 0xA8)
+9C: addi x5, x0, 99  // FLUSHED
+AC: addi x26, x0, 77 // x26 = 77 (0x4D) (Destino del salto indirecto JALR)
 \end{lstlisting}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{../Images/waves_remaining_ops.png}
-\caption{Formas de onda del Programa Extra. Se verifica el cálculo correcto y la escritura/lectura en memoria sin insertar ningún ciclo de parada (stall).}
+\includegraphics[width=0.95\textwidth]{../Images/waves_remaining_ops.png}
+\caption{Formas de onda del Programa Extra. Se verifica el correcto comportamiento temporal y la resolución de dependencias de datos (forwarding) y de control (flushing) para todas las instrucciones RV32I.}
 \end{figure}
 
 \textbf{Interpretación:}
 \begin{itemize}
-  \item \textbf{Cálculos Correctos en la ALU}: Se observa que en la etapa de Writeback (\texttt{ResultW}), los resultados lógicos y aritméticos aparecen con un retraso exacto de 4 ciclos con respecto a su búsqueda (Fetch). Por ejemplo, el desplazamiento a la izquierda (\texttt{sll}) produce \texttt{0x000001e0} y la suma (\texttt{add}) produce \texttt{0x00000014} (20 decimal).
-  \item \textbf{Eficiencia de la red de Forwarding}: Aunque las instrucciones del bloque aritmético-lógico (líneas \texttt{08} a \texttt{2C}) dependen inmediatamente de los valores cargados en \texttt{x2} y \texttt{x3}, la Hazard Unit las resuelve de manera transparente. Las señales de control \texttt{ForwardAE} y \texttt{ForwardBE} actúan de forma continua reenviando los datos desde las etapas Memory y Writeback hacia la ALU, permitiendo que el Program Counter (\texttt{pcF}) avance de 4 en 4 cada ciclo de reloj sin provocar ninguna parada (\texttt{StallD=0}, \texttt{StallF=0}).
-  \item \textbf{Integridad de Memoria}: La instrucción \texttt{sw} escribe el valor \texttt{20} (calculado previamente) en la dirección \texttt{100} en el ciclo 15. Posteriormente, la instrucción \texttt{lw} lee exitosamente el valor \texttt{20} (\texttt{0x14}) desde la memoria de datos y lo escribe en el registro \texttt{x14} en el ciclo 17.
+  \item \textbf{Verificación de Operaciones ALU e Inmediatos}: Se valida la correcta ejecución de operaciones aritméticas con registro e inmediato. Por ejemplo:
+    \begin{itemize}
+      \item En el ciclo 16, la instrucción \texttt{slli} calcula \texttt{0x50} (80 decimal) a partir de \texttt{20} desplazado 2 bits.
+      \item En el ciclo 17, la instrucción \texttt{xori} calcula \texttt{0x5A} (90 decimal) a partir de \texttt{80 \string^ 10}.
+      \item La instrucción \texttt{lui} coloca el inmediato alto \texttt{0x12345000} en el registro \texttt{x15} (mostrado en \texttt{ResultW} en el ciclo 18).
+    \end{itemize}
+  \item \textbf{Control de Bifurcaciones (Branches)}:
+    \begin{itemize}
+      \item La instrucción \texttt{bne} en \texttt{0x54} no toma el salto al ser operandos iguales, permitiendo que el PC avance secuencialmente a \texttt{0x58}.
+      \item La instrucción \texttt{beq} en \texttt{0x58} sí toma el salto, lo que provoca que \texttt{PCSrcE} se active, y la Hazard Unit aplique un \texttt{FlushD} y \texttt{FlushE} para limpiar las instrucciones especulativas en \texttt{0x5C} y \texttt{0x60}, saltando el PC directamente a \texttt{0x64}.
+      \item Las instrucciones de branch comparativos con signo \texttt{blt} (menor que) y \texttt{bge} (mayor o igual) se evalúan correctamente, redirigiendo el PC a sus destinos con la consecuente inserción de burbujas en el pipeline.
+    \end{itemize}
+  \item \textbf{Saltos Incondicionales (`jal` y `jalr`)}:
+    \begin{itemize}
+      \item \texttt{jal} en \texttt{0x84} calcula su destino relativo en la etapa Execute y salta a \texttt{0x94}, guardando el enlace \texttt{PC+4 = 0x88} en \texttt{x1} en el ciclo 37.
+      \item \texttt{jalr} en \texttt{0x98} calcula su destino basándose en el registro \texttt{x24} (que contiene \texttt{0xAC}), saltando directamente a la instrucción en \texttt{0xAC} (que carga \texttt{77} en \texttt{x26}) y guardando el enlace de retorno \texttt{PC+4 = 0x9C} en \texttt{x25} en el ciclo 41.
+    \end{itemize}
 \end{itemize}
 
 % ============================================================================

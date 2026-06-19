@@ -25,7 +25,7 @@ module tb;
   initial cycle = 0;
 
   always @(posedge clk) begin
-    if (!reset && cycle <= 30) begin
+    if (!reset && cycle <= 50) begin
       cycle <= cycle + 1;
       $display("============================================================");
       $display("CICLO %0d", cycle);
@@ -42,7 +42,7 @@ module tb;
   end
 
   always @(posedge clk) begin
-    if (cycle == 30) begin
+    if (cycle == 50) begin
       $display("*** SIMULACION MINI-TEST COMPLETADA ***");
       $finish;
     end

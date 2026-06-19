@@ -12,7 +12,37 @@
 003136b3 // 2C: sltu x13, x2, x3 (x13 = 0)
 06402223 // 30: sw   x4, 100(x0) (Mem[100] = 20)
 06402703 // 34: lw   x14, 100(x0)(x14 = 20)
-00000000 // 38: nop
-00000000 // 3C: nop
-00000000 // 40: nop
-00000000 // 44: nop
+123457b7 // 38: lui  x15, 0x12345 (x15 = 0x12345000)
+00271813 // 3C: slli x16, x14, 2  (x16 = 20 << 2 = 80)
+00a84893 // 40: xori x17, x16, 10  (x17 = 80 ^ 10 = 90)
+00285913 // 44: srli x18, x16, 2  (x18 = 80 >> 2 = 20)
+40285993 // 48: srai x19, x16, 2  (x19 = 80 >>> 2 = 20)
+00596a13 // 4C: ori  x20, x18, 5  (x20 = 20 | 5 = 21)
+00897a93 // 50: andi x21, x18, 8  (x21 = 20 & 8 = 0)
+0f391c63 // 54: bne  x18, x19, 0x8C (not taken, since 20 == 20)
+01390663 // 58: beq  x18, x19, 0x64 (taken to label_next at 0x64)
+06300293 // 5C: addi x5, x0, 99 (flushed!)
+06300293 // 60: addi x5, x0, 99 (flushed!)
+ff600b13 // 64: addi x22, x0, -10 (x22 = -10)
+00500b93 // 68: addi x23, x0, 5   (x23 = 5)
+017b4663 // 6C: blt  x22, x23, 0x78 (taken to label_next2 at 0x78)
+06300293 // 70: addi x5, x0, 99 (flushed!)
+06300293 // 74: addi x5, x0, 99 (flushed!)
+016be663 // 78: bge  x23, x22, 0x84 (taken to label_next3 at 0x84)
+06300293 // 7C: addi x5, x0, 99 (flushed!)
+06300293 // 80: addi x5, x0, 99 (flushed!)
+010000ef // 84: jal  x1, 0x94 (taken to label_jal at 0x94, saves x1 = 0x88)
+06300293 // 88: addi x5, x0, 99 (flushed!)
+00000013 // 8C: nop (label_fail trap)
+00000013 // 90: nop
+0ac00c13 // 94: addi x24, x0, 172 (x24 = 172 = 0xAC)
+000c0ce7 // 98: jalr x25, x24, 0 (taken to 0xAC, saves x25 = 0x9C)
+06300293 // 9C: addi x5, x0, 99 (flushed!)
+06300293 // A0: addi x5, x0, 99 (flushed!)
+06300293 // A4: addi x5, x0, 99 (flushed!)
+06300293 // A8: addi x5, x0, 99 (flushed!)
+04d00d13 // AC: addi x26, x0, 77  (x26 = 77)
+00000013 // B0: nop
+00000013 // B4: nop
+00000013 // B8: nop
+00000013 // BC: nop
