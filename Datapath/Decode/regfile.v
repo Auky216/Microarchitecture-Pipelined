@@ -5,6 +5,14 @@ module regfile(input  clk,
                output [31:0] rd1, rd2); 
 
   reg [31:0] rf[31:0]; 
+  integer i;
+
+  // ESTO ELIMINA LAS 'x': Inicializa todos los registros en 0 al arrancar
+  initial begin
+    for (i = 0; i < 32; i = i + 1) begin
+      rf[i] = 32'b0;
+    end
+  end
 
   // write third port on falling edge of clock (A3/WD3/WE3)
   always @(negedge clk) begin 
