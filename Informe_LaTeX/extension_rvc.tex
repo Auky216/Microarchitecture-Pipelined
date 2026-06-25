@@ -1,0 +1,179 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=3cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{\textbf{Informe Detallado: Implementaci\'on de la Extensi\'on RISC-V Compressed (RVC)}}
+\author{Microarquitectura de Procesadores Pipelined}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducci\'on al Concepto de Reducci\'on de 16 bits (RVC)}
+
+Para entender c\'omo se modific\'o el procesador, primero debemos comprender qu\'e es exactamente la extensi\'on \textbf{RVC (Compressed Instructions)} y por qu\'e se invent\'o.
+
+En la arquitectura base RISC-V de 32 bits (RV32I), absolutamente \textbf{todas las instrucciones miden 32 bits (4 bytes)}. Esto facilita enormemente el dise\~no del procesador porque sabemos que el Program Counter (PC) siempre debe avanzar de 4 en 4 (0x0, 0x4, 0x8...). Sin embargo, los estad\'isticos descubrieron que en la mayor\'ia de los programas, m\'as del 50\% de las instrucciones realizan operaciones extremadamente simples. Por ejemplo:
+\begin{itemize}
+    \item Sumar una constante peque\~na a un registro.
+    \item Cargar o guardar datos usando registros populares.
+    \item Hacer saltos relativos cortos.
+\end{itemize}
+
+Para ahorrar memoria y tama\~no del c\'odigo (footprint), RISC-V introdujo la extensi\'on \textbf{'C'}. Esta extensi\'on toma las instrucciones m\'as comunes y las "comprime" en un formato reducido de \textbf{16 bits (2 bytes)}. 
+
+\subsection{Ejemplo de Compresi\'on}
+Imagina la instrucci\'on est\'andar para sumar el n\'umero 5 al registro \texttt{x8}:
+\begin{center}
+    \texttt{addi x8, x8, 5}
+\end{center}
+
+\textbf{En formato normal de 32 bits (RV32I):}
+Se necesitan 32 bits para representar esta acci\'on. Requiere 5 bits para el registro destino (\texttt{rd}), 5 bits para el registro fuente (\texttt{rs1}), 12 bits para el n\'umero 5, m\'as los c\'odigos de operaci\'on (opcode).
+\begin{verbatim}
+Bits: [ Inmediato 12-bit ] [ rs1 ] [ funct3 ] [ rd  ] [ opcode  ]
+      [   000000000101   ] [01000] [  000   ] [01000] [ 0010011 ] -> 32 bits
+\end{verbatim}
+
+\textbf{En formato comprimido de 16 bits (RVC - \texttt{c.addi}):}
+Dado que el registro destino (\texttt{x8}) es el mismo que el registro fuente (\texttt{x8}), la extensi\'on RVC aprovecha esa redundancia. Solo especifica el registro una vez, asume que la instrucci\'on es una suma, y usa un inmediato m\'as peque\~no.
+\begin{verbatim}
+Bits: [funct3] [imm[5]] [ rd/rs1 ] [imm[4:0]] [ op ]
+      [ 000  ] [  0   ] [  01000 ] [  00101 ] [ 01 ] -> 16 bits
+\end{verbatim}
+
+Como puedes ver, los dos \'ultimos bits de la instrucci\'on comprimida son \texttt{01}. En RISC-V, \textbf{si los dos \'ultimos bits no son 11}, el procesador sabe inmediatamente que est\'a leyendo una instrucci\'on comprimida de 16 bits.
+
+\section{El Reto Arquitect\'onico: El Antes}
+
+En nuestro dise\~no original pipelined de 5 etapas (Fetch, Decode, Execute, Memory, Writeback), la CPU era r\'igida. Estaba dise\~nada asumiendo que el universo entero estaba hecho de bloques de 32 bits.
+
+\textbf{El C\'odigo Antes de las Modificaciones (\texttt{fetch.v}):}
+\begin{lstlisting}[language=Verilog, caption=Etapa Fetch Original]
+// 1. El PC siempre suma 4
+adder pcadd (.a(PCF), .b(32'd4), .y(PCPlus4F));
+
+// 2. Se lee siempre una palabra de 32 bits de la memoria
+imem imem (.a(PCF), .rd(InstrF));
+\end{lstlisting}
+
+Este enfoque r\'igido fallaba catastr\'oficamente al introducir c\'odigo de 16 bits por dos razones:
+\begin{enumerate}
+    \item \textbf{El PC se desalinea:} Si ejecutamos una instrucci\'on de 16 bits en la direcci\'on \texttt{0x0}, la siguiente instrucci\'on comenzar\'a en la direcci\'on \texttt{0x2}. Sin embargo, nuestra memoria s\'olo est\'a dise\~nada para leer m\'ultiplos de 4 (\texttt{0x0, 0x4, 0x8}). Si el PC vale \texttt{0x2}, al leer la palabra entera, nuestra peque\~na instrucci\'on quedar\'a atascada en la parte alta (bits 31 a 16).
+    \item \textbf{Decode espera 32 bits:} La siguiente etapa (Decode) extrae los registros \texttt{Rs1}, \texttt{Rs2} y \texttt{Rd} de ubicaciones espec\'ificas de un arreglo de 32 bits. Si le enviamos una instrucci\'on de 16 bits en bruto, Decode extraer\'a basura y leer\'a registros incorrectos.
+\end{enumerate}
+
+\section{La Soluci\'on: Expansi\'on en Tiempo Cero (El Despu\'es)}
+
+Para no tener que reescribir todo el procesador (lo cual habr\'ia destruido la Hazard Unit y complicado inmensamente el Decode), se adopt\'o una soluci\'on sumamente elegante: \textbf{ocultarle al pipeline que existen instrucciones de 16 bits}.
+
+La meta fue crear un "traductor" dentro de la primera etapa (Fetch). Cuando llega una instrucci\'on de 16 bits, este traductor la convierte instant\'aneamente en su equivalente de 32 bits \textit{antes} de que pase a la etapa Decode. As\'i, Decode siempre ve instrucciones est\'andar de 32 bits.
+
+A continuaci\'on, explicamos c\'omo se modific\'o el procesador paso a paso.
+
+\subsection{Paso 1: Lectura y Alineaci\'on (fetch.v)}
+Ahora la memoria se lee en bloques de 32 bits est\'andar, pero introducimos un multiplexor de hardware que revisa si el Program Counter est\'a desalineado.
+
+El bit 1 del PC (\texttt{PCF[1]}) nos indica la alineaci\'on a medias palabras. Si el PC vale \texttt{0x0} o \texttt{0x4}, \texttt{PCF[1]} es 0. Si el PC vale \texttt{0x2} o \texttt{0x6}, \texttt{PCF[1]} es 1.
+Si vale 1, significa que los datos \'utiles de 16 bits que acabamos de leer de la memoria no est\'an al principio, sino desplazados a la izquierda.
+
+\textbf{El C\'odigo Despu\'es:}
+\begin{lstlisting}[language=Verilog, caption=Alineacion Dinamica]
+wire [31:0] raw_imem_data;
+imem imem (.a(PCF), .rd(raw_imem_data));
+
+// Si el PC termina en 2 o 6, la instruccion esta en [31:16]
+// Recorremos la instruccion hacia la parte baja.
+wire [31:0] actual_instr;
+assign actual_instr = PCF[1] ? {16'b0, raw_imem_data[31:16]} : raw_imem_data;
+\end{lstlisting}
+
+\subsection{Paso 2: El Descompresor Combinacional (decompressor.v)}
+Creamos un m\'odulo nuevo en Verilog. Este m\'odulo extrae los 16 bits m\'as bajos (\texttt{cinstr}), revisa si es una instrucci\'on comprimida, e infla los bits a su versi\'on RV32I. 
+
+\begin{lstlisting}[language=Verilog, caption=Traduccion a 32 bits en decompressor.v]
+// Si termina diferente a 11, esta comprimida
+assign is_compressed = (cinstr[1:0] != 2'b11);
+
+always @(*) begin
+    // Traduce un c.addi (16 bits) a un addi normal (32 bits)
+    if (is_compressed && cinstr[15:13] == 3'b000) begin
+        outstr = {imm_addi[11:0], rdp_rs1p, 3'b000, rdp_rs1p, 7'b0010011};
+    end
+end
+\end{lstlisting}
+Esta conversi\'on ocurre sin retrasos de reloj. Es un circuito combinacional puro.
+
+\subsection{Paso 3: Enga\~nando al Pipeline}
+Ahora que tenemos dos versiones de la instrucci\'on (la original le\'ida de memoria, y la descomprimida generada por el traductor), usamos un multiplexor guiado por la bandera \texttt{is\_compressed} para elegir cu\'al enviar a la etapa Decode a trav\'es del registro \texttt{IF/ID}.
+
+\begin{lstlisting}[language=Verilog, caption=El Engano Final]
+// Si la instruccion era de 16 bits, entregamos el resultado del traductor.
+// Si era de 32 bits, entregamos la lectura normal de memoria.
+assign InstrF = is_compressed ? decompressed_instr : actual_instr;
+\end{lstlisting}
+
+\subsection{Paso 4: Actualizaci\'on Din\'amica del PC}
+Por \'ultimo, debemos decirle al Program Counter cu\'anto tiene que avanzar. Ya no podemos avanzar $+4$ r\'igidamente. Si la instrucci\'on que acabamos de leer fue de 16 bits, el PC s\'olo debe avanzar $+2$ bytes para apuntar correctamente a la instrucci\'on que sigue inmediatamente despu\'es.
+
+\begin{lstlisting}[language=Verilog, caption=Calculo dinamico del PC]
+wire [31:0] pc_increment;
+
+// Multiplexor de incremento: +2 o +4
+assign pc_increment = is_compressed ? 32'd2 : 32'd4;
+
+adder pcadd (.a(PCF), .b(pc_increment), .y(PCPlus4F));
+\end{lstlisting}
+
+\section{Impacto en el Resto de la Arquitectura}
+
+Gracias a haber solucionado el problema desde el \textbf{Fetch}, los dem\'as subsistemas del CPU funcionaron sin apenas tocarlos.
+
+\subsection{La Unidad de Riesgos (Hazard Unit)}
+\textbf{El Antes:} La \texttt{hunit.v} comparaba las direcciones de los registros (bits del 15 al 19 para \texttt{Rs1}, etc.) para detectar si una instrucci\'on en Execute necesitaba enviar datos adelantados (Forwarding) a una instrucci\'on en Decode, o si deb\'ia insertar burbujas (Stall) por un \texttt{Load}.
+
+\textbf{El Despu\'es:} No se modific\'o \textbf{ni una sola l\'inea de c\'odigo} en \texttt{hunit.v}. 
+¿C\'omo es posible? Dado que el traductor (descompresor) se ubic\'o \textit{antes} del registro que divide las etapas \texttt{IF} y \texttt{ID}, cuando llega el flanco positivo del reloj, la etapa Decode siempre recibe un bloque de 32 bits perfecto. Decode extrae \texttt{Rs1}, \texttt{Rs2} y \texttt{Rd} de los lugares est\'andar, la Hazard Unit los lee y aplica toda su l\'ogica de prevenci\'on de riesgos de la misma forma que lo hac\'ia antes. La Hazard Unit no tiene idea de que en el c\'odigo fuente exist\'ia una instrucci\'on comprimida.
+
+\subsection{Etapas de Execute, Memory y Writeback}
+Funcionan igual. La \texttt{ALU} sigue sumando registros de 32 bits. La \texttt{Data Memory} sigue leyendo palabras completas. Lo \'unico diferente ocurre si usamos instrucciones como \texttt{c.lw} (Load Word Comprimido), pero de nuevo, como el descompresor lo transform\'o a un \texttt{lw} normal, las se\~nales de control \texttt{MemWrite} o \texttt{ResultSrc} se encienden sin problema.
+
+\section{Conclusi\'on}
+La compresi\'on de 16 bits en RISC-V es un ejemplo brillante de eficiencia arquitect\'onica. Al implementar la expansi\'on en tiempo cero directamente al leer la memoria, logramos un procesador retro-compatible que puede intercalar sin penalizaci\'on instrucciones RV32I e instrucciones RVC en un mismo programa, manteniendo la elegancia y limpieza del dise\~no Pipelined de 5 etapas.
+
+\end{document}

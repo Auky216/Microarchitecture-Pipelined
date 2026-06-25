@@ -1,0 +1,38 @@
+Informe de Implementación Arquitectónica: 
+Soporte para Extensión RVC (16-bits) en Procesador RISC-V Pipelined
+Documentación Técnica de Diseño
+
+1. Introducción
+La extensión estándar RVC (Compressed Instructions) de la arquitectura RISC-V tiene como objetivo reducir el tamaño del código permitiendo que las instrucciones más frecuentes sean codificadas en 16 bits (2 bytes) en lugar de los 32 bits tradicionales. El presente documento detalla la implementación de esta extensión en una microarquitectura segmentada (pipelined) de 5 etapas, logrando el soporte de instrucciones de 16 bits sin afectar la compatibilidad con el pipeline de 32 bits subyacente.
+
+2. Arquitectura General y Estrategia de Diseño
+Para minimizar los cambios en todo el procesador, se optó por una estrategia de "expansión en tiempo cero". Esto significa que cualquier instrucción de 16 bits leída de la memoria es automáticamente descomprimida a su equivalente de 32 bits (RV32I) de manera puramente combinacional *antes* de ser guardada en el registro de segmentación IF/ID. Gracias a este diseño, las etapas de Decode, Execute, Memory y Writeback, al igual que la Hazard Unit, operan exactamente igual que en un procesador de 32 bits puro.
+
+3. Modificaciones al Código (Módulo por Módulo)
+
+3.1. Etapa de Instruction Fetch (fetch.v)
+La etapa de Fetch sufrió la mayor cantidad de cambios. Dado que las instrucciones ahora pueden tener 16 bits, el Program Counter (PC) puede estar alineado a media palabra (direcciones terminadas en 0x2, 0x6, etc.). 
+
+Alineación de Memoria: La memoria siempre entrega 32 bits. Si el bit 1 del PC es alto (PCF[1] == 1), la instrucción de 16 bits real se encuentra en la parte alta de la palabra leída.
+
+Integración del Descompresor y Engaño al Pipeline:
+Se extraen los primeros 16 bits y se usa el módulo `decompressor` para identificar si es comprimida y obtener la versión completa. Luego un multiplexor elige la versión expandida (si era de 16 bits) o la instrucción cruda (si era de 32 bits) para mandársela a la etapa de Decode.
+
+Avance Dinámico del PC:
+Anteriormente, el PC siempre avanzaba 4 bytes. Ahora se utiliza un multiplexor para que avance 2 o 4 bytes según el tamaño real de la instrucción leída (identificado por la bandera is_compressed).
+
+3.2. Módulo Descompresor (decompressor.v)
+Se creó un archivo completamente nuevo que contiene lógica combinacional. Toma los 16 bits, determina mediante los dos bits menos significativos si es una instrucción comprimida y usa un bloque case para traducir la instrucción a formato RV32I.
+
+3.3. Justificación: Ausencia de Cambios en la Hazard Unit (hunit.v)
+Como estipula el requerimiento del proyecto, es fundamental analizar el impacto en la Hazard Unit. NO fue necesario modificar este módulo.
+Justificación técnica: La Hazard Unit supervisa los riesgos de datos y control basándose en las direcciones de los registros fuente (Rs1, Rs2) y destino (Rd). Debido a que la expansión de 16 bits a 32 bits ocurre exclusivamente en la etapa de Fetch, justo antes de cruzar el registro IF/ID, la etapa de Decode siempre recibe una instrucción RV32I puramente estándar. Por consiguiente, la Hazard Unit procesa los registros del 0 al 31 y emite señales de forwarding o stall exactamente de la misma manera, manteniéndose completamente agnóstica a la compresión del código.
+
+4. Pruebas y Verificación
+Para comprobar el funcionamiento, se elaboraron tres vectores de prueba ejecutados en ModelSim/GTKWave:
+- test_rvc_basic.mem: Evaluó instrucciones aritméticas combinadas y saltos relativos cortos. 
+- test_rvc_branches.mem: Evaluó instrucciones de salto condicional exclusivas RVC (c.beqz, c.bnez).
+- test_rvc_memory.mem: Verificó la interacción con la memoria usando c.sw y c.lw.
+
+5. Conclusión
+La adaptación del procesador pipelined para incluir la extensión RVC fue todo un éxito. La arquitectura fue robustecida implementando alineación dinámica en memoria y un traductor en tiempo cero en la etapa temprana. Estas modificaciones aislaron la complejidad de los 16 bits, permitiendo que el resto del procesador operara a máxima eficiencia y validando el diseño segmentado original.

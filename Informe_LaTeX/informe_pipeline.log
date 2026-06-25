@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  18 JUN 2026 20:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  25 JUN 2026 00:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1276,9 +1276,80 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.17}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1211 \end{verbatim}
-                      <../Images/waves_remaining_ops.png>] [27] [28]
-(./informe_pipeline.aux
+l.1182 
+        <../Images/waves_remaining_ops.png>]
+
+LaTeX Warning: File `../Images/waves_rvc_basic.png' not found on input line 120
+4.
+
+
+! Package pdftex.def Error: File `../Images/waves_rvc_basic.png' not found: usi
+ng draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1204 ...extwidth]{../Images/waves_rvc_basic.png}
+                                                   % Placeholder
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[27]
+
+LaTeX Warning: File `../Images/waves_rvc_memory.png' not found on input line 12
+17.
+
+
+! Package pdftex.def Error: File `../Images/waves_rvc_memory.png' not found: us
+ing draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1217 ...xtwidth]{../Images/waves_rvc_memory.png}
+                                                   % Placeholder
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[28
+pdfTeX warning (ext4): destination with the same identifier (name{figure.18}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1220 
+       ]
+
+LaTeX Warning: File `../Images/waves_rvc_branches.png' not found on input line 
+1229.
+
+
+! Package pdftex.def Error: File `../Images/waves_rvc_branches.png' not found: 
+using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1229 ...width]{../Images/waves_rvc_branches.png}
+                                                   % Placeholder
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[29
+pdfTeX warning (ext4): destination with the same identifier (name{figure.19}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1232 
+       ] [30
+pdfTeX warning (ext4): destination with the same identifier (name{figure.20}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1269 \end{verbatim}
+                     ] [31] (./informe_pipeline.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -1286,15 +1357,22 @@ LaTeX Info: Redefining \% on input line 11.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-Package rerunfilecheck Info: File `informe_pipeline.out' has not changed.
-(rerunfilecheck)             Checksum: 74E023C1C56778B0827B86CAF97125F4;12311.
+
+
+Package rerunfilecheck Warning: File `informe_pipeline.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `informe_pipeline.out':
+(rerunfilecheck)             Before: 74E023C1C56778B0827B86CAF97125F4;12311
+(rerunfilecheck)             After:  E9F32279C328467C227366C863AC2E94;14299.
  ) 
 Here is how much of TeX's memory you used:
- 27463 strings out of 468658
- 501149 string characters out of 5439871
- 1829971 words of memory out of 5000000
- 55356 multiletter control sequences out of 15000+600000
- 705787 words of font info for 164 fonts, out of 8000000 for 9000
+ 27572 strings out of 468658
+ 505026 string characters out of 5439871
+ 1829968 words of memory out of 5000000
+ 55450 multiletter control sequences out of 15000+600000
+ 706408 words of font info for 166 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  84i,13n,94p,1145b,2065s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10
@@ -1306,10 +1384,10 @@ fb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb
 /usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></u
 sr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr
 /local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on informe_pipeline.pdf (30 pages, 1239714 bytes).
+Output written on informe_pipeline.pdf (33 pages, 1245622 bytes).
 PDF statistics:
- 840 PDF objects out of 1000 (max. 8388607)
- 753 compressed objects within 8 object streams
- 368 named destinations out of 1000 (max. 500000)
+ 866 PDF objects out of 1000 (max. 8388607)
+ 776 compressed objects within 8 object streams
+ 382 named destinations out of 1000 (max. 500000)
  496 words of extra memory for PDF output out of 10000 (max. 10000000)
 

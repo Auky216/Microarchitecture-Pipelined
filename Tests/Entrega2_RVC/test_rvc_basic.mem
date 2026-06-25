@@ -1,0 +1,27 @@
+// test_rvc_basic.mem
+// 
+// Memoria para testear la funcionalidad basica de RVC (Parte 2)
+// Combina instrucciones de 16 bits y 32 bits para asegurar el correcto
+// incremento del PC y la descompresion.
+//
+// 0x00: c.addi x8, 5       (16-bit) -> 0x0415
+// 0x02: c.addi x9, 10      (16-bit) -> 0x04A9
+// Word 0 = 0x04A90415
+04A90415
+
+// 0x04: add x10, x8, x9    (32-bit) -> 0x00940533 (x10 = 15)
+// Word 1 = 0x00940533
+00940533
+
+// 0x08: c.sub x8, x9       (16-bit) -> 0x8C05 (x8 = 5 - 10 = -5)
+// 0x0A: c.j 4              (16-bit) -> 0xA011 (Salta sobre el NOP)
+// Word 2 = 0xA0198C05
+A0198C05
+
+// 0x0C: nop                (32-bit) -> 0x00000013 (¡Se la salta!)
+// Word 3 = 0x00000013
+00000013
+
+// 0x10: addi x11, x0, 100  (32-bit) -> 0x06400593 (Aqui aterriza el salto)
+// Word 4 = 0x06400593
+06400593

@@ -1,0 +1,6 @@
+// test_rvc_branches.mem
+00000413 // 0x00: addi x8, x0, 0
+00100493 // 0x04: addi x9, x0, 1
+E089C089 // 0x08: c.beqz x9, 4 (0xC089) | 0x0A: c.bnez x9, 4 (0xE089)
+00000013 // 0x0C: nop (skipped)
+06300513 // 0x10: addi x10, x0, 99

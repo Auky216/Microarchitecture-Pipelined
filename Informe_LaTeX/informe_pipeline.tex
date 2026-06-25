@@ -1175,9 +1175,70 @@ AC: addi x26, x0, 77 // x26 = 77 (0x4D) (Destino del salto indirecto JALR)
 \end{itemize}
 
 % ============================================================================
-% SECCION 7: JERARQUIA DE ARCHIVOS
+% SECCION 7: EXTENSION RVC (16 BITS)
 % ============================================================================
-\section{Jerarquía de Archivos}
+\section{Extension RVC (16-bits)}
+La extension estandar RVC (Compressed Instructions) de la arquitectura RISC-V tiene como objetivo reducir el tamano del codigo permitiendo que las instrucciones mas frecuentes sean codificadas en 16 bits (2 bytes) en lugar de los 32 bits tradicionales.
+
+\subsection{El Reto Arquitectonico y la Solucion}
+En nuestro diseno original pipelined de 5 etapas, la CPU estaba disenada asumiendo que el universo entero estaba hecho de bloques de 32 bits. Para no tener que reescribir todo el procesador (lo cual habria destruido la Hazard Unit), se adopto una solucion sumamente elegante: \textbf{ocultarle al pipeline que existen instrucciones de 16 bits}.
+
+La meta fue crear un descompresor combinacional dentro de la primera etapa (Fetch). Cuando llega una instruccion de 16 bits, este traductor la convierte instantaneamente en su equivalente de 32 bits antes de que pase a la etapa Decode. Asi, Decode siempre ve instrucciones estandar de 32 bits.
+
+\subsection{Modificaciones al Codigo}
+\begin{itemize}
+    \item \textbf{Alineacion en Memoria:} Ahora la memoria se lee en bloques de 32 bits estandar, pero introducimos un multiplexor de hardware que revisa si el Program Counter esta desalineado (bit \texttt{PCF[1]}).
+    \item \textbf{Descompresor (\texttt{decompressor.v}):} Este modulo extrae los 16 bits mas bajos, revisa si es una instruccion comprimida, e infla los bits a su version RV32I.
+    \item \textbf{El Engano al Pipeline:} Se utiliza un multiplexor para elegir entre la instruccion leida original o la version expandida por el descompresor.
+    \item \textbf{Avance Dinamico del PC:} El Program Counter ya no avanza 4 bytes rigidamente, sino que avanza $+2$ si la instruccion fue de 16 bits o $+4$ si fue de 32 bits.
+\end{itemize}
+
+\subsection{Justificacion: Unidad de Riesgos (Hazard Unit)}
+No se modifico ni una sola linea de codigo en la \texttt{hunit.v}. Dado que el descompresor se ubico antes del registro \texttt{IF/ID}, la etapa Decode siempre recibe un bloque de 32 bits perfecto. La Hazard Unit procesa registros y emite senales de forwarding o stall exactamente de la misma manera que lo hacia antes.
+
+\subsection{Pruebas de la Extension RVC}
+
+\subsubsection{Test RVC Basico (\texttt{test\_rvc\_basic.mem})}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/waves_rvc_basic.png} % Placeholder
+\caption{Formas de onda del test basico RVC. Se observa la mezcla de instrucciones \texttt{c.addi}, \texttt{add} normal y \texttt{c.sub}.}
+\end{figure}
+
+\textbf{Interpretacion de la forma de onda:}
+\begin{itemize}
+  \item \textbf{El salto de 2 en 2:} En la senal \texttt{PCF}, se puede observar claramente la secuencia de avance \texttt{0 -> 2 -> 4 -> 8}. El salto inicial de 2 en 2 bytes comprueba visualmente que el PC esta reconociendo la instruccion de 16 bits (\texttt{c.addi}) y avanzando adecuadamente.
+  \item \textbf{Senal de Compresion:} La senal interna \texttt{is\_compressed} se eleva a alto (\texttt{1}) durante los ciclos donde el PC apunta a direcciones alineadas a media palabra.
+\end{itemize}
+
+\subsubsection{Test RVC de Memoria (\texttt{test\_rvc\_memory.mem})}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/waves_rvc_memory.png} % Placeholder
+\caption{Formas de onda del test de memoria RVC. Se evalua el funcionamiento de las instrucciones \texttt{c.lw} y \texttt{c.sw}.}
+\end{figure}
+
+\textbf{Interpretacion de la forma de onda:}
+\begin{itemize}
+  \item A pesar de que las instrucciones en el codigo fuente ocupan solo 16 bits, la etapa Memory interactua con \texttt{Data Memory} transfiriendo 32 bits completos, tal como lo demuestra la validacion de las escrituras y lecturas exitosas en memoria. Las senales \texttt{MemWrite} se activan en los ciclos correctos.
+\end{itemize}
+
+\subsubsection{Test RVC de Saltos (\texttt{test\_rvc\_branches.mem})}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/waves_rvc_branches.png} % Placeholder
+\caption{Formas de onda del test de saltos RVC. Ejecucion de branches condicionales \texttt{c.beqz} y \texttt{c.bnez}.}
+\end{figure}
+
+\textbf{Interpretacion de la forma de onda:}
+\begin{itemize}
+  \item Se visualiza el correcto calculo de offsets (saltos relativos al PC) para instrucciones comprimidas. A pesar de los 16 bits, el modulo Execute genera el Branch Target adecuado, y la Hazard Unit logra hacer el \texttt{Flush} de manera transparente ante un salto tomado.
+\end{itemize}
+
+% ============================================================================
+% SECCION 8: JERARQUIA DE ARCHIVOS
+% ============================================================================
+\section{Jerarquia de Archivos}
 
 \begin{verbatim}
 Microarchitecture-Pipelined/
@@ -1185,7 +1246,7 @@ Microarchitecture-Pipelined/
 |-- tb.v                        (Testbench)
 |-- run_sim.sh                  (Script de simulacion)
 |-- Datapath/
-|   |-- Fetch/     fetch.v, imem.v
+|   |-- Fetch/     fetch.v, imem.v, decompressor.v
 |   |-- Decode/    decode.v, regfile.v
 |   |-- Execute/   execute.v
 |   |-- Memory/    memory.v, dmem.v
@@ -1196,22 +1257,19 @@ Microarchitecture-Pipelined/
 |                  mux2.v, mux3.v, adder.v, alu.v, extend.v
 |-- Tests/
 |   |-- test_isa_sin_dependencias.mem  (Programa 1)
-|   |-- test_forwarding.mem            (Programa 2)
-|   |-- test_stalling.mem              (Programa 3)
-|   |-- test_flushing.mem              (Programa 4)
-|   |-- test_remaining_ops.mem         (Programa Extra)
+|   |-- Entrega2_RVC/
+|       |-- test_rvc_basic.mem         (Test RVC 1)
+|       |-- test_rvc_branches.mem      (Test RVC 2)
+|       |-- test_rvc_memory.mem        (Test RVC 3)
 |-- Waves/
 |   |-- waves_isa.vcd, waves_forwarding.vcd,
-|   |   waves_stalling.vcd, waves_flushing.vcd,
-|   |   waves_remaining_ops.vcd
-|   |-- waves_forwarding_NO_HAZARD.vcd,
-|   |   waves_stalling_NO_HAZARD.vcd,
-|   |   waves_flushing_NO_HAZARD.vcd
+|   |   waves_rvc_basic.vcd, waves_rvc_branches.vcd,
+|   |   waves_rvc_memory.vcd
 |-- Informe_LaTeX/  informe_pipeline.tex
 \end{verbatim}
 
 % ============================================================================
-% SECCION 8: CONCLUSIONES
+% SECCION 9: CONCLUSIONES
 % ============================================================================
 \section{Conclusiones}
 

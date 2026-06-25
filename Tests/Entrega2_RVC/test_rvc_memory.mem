@@ -1,0 +1,5 @@
+// test_rvc_memory.mem
+00000413 // 0x00: addi x8, x0, 0
+02A00493 // 0x04: addi x9, x0, 42
+4048C044 // 0x08: c.sw x9, 4(x8) (0xC044) | 0x0A: c.lw x10, 4(x8) (0x4048)
+00000013 // 0x0C: nop
