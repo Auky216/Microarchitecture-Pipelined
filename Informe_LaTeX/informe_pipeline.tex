@@ -73,7 +73,12 @@
                 parameter, input, output, reg, wire, begin, end, case,
                 endcase, if, else, posedge, negedge, default, initial},
 }
-\lstset{style=verilogstyle}
+\lstset{
+  style=verilogstyle,
+  inputencoding=utf8,
+  extendedchars=true,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1 {¿}{{\textquestiondown}}1 {¡}{{\textexclamdown}}1
+}
 
 \lstdefinestyle{pseudo}{
   language={},
@@ -322,7 +327,7 @@ El siguiente diagrama muestra cómo 5 instrucciones se solapan en el pipeline:
   \node[clabel] at (\c, -0.3) {\c};
 }
 
-% Instruccion 1
+% Instrucción 1
 \node[ilabel] at (0.4, 0.5) {I1: addi};
 \node[stage] at (1, 0.5) {IF};
 \node[stage] at (2, 0.5) {ID};
@@ -330,7 +335,7 @@ El siguiente diagrama muestra cómo 5 instrucciones se solapan en el pipeline:
 \node[stage] at (4, 0.5) {MEM};
 \node[stage] at (5, 0.5) {WB};
 
-% Instruccion 2
+% Instrucción 2
 \node[ilabel] at (0.4, 1.5) {I2: add};
 \node[stage] at (2, 1.5) {IF};
 \node[stage] at (3, 1.5) {ID};
@@ -338,7 +343,7 @@ El siguiente diagrama muestra cómo 5 instrucciones se solapan en el pipeline:
 \node[stage] at (5, 1.5) {MEM};
 \node[stage] at (6, 1.5) {WB};
 
-% Instruccion 3
+% Instrucción 3
 \node[ilabel] at (0.4, 2.5) {I3: sub};
 \node[stage] at (3, 2.5) {IF};
 \node[stage] at (4, 2.5) {ID};
@@ -346,7 +351,7 @@ El siguiente diagrama muestra cómo 5 instrucciones se solapan en el pipeline:
 \node[stage] at (6, 2.5) {MEM};
 \node[stage] at (7, 2.5) {WB};
 
-% Instruccion 4
+% Instrucción 4
 \node[ilabel] at (0.4, 3.5) {I4: or};
 \node[stage] at (4, 3.5) {IF};
 \node[stage] at (5, 3.5) {ID};
@@ -354,7 +359,7 @@ El siguiente diagrama muestra cómo 5 instrucciones se solapan en el pipeline:
 \node[stage] at (7, 3.5) {MEM};
 \node[stage] at (8, 3.5) {WB};
 
-% Instruccion 5
+% Instrucción 5
 \node[ilabel] at (0.4, 4.5) {I5: and};
 \node[stage] at (5, 4.5) {IF};
 \node[stage] at (6, 4.5) {ID};
@@ -554,25 +559,116 @@ always @(posedge clk):
 
 El módulo \texttt{riscv\_pipeline} es el \textbf{ensamblaje principal} que conecta las 5 etapas con la Hazard Unit. Es puramente estructural, cableando todos los submóulos.
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo del módulo top-level}]
-module riscv_pipeline(clk, reset):
-  // 1. Instanciar Fetch
-  fetchStage(clk, reset, StallF, PCSrcE, PCTargetE ...);
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog del módulo top-level}]
+module riscv_pipeline (
+  input  logic clk, reset,
+  output logic [31:0] PCF,
+  output logic        MemWriteM
+);
+  // Cables para conectar las etapas
+  // IF -> ID
+  logic [31:0] InstrF, PCPlus4F;
+  
+  // ID -> EX
+  logic [31:0] InstrD, PCD, PCPlus4D, RD1D, RD2D, ExtImmD;
+  logic [4:0]  Rs1D, Rs2D, RdD;
+  logic        RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD;
+  logic [1:0]  ResultSrcD;
+  logic [3:0]  ALUControlD;
+  
+  // EX -> MEM / Hazard
+  logic        RegWriteE, MemWriteE, PCSrcE;
+  logic [1:0]  ResultSrcE;
+  logic [31:0] ALUResultE, WriteDataE, PCPlus4E, PCTargetE, InstrE;
+  logic [4:0]  RdE, Rs1E, Rs2E;
+  logic        ZeroE;
+  
+  // MEM -> WB / Hazard
+  logic        RegWriteM_internal;
+  logic [1:0]  ResultSrcM;
+  logic [31:0] ALUResultM, ReadDataM, PCPlus4M, WriteDataM, InstrM;
+  logic [4:0]  RdM;
+  
+  // WB -> Hazard / Decode
+  logic        RegWriteW;
+  logic [31:0] ResultW, InstrW;
+  logic [4:0]  RdW;
+  
+  // Hazard Unit
+  logic        StallF, StallD, FlushD, FlushE;
+  logic [1:0]  ForwardAE, ForwardBE;
 
-  // 2. Instanciar Decode 
-  decodeStage(clk, reset, StallD, FlushD, ...);
+  // Instanciación de la etapa Fetch
+  fetch fetchStage (
+    .clk(clk), .reset(reset),
+    .StallF(StallF), .PCSrcE(PCSrcE), .PCTargetE(PCTargetE),
+    .InstrF(InstrF), .PCF(PCF), .PCPlus4F(PCPlus4F)
+  );
 
-  // 3. Instanciar Execute
-  executeStage(clk, reset, FlushE, ForwardAE, ForwardBE, ...);
+  // Instanciación de la etapa Decode
+  decode decodeStage (
+    .clk(clk), .reset(reset),
+    .StallD(StallD), .FlushD(FlushD),
+    .InstrF(InstrF), .PCF(PCF), .PCPlus4F(PCPlus4F),
+    .RegWriteW(RegWriteW), .RdW(RdW), .ResultW(ResultW),
+    .InstrD(InstrD), .PCD(PCD), .PCPlus4D(PCPlus4D),
+    .RD1D(RD1D), .RD2D(RD2D), .ExtImmD(ExtImmD),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdD(RdD),
+    .RegWriteD(RegWriteD), .ResultSrcD(ResultSrcD), .MemWriteD(MemWriteD),
+    .JumpD(JumpD), .BranchD(BranchD), .ALUControlD(ALUControlD), .ALUSrcD(ALUSrcD)
+  );
 
-  // 4. Instanciar Memory
-  memStage(clk, reset, execute_signals ...);
+  // Instanciación de la etapa Execute
+  execute executeStage (
+    .clk(clk), .reset(reset),
+    .FlushE(FlushE), .ForwardAE(ForwardAE), .ForwardBE(ForwardBE),
+    .RegWriteD(RegWriteD), .ResultSrcD(ResultSrcD), .MemWriteD(MemWriteD),
+    .JumpD(JumpD), .BranchD(BranchD), .ALUControlD(ALUControlD), .ALUSrcD(ALUSrcD),
+    .RD1D(RD1D), .RD2D(RD2D), .PCD(PCD),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdD(RdD),
+    .ExtImmD(ExtImmD), .PCPlus4D(PCPlus4D), .InstrD(InstrD),
+    .ALUResultM(ALUResultM), .ResultW(ResultW),
+    .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E), .InstrE(InstrE),
+    .PCSrcE(PCSrcE), .PCTargetE(PCTargetE), .Rs1E(Rs1E), .Rs2E(Rs2E)
+  );
 
-  // 5. Instanciar Writeback
-  wbStage(clk, reset, memory_signals ...);
+  // Para conectar ZeroE que está interno a Execute si lo necesitamos en TB
+  assign ZeroE = executeStage.ZeroE;
 
-  // 6. Instanciar Hazard Unit
-  hazardUnit(Rs1D, Rs2D, Rs1E, Rs2E, RdE, RdM, RdW, ...);
+  // Instanciación de la etapa Memory
+  memory_stage memStage (
+    .clk(clk), .reset(reset),
+    .RegWriteE(RegWriteE), .ResultSrcE(ResultSrcE), .MemWriteE(MemWriteE),
+    .ALUResultE(ALUResultE), .WriteDataE(WriteDataE), .RdE(RdE), .PCPlus4E(PCPlus4E), .InstrE(InstrE),
+    .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M), .InstrM(InstrM)
+  );
+  
+  // Extraemos variables internas de Memory para el Hazard Unit y el Testbench
+  assign MemWriteM  = memStage.MemWriteM;
+  assign WriteDataM = memStage.WriteDataM;
+
+  // Instanciación de la etapa Writeback
+  writeback wbStage (
+    .clk(clk), .reset(reset),
+    .RegWriteM(RegWriteM_internal), .ResultSrcM(ResultSrcM),
+    .ALUResultM(ALUResultM), .ReadDataM(ReadDataM), .RdM(RdM), .PCPlus4M(PCPlus4M), .InstrM(InstrM),
+    .RegWriteW(RegWriteW), .ResultW(ResultW), .RdW(RdW), .InstrW(InstrW)
+  );
+
+  // Instanciación de la Hazard Unit
+  hunit hazardUnit (
+    .Rs1E(Rs1E), .Rs2E(Rs2E), .RdM(RdM), .RdW(RdW),
+    .RegWriteM(RegWriteM_internal), .RegWriteW(RegWriteW),
+    .Rs1D(Rs1D), .Rs2D(Rs2D), .RdE(RdE),
+    .ResultSrcE0(ResultSrcE[0]), .PCSrcE(PCSrcE),
+    .ForwardAE(ForwardAE), .ForwardBE(ForwardBE),
+    .StallF(StallF), .StallD(StallD),
+    .FlushD(FlushD), .FlushE(FlushE)
+  );
+
+endmodule
 \end{lstlisting}
 
 \subsection{Etapa 1: Fetch (IF)}
@@ -585,26 +681,74 @@ module riscv_pipeline(clk, reset):
 \caption{Etapa Fetch aislada con sus componentes operativos.}
 \end{figure}
 
-\subsubsection{Pseudocódigo}
+\subsubsection{Código Verilog}
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo de la etapa Fetch}]
-FETCH(clk, reset, StallF, PCSrcE, PCTargetE):
-  // 1. Seleccionar el proximo PC
-  if (PCSrcE == 1):
-    PCF_next = PCTargetE;      // Salto tomado
-  else:
-    PCF_next = PCPlus4F;       // Secuencial (PC + 4)
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog de la etapa Fetch}]
+module fetch (
+  input  logic        clk, reset,
+  input  logic        StallF,
+  input  logic        PCSrcE,
+  input  logic [31:0] PCTargetE,
+  output logic [31:0] InstrF,
+  output logic [31:0] PCF,
+  output logic [31:0] PCPlus4F // Se mantiene este nombre de puerto para no romper el pipeline
+);
 
-  // 2. Actualizar el PC (solo si no hay stall)
-  always @(posedge clk):
-    if (reset)         PCF = 0;
-    else if (!StallF)  PCF = PCF_next;
+  logic [31:0] PCF_next;
+  logic [31:0] raw_imem_data;
+  logic [31:0] actual_instr;
+  logic [15:0] cinstr;
+  logic [31:0] decompressed_instr;
+  logic        is_compressed;
+  logic [31:0] pc_increment;
 
-  // 3. Leer la instruccion de la memoria
-  InstrF = instruction_memory[PCF / 4];
+  // Multiplexor del PC
+  mux2 #(32) pcmux (
+    .d0(PCPlus4F),
+    .d1(PCTargetE),
+    .s(PCSrcE),
+    .y(PCF_next)
+  );
 
-  // 4. Calcular PC + 4
-  PCPlus4F = PCF + 4;
+  // Registro del PC
+  flopenr #(32) pcReg (
+    .clk(clk), .reset(reset), .en(~StallF),
+    .d(PCF_next), .q(PCF)
+  );
+
+  // Memoria de Instrucciones
+  imem imem_inst (
+    .a(PCF),
+    .rd(raw_imem_data)
+  );
+
+  // Lógica de Alineación (Extracción de la instrucción correcta)
+  // Si PC[1] == 1, la instrucción empieza a la mitad de la palabra leída.
+  assign actual_instr = PCF[1] ? {16'b0, raw_imem_data[31:16]} : raw_imem_data;
+
+  // Extraemos solo los 16 bits menos significativos para el descompresor
+  assign cinstr = actual_instr[15:0];
+
+  // Instanciación del Descompresor
+  decompressor decomp (
+    .cinstr(cinstr),
+    .outstr(decompressed_instr),
+    .is_compressed(is_compressed)
+  );
+
+  // Mux Final: Seleccionamos la expandida (si era C) o pasamos la normal de 32-bits
+  assign InstrF = is_compressed ? decompressed_instr : actual_instr;
+
+  // Incremento Dinámico del PC
+  assign pc_increment = is_compressed ? 32'd2 : 32'd4;
+
+  adder pcadd (
+    .a(PCF),
+    .b(pc_increment),
+    .y(PCPlus4F) // Ahora contiene PC + 2 o PC + 4 según corresponda
+  );
+
+endmodule
 \end{lstlisting}
 
 \subsection{Etapa 2: Decode (ID)}
@@ -644,29 +788,109 @@ jalr    & 1100111 & 1 & 000 & 1 & 0 & 10 & 0 & 00 \\
 
 \textbf{Nota crítica sobre el ALUControl:} El \texttt{ALUControl} usa \textbf{4 bits}, no 3. El bit [3] diferencia ADD (0000) de SUB (1000). Si se truncara a 3 bits, la resta se interpretaría como suma y fallaría la operación \texttt{sub} o la lógica de comparación de \texttt{beq}.
 
-\subsubsection{Pseudocódigo de Decode}
+\subsubsection{Código Verilog de Decode}
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo de la etapa Decode}]
-DECODE(clk, reset, StallD, FlushD, InstrF, PCF, PCPlus4F):
-  // 1. Registros IF/ID (flopenrc: con stall y flush)
-  always @(posedge clk):
-    if (reset || FlushD):
-      InstrD = 0; PCD = 0; PCPlus4D = 0;   // Insertar NOP
-    else if (!StallD):
-      InstrD = InstrF; PCD = PCF; PCPlus4D = PCPlus4F;
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog de la etapa Decode}]
+module decode (
+  // Señales de reloj y reset
+  input  logic        clk, reset,
+  
+  // Señales de control de la Hazard Unit (Riesgos)
+  input  logic        StallD, FlushD,
+  
+  // Entradas desde la etapa Fetch (F)
+  input  logic [31:0] InstrF, PCF, PCPlus4F,
+  
+  // Entradas desde la etapa Writeback (W) para el Register File
+  input  logic        RegWriteW,
+  input  logic [4:0]  RdW,
+  input  logic [31:0] ResultW,
+  
+  // Salidas hacia la etapa Execute (E) - Datos
+  output logic [31:0] InstrD, PCD, PCPlus4D,
+  output logic [31:0] RD1D, RD2D,
+  output logic [31:0] ExtImmD,
+  output logic [4:0]  Rs1D, Rs2D, RdD,
+  
+  // Salidas hacia la etapa Execute (E) - Señales de Control
+  output logic        RegWriteD,
+  output logic [1:0]  ResultSrcD,
+  output logic        MemWriteD,
+  output logic        JumpD,
+  output logic        BranchD,
+  output logic [3:0]  ALUControlD,
+  output logic        ALUSrcD
+);
 
-  // 2. Extraer campos
-  Rs1D = InstrD[19:15]; Rs2D = InstrD[24:20]; RdD = InstrD[11:7];
+  // ==========================================================================
+  // REGISTROS IF/ID (Pipeline Registers)
+  // ==========================================================================
+  
+  // Registro para la Instrucción
+  flopenrc #(32) ifIdInstr (
+    .clk(clk), .reset(reset), .en(~StallD), .clear(FlushD),
+    .d(InstrF), .q(InstrD)
+  );
 
-  // 3. Leer banco de registros (combinacional)
-  RD1D = (Rs1D != 0) ? registers[Rs1D] : 0;
-  RD2D = (Rs2D != 0) ? registers[Rs2D] : 0;
+  // Registro para el Program Counter (PC)
+  flopenrc #(32) ifIdPc (
+    .clk(clk), .reset(reset), .en(~StallD), .clear(FlushD),
+    .d(PCF), .q(PCD)
+  );
 
-  // 4. Generar senales de control
-  {RegWriteD, MemWriteD, ALUSrcD, ...} = decode_control(InstrD);
+  // Registro para PC + 4
+  flopenrc #(32) ifIdPcPlus4 (
+    .clk(clk), .reset(reset), .en(~StallD), .clear(FlushD),
+    .d(PCPlus4F), .q(PCPlus4D)
+  );
 
-  // 5. Extender inmediato
-  ExtImmD = extend_sign(InstrD[31:7], ImmSrcD);
+  // ==========================================================================
+  // EXTRACCIÓN DE CAMPOS DE LA INSTRUCCIÓN
+  // ==========================================================================
+  
+  assign Rs1D = InstrD[19:15]; // Source Register 1
+  assign Rs2D = InstrD[24:20]; // Source Register 2
+  assign RdD  = InstrD[11:7];  // Destination Register
+
+  // ==========================================================================
+  // COMPONENTES DE LA ETAPA DECODE
+  // ==========================================================================
+
+  // Register File: Banco de Registros
+  // Lee de Rs1D y Rs2D de manera asíncrona (combinacional)
+  // Escribe en RdW de manera síncrona en el flanco del reloj si RegWriteW = 1
+  regfile rf (
+    .clk(clk), .we3(RegWriteW),
+    .a1(Rs1D), .a2(Rs2D), .a3(RdW),
+    .wd3(ResultW), .rd1(RD1D), .rd2(RD2D)
+  );
+
+  // ImmSrcD es una señal de control local (solo se usa dentro de Decode)
+  logic [2:0] ImmSrcD;
+
+  // Control Unit: Decodifica la instrucción y genera las señales de control
+  controller ctrl (
+    .op(InstrD[6:0]),
+    .funct3(InstrD[14:12]),
+    .funct7(InstrD[31:25]),
+    .RegWrite(RegWriteD),
+    .ResultSrc(ResultSrcD),
+    .MemWrite(MemWriteD),
+    .Jump(JumpD),
+    .Branch(BranchD),
+    .ALUControl(ALUControlD),
+    .ALUSrc(ALUSrcD),
+    .ImmSrc(ImmSrcD)
+  );
+
+  // Extend Unit: Extiende el inmediato según el tipo de instrucción
+  extend ext (
+    .instr(InstrD[31:7]),
+    .immsrc(ImmSrcD),
+    .immext(ExtImmD)
+  );
+
+endmodule
 \end{lstlisting}
 
 % ============================================================================
@@ -688,54 +912,154 @@ Este retraso arquitectónico significa que el salto no se resuelve hasta el terc
 \caption{Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}
 \end{figure}
 
-\subsection{Pseudocódigo Completo del Execute}
+\subsection{Código Verilog de la etapa Execute}
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo de la etapa Execute}]
-EXECUTE(clk, reset, FlushE, ForwardAE, ForwardBE,
-        control_signals_D, data_D, ALUResultM, ResultW):
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog de la etapa Execute}]
+module execute (
+  // Señales de reloj y reset
+  input  logic        clk, reset,
+  
+  // Señales de control de la Hazard Unit (Riesgos)
+  input  logic        FlushE,
+  input  logic [1:0]  ForwardAE, ForwardBE,
+  
+  // Entradas desde la etapa Decode (D) - Control
+  input  logic        RegWriteD,
+  input  logic [1:0]  ResultSrcD,
+  input  logic        MemWriteD,
+  input  logic        JumpD,
+  input  logic        BranchD,
+  input  logic [3:0]  ALUControlD, 
+  input  logic        ALUSrcD,
+  
+  // Entradas desde la etapa Decode (D) - Datos
+  input  logic [31:0] RD1D, RD2D,
+  input  logic [31:0] PCD,
+  input  logic [4:0]  Rs1D, Rs2D, RdD,
+  input  logic [31:0] ExtImmD,
+  input  logic [31:0] PCPlus4D,
+  input  logic [31:0] InstrD,
+  
+  // Entradas desde Memory y Writeback (para Forwarding)
+  input  logic [31:0] ALUResultM, ResultW,
+  
+  // Salidas hacia la etapa Memory (M) y Hazard Unit
+  output logic        RegWriteE,
+  output logic [1:0]  ResultSrcE,
+  output logic        MemWriteE,
+  output logic [31:0] ALUResultE, WriteDataE,
+  output logic [4:0]  RdE,
+  output logic [31:0] PCPlus4E,
+  output logic [31:0] InstrE,
+  
+  // Salidas hacia Fetch y Hazard Unit
+  output logic        PCSrcE,
+  output logic [31:0] PCTargetE,
+  output logic [4:0]  Rs1E, Rs2E
+);
 
-  // 1. Registro ID/EX (flopenrc: sin stall, con flush)
-  always @(posedge clk):
-    if (reset || FlushE):
-      all_signals = 0;     // Insertar burbuja NOP
-    else:
-      all_signals = decode_signals;
+  // Cables internos de la etapa Execute (salidas del registro ID/EX)
+  logic        JumpE, BranchE, ALUSrcE, ZeroE;
+  logic [3:0]  ALUControlE;
+  logic [31:0] RD1E, RD2E, PCE, ExtImmE;
+  
+  // Entradas a la ALU
+  logic [31:0] SrcAE, SrcBE;
 
-  // 2. Forwarding Mux A
-  if (ForwardAE == 2'b10):      SrcAE = ALUResultM;  // de Memory
-  else if (ForwardAE == 2'b01): SrcAE = ResultW;     // de Writeback
-  else:                         SrcAE = RD1E;        // del registro
+  // ==========================================================================
+  // REGISTRO ID/EX (Pipeline Register)
+  // ==========================================================================
+  // Este registro separa la etapa de Decode de Execute. 
+  // Ojo: En el diagrama no tiene Stall (siempre habilitado, en = 1'b1), pero sí tiene FlushE
+  // para vaciarse cuando hay un salto fallido.
+  // Tiene un total de 218 bits (Control + Datos).
+  
+  flopenrc #(218) idexReg (
+    .clk(clk), .reset(reset), .en(1'b1), .clear(FlushE),
+    .d({RegWriteD, ResultSrcD, MemWriteD, JumpD, BranchD, ALUControlD, ALUSrcD, 
+        RD1D, RD2D, PCD, Rs1D, Rs2D, RdD, ExtImmD, PCPlus4D, InstrD}),
+    .q({RegWriteE, ResultSrcE, MemWriteE, JumpE, BranchE, ALUControlE, ALUSrcE, 
+        RD1E, RD2E, PCE, Rs1E, Rs2E, RdE, ExtImmE, PCPlus4E, InstrE})
+  );
 
-  // 3. Forwarding Mux B
-  if (ForwardBE == 2'b10):      WriteDataE = ALUResultM;
-  else if (ForwardBE == 2'b01): WriteDataE = ResultW;
-  else:                         WriteDataE = RD2E;
+  // ==========================================================================
+  // COMPONENTES DE LA ETAPA EXECUTE
+  // ==========================================================================
 
-  // 4. Seleccion del operando B de la ALU
-  if (ALUSrcE == 1): SrcBE = ExtImmE;     // Inmediato
-  else:              SrcBE = WriteDataE;  // Registro
+  // Forwarding Mux para la entrada A de la ALU
+  // Decide si usar RD1E, o un valor "adelantado" de Writeback o Memory
+  mux3 #(32) forwardAmux (
+    .d0(RD1E), 
+    .d1(ResultW), 
+    .d2(ALUResultM),
+    .s(ForwardAE), 
+    .y(SrcAE)
+  );
 
-  // 5. Ejecutar ALU
-  ALUResultE = ALU(SrcAE, SrcBE, ALUControlE);
-  ZeroE = (ALUResultE == 0);
+  // Forwarding Mux para la entrada B de la ALU
+  // Decide si usar RD2E, o un valor "adelantado" de Writeback o Memory
+  // Nota: La salida de este mux es WriteDataE (el dato que se guardará en memoria)
+  mux3 #(32) forwardBmux (
+    .d0(RD2E), 
+    .d1(ResultW), 
+    .d2(ALUResultM),
+    .s(ForwardBE), 
+    .y(WriteDataE)
+  );
 
-  // 6. Calcular direccion de salto (Multiplexacion JALR / Branch)
-  isJALRE = (InstrE[6:0] == 7'b1100111);
-  PCTargetBaseE = isJALRE ? SrcAE : PCE;
-  PCTargetE = (PCTargetBaseE + ExtImmE) & ~32'd1; // Limpiar LSB
+  // Mux que selecciona el operando B de la ALU
+  // (entre WriteDataE o el Inmediato Extendido)
+  mux2 #(32) srcBmux (
+    .d0(WriteDataE), 
+    .d1(ExtImmE),
+    .s(ALUSrcE), 
+    .y(SrcBE)
+  );
 
-  // 7. Evaluar condicion de salto segun funct3 (InstrE[14:12])
-  case (InstrE[14:12]) of:
-    3'b000 (beq):  TakeBranchE = ZeroE;
-    3'b001 (bne):  TakeBranchE = ~ZeroE;
-    3'b100 (blt):  TakeBranchE = $signed(SrcAE) < $signed(SrcBE);
-    3'b101 (bge):  TakeBranchE = $signed(SrcAE) >= $signed(SrcBE);
-    3'b110 (bltu): TakeBranchE = SrcAE < SrcBE;
-    3'b111 (bgeu): TakeBranchE = SrcAE >= SrcBE;
-    default:       TakeBranchE = 0;
+  // ALU (Unidad Aritmético Lógica)
+  alu aluUnit (
+    .a(SrcAE), 
+    .b(SrcBE),
+    .alucontrol(ALUControlE),
+    .result(ALUResultE), 
+    .zero(ZeroE)
+  );
+  logic        isJALRE;
+  logic [31:0] pcTargetBaseE;
+  logic [31:0] pcTargetAddOutE;
+  logic        TakeBranchE;
 
-  // 8. Decidir si se toma el salto
-  PCSrcE = (BranchE && TakeBranchE) || JumpE;
+  // Detección local de JALR en Execute
+  assign isJALRE = (InstrE[6:0] == 7'b1100111);
+  assign pcTargetBaseE = isJALRE ? SrcAE : PCE;
+
+  // Sumador para la dirección de salto (PC o registro base + Inmediato Extendido)
+  adder pcTargetAdd (
+    .a(pcTargetBaseE), 
+    .b(ExtImmE), 
+    .y(pcTargetAddOutE)
+  );
+
+  // El bit menos significativo de la dirección calculada por jalr se limpia
+  assign PCTargetE = {pcTargetAddOutE[31:1], 1'b0};
+
+  // Lógica para decidir si se toma el salto para distintas condiciones
+  always_comb begin
+    case (InstrE[14:12])
+      3'b000:  TakeBranchE = ZeroE;                     // beq
+      3'b001:  TakeBranchE = ~ZeroE;                    // bne
+      3'b100:  TakeBranchE = $signed(SrcAE) < $signed(SrcBE); // blt
+      3'b101:  TakeBranchE = $signed(SrcAE) >= $signed(SrcBE); // bge
+      3'b110:  TakeBranchE = SrcAE < SrcBE;             // bltu
+      3'b111:  TakeBranchE = SrcAE >= SrcBE;            // bgeu
+      default: TakeBranchE = 1'b0;
+    endcase
+  end
+
+  // PCSrcE = 1 si ocurre un Branch válido y se cumple la condición, o si es un Jump
+  assign PCSrcE = (BranchE & TakeBranchE) | JumpE;
+
+endmodule
 \end{lstlisting}
 
 % ============================================================================
@@ -760,30 +1084,122 @@ La Memoria de Datos representa típicamente la caché L1 de datos en un procesad
 \caption{Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}
 \end{figure}
 
-\subsection{Pseudocódigo de ambas etapas}
+\subsection{Código Verilog de las etapas Memory y Writeback}
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo de Memory y Writeback}]
-MEMORY(clk, reset, execute_signals):
-  // 1. Registro EX/MEM (flopr: siempre avanza)
-  always @(posedge clk):
-    if (reset) all_signals = 0;
-    else       all_signals = execute_signals;
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog de la etapa Memory}]
+module memory_stage (
+  // Señales de reloj y reset
+  input  logic        clk, reset,
+  
+  // Entradas desde la etapa Execute (E)
+  input  logic        RegWriteE,
+  input  logic [1:0]  ResultSrcE,
+  input  logic        MemWriteE,
+  input  logic [31:0] ALUResultE, WriteDataE,
+  input  logic [4:0]  RdE,
+  input  logic [31:0] PCPlus4E,
+  input  logic [31:0] InstrE,
+  
+  // Salidas hacia la etapa Writeback (W) y Forwarding
+  output logic        RegWriteM,
+  output logic [1:0]  ResultSrcM,
+  output logic [31:0] ALUResultM,
+  output logic [31:0] ReadDataM,
+  output logic [4:0]  RdM,
+  output logic [31:0] PCPlus4M,
+  output logic [31:0] InstrM
+);
 
-  // 2. Acceso a Memoria de Datos
-  ReadDataM = data_memory[ALUResultM / 4];  // Lectura combinacional
-  if (MemWriteM == 1):                      // Escritura sincrona
-    data_memory[ALUResultM / 4] = WriteDataM;
+  // Cables internos
+  logic        MemWriteM;
+  logic [31:0] WriteDataM;                
 
-WRITEBACK(clk, reset, memory_signals):
-  // 1. Registro MEM/WB (flopr: siempre avanza)
-  always @(posedge clk):
-    if (reset) all_signals = 0;
-    else       all_signals = memory_signals;
+  // ==========================================================================
+  // REGISTRO EX/MEM (Pipeline Register)
+  // ==========================================================================
+  // Separa la etapa de Execute de Memory. 
+  // En el diagrama base de RISC-V, este registro NO tiene Stall ni Flush.
+  // Pasan 137 bits en total: 5 bits de Control + 132 bits de Datos.
+  
+  flopr #(137) exmemReg (
+    .clk(clk), .reset(reset),
+    .d({RegWriteE, ResultSrcE, MemWriteE, ALUResultE, WriteDataE, RdE, PCPlus4E, InstrE}),
+    .q({RegWriteM, ResultSrcM, MemWriteM, ALUResultM, WriteDataM, RdM, PCPlus4M, InstrM})
+  );
 
-  // 2. Seleccionar resultado final
-  if (ResultSrcW == 2'b00):      ResultW = ALUResultW;   // Aritmetica
-  else if (ResultSrcW == 2'b01): ResultW = ReadDataW;   // Load (lw)
-  else if (ResultSrcW == 2'b10): ResultW = PCPlus4W;    // JAL
+  // ==========================================================================
+  // COMPONENTES DE LA ETAPA MEMORY
+  // ==========================================================================
+
+  // Data Memory: Memoria de Datos
+  // Usa ALUResultM como dirección de memoria y WriteDataM como el dato a guardar.
+  // Solo escribe si MemWriteM está activo.
+  dmem dataMemory (
+    .clk(clk), 
+    .we(MemWriteM),
+    .a(ALUResultM), 
+    .wd(WriteDataM),
+    .rd(ReadDataM)
+  );
+
+endmodule
+\end{lstlisting}
+
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog de la etapa Writeback}]
+module writeback (
+  // Señales de reloj y reset
+  input  logic        clk, reset,
+  
+  // Entradas desde la etapa Memory (M)
+  input  logic        RegWriteM,
+  input  logic [1:0]  ResultSrcM,
+  input  logic [31:0] ALUResultM, ReadDataM,
+  input  logic [4:0]  RdM,
+  input  logic [31:0] PCPlus4M,
+  input  logic [31:0] InstrM,
+  
+  // Salidas hacia la etapa Decode (D) y Forwarding
+  output logic        RegWriteW,
+  output logic [31:0] ResultW,
+  output logic [4:0]  RdW,
+  output logic [31:0] InstrW
+);
+
+  // Cables internos (salidas del registro MEM/WB)
+  logic [1:0]  ResultSrcW;
+  logic [31:0] ALUResultW, ReadDataW, PCPlus4W;
+
+  // ==========================================================================
+  // REGISTRO MEM/WB (Pipeline Register)
+  // ==========================================================================
+  // Separa la etapa de Memory de Writeback. 
+  // No tiene Stall ni Flush en el diseño básico.
+  // Pasan 136 bits en total: 4 bits de Control + 132 bits de Datos.
+  
+  flopr #(136) memwbReg (
+    .clk(clk), .reset(reset),
+    .d({RegWriteM, ResultSrcM, ALUResultM, ReadDataM, RdM, PCPlus4M, InstrM}),
+    .q({RegWriteW, ResultSrcW, ALUResultW, ReadDataW, RdW, PCPlus4W, InstrW})
+  );
+
+  // ==========================================================================
+  // COMPONENTES DE LA ETAPA WRITEBACK
+  // ==========================================================================
+
+  // Multiplexor de Resultado
+  // Selecciona qué dato se guardará en el Register File (o se reenviará por forwarding)
+  // 00 -> Resultado de la ALU
+  // 01 -> Dato leído de la Memoria
+  // 10 -> PC + 4 (Usado típicamente para llamadas a funciones: JAL/JALR)
+  mux3 #(32) resultMux (
+    .d0(ALUResultW), 
+    .d1(ReadDataW), 
+    .d2(PCPlus4W),
+    .s(ResultSrcW), 
+    .y(ResultW)
+  );
+
+endmodule
 \end{lstlisting}
 
 % ============================================================================
@@ -867,7 +1283,16 @@ Para este caso, se ejecuta el Programa 2, el cual intenta realizar operaciones a
 \caption{Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt{add} los necesita.}
 \end{figure}
 
-\textbf{Interpretación:} Sin forwarding, la instrucción \texttt{add x4, x2, x3} lee los registros \texttt{x2} y \texttt{x3} directamente del banco de registros. Como estas instrucciones previas (\texttt{addi x2} y \texttt{addi x3}) aún no han llegado a Writeback, la ALU recibe ceros y el resultado es incorrecto.
+\textbf{Análisis de Falla de Dependencia RAW en el Ciclo de Reloj:}
+\begin{enumerate}
+  \item La instrucción \texttt{addi x2, x0, 5} calcula el valor \texttt{5} en el ciclo 3 (etapa Execute) y avanza.
+  \item La instrucción \texttt{addi x3, x0, 12} calcula el valor \texttt{12} en el ciclo 4 (etapa Execute).
+  \item En el ciclo 4, la instrucción \texttt{add x4, x2, x3} se encuentra en la etapa \textbf{Decode} y realiza la lectura física del banco de registros. Dado que el banco de registros solo actualiza sus salidas al final de la etapa de Writeback (lo cual ocurre en el ciclo 5 para \texttt{x2} y ciclo 6 para \texttt{x3}), los valores leídos para ambos registros son \texttt{0x00000000} (los valores antiguos o nulos).
+  \item En el ciclo 5, la instrucción \texttt{add x4} avanza a la etapa \textbf{Execute}. Sin la Hazard Unit, las señales de control de reenvío se desactivan (\texttt{ForwardAE = 00}, \texttt{ForwardBE = 00}). La ALU efectúa la operación básica sin corregir los operandos:
+  \[ \text{Resultado} = 0 + 0 = 0 \]
+  \item En lugar de almacenar \texttt{17} (\texttt{0x11}) en el registro \texttt{x4}, se escribe el valor erróneo \texttt{0} en el banco de registros al completar Writeback en el ciclo 7.
+\end{enumerate}
+\textbf{Error:} La dependencia de datos tipo \textit{Read After Write} (RAW) es completamente ignorada por el datapath, resultando en la corrupción silenciosa del resultado aritmético.
 
 \subsubsection{Programa 3 SIN Hazard Unit (Stalling)}
 
@@ -887,7 +1312,17 @@ En esta prueba se ejecuta el Programa 3, el cual presenta una dependencia de tip
 \caption{Programa 3 SIN Hazard Unit. El \texttt{add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}
 \end{figure}
 
-\textbf{Interpretación:} El \texttt{lw x3, 100(x0)} carga un dato de memoria, pero el pipeline no se detiene. La instrucción \texttt{add x4, x3, x2} entra a Execute antes de que el dato esté disponible, produciendo un resultado corrupto.
+\textbf{Análisis de Falla de Dependencia Load-Use en el Ciclo de Reloj:}
+\begin{enumerate}
+  \item La instrucción \texttt{lw x3, 100(x0)} calcula la dirección física de la memoria (\texttt{100}) en el ciclo 5 (etapa Execute) y realiza el acceso de lectura a la RAM en el ciclo 6 (etapa Memory).
+  \item En el ciclo 6, la instrucción \texttt{add x4, x3, x2} está en la etapa \textbf{Execute} y requiere como operando el dato cargado de la memoria en \texttt{x3}.
+  \item Puesto que la memoria de datos devuelve el valor leído al final de la etapa de Memory (ciclo 6), físicamente es imposible proveer dicho dato a la ALU en el ciclo 6 sin detener previamente el flujo del procesador por al menos un ciclo.
+  \item Sin la Hazard Unit, no se generan las señales de detención (\texttt{StallF = 0}, \texttt{StallD = 0}). El procesador no inserta ninguna burbuja de espera (NOP). La instrucción \texttt{add x4} continúa en Execute leyendo el contenido obsoleto del banco de registros (\texttt{x3 = 0}).
+  \item La ALU realiza la suma de forma incorrecta:
+  \[ \text{Resultado} = x3_{\text{antiguo}} + x2 = 0 + 5 = 5 \]
+  \item En el ciclo 7, el dato real leído de la memoria por \texttt{lw} (\texttt{5}) llega a la etapa de Writeback, pero el pipeline ya ha procesado la operación \texttt{add} con el valor corrupto, escribiendo un resultado erróneo en el banco de registros.
+\end{enumerate}
+\textbf{Error:} El pipeline no congela las etapas de Fetch y Decode, provocando que la instrucción consumidora intente operar con el bus de memoria antes de que la lectura física haya culminado.
 
 \subsubsection{Programa 4 SIN Hazard Unit (Flushing)}
 
@@ -895,7 +1330,7 @@ Para evaluar los riesgos de control se ejecuta el Programa 4, el cual realiza un
 
 \begin{lstlisting}[style=pseudo, caption={Programa 4: test\_flushing.mem (para deshabilitado)}]
 00: addi x2, x0, 5       // x2 = 5
-04: beq  x2, x2, 12      // Salta a linea 10 hex (siempre verdadero)
+04: beq  x2, x2, 12      // Salta a línea 10 hex (siempre verdadero)
 08: addi x3, x0, 1       // FLUSHED (no debe ejecutarse)
 0C: addi x3, x0, 99      // FLUSHED (no debe ejecutarse)
 10: add  x4, x0, x2      // x4 = 5 (destino del salto)
@@ -908,7 +1343,14 @@ Para evaluar los riesgos de control se ejecuta el Programa 4, el cual realiza un
 \caption{Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt{beq}.}
 \end{figure}
 
-\textbf{Interpretación:} Sin la Hazard Unit, las instrucciones que preparan los operandos del \texttt{beq} no reciben los datos correctos vía forwarding. Esto puede causar que el salto se tome (o no) de forma errónea, ejecutando código que no debería ejecutarse.
+\textbf{Análisis de Pérdida de Control en Saltos en el Ciclo de Reloj:}
+\begin{enumerate}
+  \item En el ciclo 4, la instrucción \texttt{beq x2, x2, 12} está en la etapa \textbf{Execute}. La ALU detecta la igualdad de los registros y activa la señal de redirección del PC (\texttt{PCSrcE = 1}).
+  \item Sin embargo, debido a la precarga secuencial inherente de la segmentación, durante los ciclos de decodificación del salto, el procesador ya ha ingresado las instrucciones de las direcciones consecutivas \texttt{0x08} (etapa Decode) y \texttt{0x0C} (etapa Fetch).
+  \item Al estar la Hazard Unit desactivada, las señales de vaciado de etapa permanecen inactivas (\texttt{FlushD = 0}, \texttt{FlushE = 0}). Los registros de acoplamiento \texttt{IF/ID} y \texttt{ID/EX} no limpian su contenido.
+  \item En consecuencia, durante los ciclos 5 y 6, las instrucciones de la ruta especulativa errónea (\texttt{addi x3, x0, 1} y \texttt{addi x3, x0, 99}) continúan avanzando a través de Execute, Memory y Writeback, modificando el estado del banco de registros al escribir \texttt{99} en el registro \texttt{x3}.
+\end{enumerate}
+\textbf{Error:} Se ejecutan instrucciones especulativas ubicadas en el camino secuencial posterior a un salto tomado. Esto corrompe los registros y la memoria de datos con valores correspondientes a un camino de ejecución prohibido.
 
 
 % ============================================================================
@@ -975,18 +1417,18 @@ else if ((Rs1E == RdW) && RegWriteW && (Rs1E != 0)):
 else:
     ForwardAE = 2'b00;    // Sin forwarding (usar registro)
 
-// Forwarding para operando B (misma logica con Rs2E)
+// Forwarding para operando B (misma lógica con Rs2E)
 \end{lstlisting}
 
 \subsection{Mecanismo 2: Stall (Load-Use Hazard)}
 El forwarding no puede resolver el Load-Use hazard (cuando un \texttt{lw} es seguido inmediatamente por una instrucción que lo usa). En ese caso, la Hazard Unit congela (stall) el PC y el IF/ID, e inserta una burbuja (flush) en el ID/EX.
 
 \begin{lstlisting}[style=pseudo, caption={Lógica de detección de Load-Use Hazard}]
-// ResultSrcE[0] == 1 indica que la instruccion es un lw
+// ResultSrcE[0] == 1 indica que la instrucción es un lw
 lwStall = ResultSrcE[0] && ((Rs1D == RdE) || (Rs2D == RdE));
 
 StallF = lwStall;    // Congelar PC (no avanza)
-StallD = lwStall;    // Congelar IF/ID (mantener instruccion)
+StallD = lwStall;    // Congelar IF/ID (mantener instrucción)
 FlushE = lwStall;    // Vaciar ID/EX (insertar burbuja NOP)
 \end{lstlisting}
 
@@ -1084,7 +1526,7 @@ El programa fuerza un Control Hazard con un salto condicional (\texttt{beq}) que
 
 \begin{lstlisting}[style=pseudo, caption={Programa 4: test\_flushing.mem}]
 00: addi x2, x0, 5       // x2 = 5
-04: beq  x2, x2, 12      // Salta a linea 10 hex (siempre verdadero)
+04: beq  x2, x2, 12      // Salta a línea 10 hex (siempre verdadero)
 08: addi x3, x0, 1       // FLUSHED (no debe ejecutarse)
 0C: addi x3, x0, 99      // FLUSHED (no debe ejecutarse)
 10: add  x4, x0, x2      // x4 = 5 (destino del salto)
@@ -1178,143 +1620,176 @@ AC: addi x26, x0, 77 // x26 = 77 (0x4D) (Destino del salto indirecto JALR)
 % SECCION 7: EXTENSION RVC (16 BITS)
 % ============================================================================
 \section{Extension RVC (16-bits)}
-La extension estandar RVC (Compressed Instructions) de la arquitectura RISC-V tiene como objetivo reducir el tamano del codigo permitiendo que las instrucciones mas frecuentes sean codificadas en 16 bits (2 bytes) en lugar de los 32 bits tradicionales.
+La extension estandar RVC (Compressed Instructions) de la arquitectura RISC-V tiene como objetivo reducir el tamaño del código permitiendo que las instrucciones más frecuentes sean codificadas en 16 bits (2 bytes) en lugar de los 32 bits tradicionales.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../Images/Entrega2/diagrama_fetch_rvc.png}
-\caption{Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresion combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID.}
+\caption{Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresión combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID.}
 \label{fig:diagrama_fetch_rvc}
 \end{figure}
 
 \subsection{El Reto Arquitectonico y la Solucion}
-En nuestro diseno original pipelined de 5 etapas, la CPU estaba disenada asumiendo que el universo entero estaba hecho de bloques de 32 bits. Para no tener que reescribir todo el procesador (lo cual habria destruido la Hazard Unit), se adopto una solucion sumamente elegante: \textbf{ocultarle al pipeline que existen instrucciones de 16 bits}.
+En nuestro diseño original pipelined de 5 etapas, la CPU estaba diseñada asumiendo que el universo entero estaba hecho de bloques de 32 bits. Para no tener que reescribir todo el procesador (lo cual habria destruido la Hazard Unit), se adopto una solucion sumamente elegante: \textbf{ocultarle al pipeline que existen instrucciones de 16 bits}.
 
-La meta fue crear un descompresor combinacional dentro de la primera etapa (Fetch). Cuando llega una instruccion de 16 bits, este traductor la convierte instantaneamente en su equivalente de 32 bits antes de que pase a la etapa Decode. Asi, Decode siempre ve instrucciones estandar de 32 bits.
+La meta fue crear un descompresor combinacional dentro de la primera etapa (Fetch). Cuando llega una instrucción de 16 bits, este traductor la convierte instantaneamente en su equivalente de 32 bits antes de que pase a la etapa Decode. Así, Decode siempre ve instrucciones estandar de 32 bits.
 
 
-\subsection{Modificaciones al Codigo}
+\subsection{Modificaciones al Código}
 \begin{itemize}
     \item \textbf{Alineacion en Memoria:} Ahora la memoria se lee en bloques de 32 bits estandar, pero introducimos un multiplexor de hardware que revisa si el Program Counter esta desalineado (bit \texttt{PCF[1]}).
-    \item \textbf{Descompresor (\texttt{decompressor.v}):} Este modulo extrae los 16 bits mas bajos, revisa si es una instruccion comprimida, e infla los bits a su version RV32I.
-    \item \textbf{El Engano al Pipeline:} Se utiliza un multiplexor para elegir entre la instruccion leida original o la version expandida por el descompresor.
-    \item \textbf{Avance Dinamico del PC:} El Program Counter ya no avanza 4 bytes rigidamente, sino que avanza $+2$ si la instruccion fue de 16 bits o $+4$ si fue de 32 bits.
+    \item \textbf{Descompresor (\texttt{decompressor.v}):} Este módulo extrae los 16 bits más bajos, revisa si es una instrucción comprimida, e infla los bits a su version RV32I.
+    \item \textbf{El Engaño al Pipeline:} Se utiliza un multiplexor para elegir entre la instrucción leida original o la version expandida por el descompresor.
+    \item \textbf{Avance Dinamico del PC:} El Program Counter ya no avanza 4 bytes rigidamente, sino que avanza $+2$ si la instrucción fue de 16 bits o $+4$ si fue de 32 bits.
 \end{itemize}
 
 \subsection{Justificacion: Unidad de Riesgos (Hazard Unit)}
-Como parte de los requerimientos de diseno, es crucial justificar por que la Unidad de Riesgos (\texttt{hunit.v}) no requirio ninguna modificacion para soportar la extension RVC. 
+Como parte de los requerimientos de diseño, es crucial justificar por que la Unidad de Riesgos (\texttt{hunit.v}) no requirio ninguna modificacion para soportar la extension RVC. 
 
-La respuesta radica en la \textbf{estrategia de expansion en tiempo cero en la etapa de Fetch}. Al ubicar el modulo descompresor combinacional de RVC justo antes del registro de acoplamiento \texttt{IF/ID}, se logra un desacoplamiento completo (decoupling) entre la naturaleza de 16 bits de las instrucciones comprimidas y el resto del pipeline. 
+La respuesta radica en la \textbf{estrategia de expansion en tiempo cero en la etapa de Fetch}. Al ubicar el módulo descompresor combinacional de RVC justo antes del registro de acoplamiento \texttt{IF/ID}, se logra un desacoplamiento completo (decoupling) entre la naturaleza de 16 bits de las instrucciones comprimidas y el resto del pipeline. 
 
-A continuacion se detallan las razones arquitectonicas y de control de esta decision:
+A continuación se detallan las razones arquitectonicas y de control de esta decision:
 \begin{enumerate}
-    \item \textbf{Transparencia en Decode (ID):} Dado que la descompresion y alineacion ocurren en la etapa Fetch (IF), la instruccion que se escribe en el registro \texttt{IF/ID} y que posteriormente ingresa a la etapa Decode es siempre una instruccion RV32I estandar de 32 bits (\texttt{InstrD}). Por lo tanto, los puertos de lectura del banco de registros reciben las direcciones correctas de los registros fuente (\texttt{rs1} y \texttt{rs2}), y la Unidad de Control genera las senales de control estandar (ej. \texttt{RegWrite}, \texttt{MemtoReg}, \texttt{ALUControl}).
-    \item \textbf{Deteccion Homogenea de Riesgos de Datos (RAW Hazards):} La Hazard Unit opera comparando las direcciones de los registros fuente de la instruccion en Decode (\texttt{Rs1D}, \texttt{Rs2D}) con las direcciones de los registros destino de las instrucciones previas en las etapas de Execute, Memory y Writeback (\texttt{RdE}, \texttt{RdM}, \texttt{RdW}). Como la instruccion en Decode ya ha sido inflada a 32 bits, los campos de registro se encuentran en las posiciones de bits estandar de RISC-V, permitiendo a la Hazard Unit detectar coincidencias y aplicar reenvio (forwarding) o detencion (stall) de manera totalmente transparente.
-    \item \textbf{Manejo de Riesgos de Control (Control Hazards):} Ante saltos tomados (como \texttt{c.j}, \texttt{c.jal}, o branches comprimidos como \texttt{c.beqz}), el control se resuelve en la etapa Execute (EX) activando la senal \texttt{PCSrcE = 1}. Al igual que en la ISA base, la Hazard Unit responde activando \texttt{FlushD = 1} y \texttt{FlushE = 1} para vaciar las instrucciones especulativas en Fetch y Decode. El vaciado del pipeline escribe un NOP estandar (\texttt{0x00000013}) en los registros del pipeline, neutralizando cualquier instruccion sin importar si era de 16 o 32 bits originalmente.
-    \item \textbf{Conservacion del Critical Path de Control:} La Hazard Unit suele estar en uno de los caminos criticos de temporizacion del procesador debido a la gran cantidad de comparaciones logicas necesarias para forwarding. Mantenerla agnostica al tamano de la instruccion evita anadir retardos adicionales en Decode/Execute, conservando la frecuencia maxima de reloj del procesador.
+    \item \textbf{Transparencia en Decode (ID):} Dado que la descompresión y alineacion ocurren en la etapa Fetch (IF), la instrucción que se escribe en el registro \texttt{IF/ID} y que posteriormente ingresa a la etapa Decode es siempre una instrucción RV32I estandar de 32 bits (\texttt{InstrD}). Por lo tanto, los puertos de lectura del banco de registros reciben las direcciones correctas de los registros fuente (\texttt{rs1} y \texttt{rs2}), y la Unidad de Control genera las señales de control estandar (ej. \texttt{RegWrite}, \texttt{MemtoReg}, \texttt{ALUControl}).
+    \item \textbf{Deteccion Homogenea de Riesgos de Datos (RAW Hazards):} La Hazard Unit opera comparando las direcciones de los registros fuente de la instrucción en Decode (\texttt{Rs1D}, \texttt{Rs2D}) con las direcciones de los registros destino de las instrucciones previas en las etapas de Execute, Memory y Writeback (\texttt{RdE}, \texttt{RdM}, \texttt{RdW}). Como la instrucción en Decode ya ha sido inflada a 32 bits, los campos de registro se encuentran en las posiciones de bits estandar de RISC-V, permitiendo a la Hazard Unit detectar coincidencias y aplicar reenvio (forwarding) o detencion (stall) de manera totalmente transparente.
+    \item \textbf{Manejo de Riesgos de Control (Control Hazards):} Ante saltos tomados (como \texttt{c.j}, \texttt{c.jal}, o branches comprimidos como \texttt{c.beqz}), el control se resuelve en la etapa Execute (EX) activando la señal \texttt{PCSrcE = 1}. Al igual que en la ISA base, la Hazard Unit responde activando \texttt{FlushD = 1} y \texttt{FlushE = 1} para vaciar las instrucciones especulativas en Fetch y Decode. El vaciado del pipeline escribe un NOP estandar (\texttt{0x00000013}) en los registros del pipeline, neutralizando cualquier instrucción sin importar si era de 16 o 32 bits originalmente.
+    \item \textbf{Conservacion del Critical Path de Control:} La Hazard Unit suele estar en uno de los caminos criticos de temporizacion del procesador debido a la gran cantidad de comparaciones lógicas necesarias para forwarding. Mantenerla agnostica al tamaño de la instrucción evita añadir retardos adicionales en Decode/Execute, conservando la frecuencia maxima de reloj del procesador.
 \end{enumerate}
-En conclusion, el descompresor actua como un "filtro de traduccion" temprano en el pipeline. Esto permite que el resto del procesador, incluyendo la compleja Unidad de Riesgos, funcione como si estuviera ejecutando un programa RV32I puro, garantizando la correctitud y robustez del diseno.
+En conclusión, el descompresor actua como un "filtro de traduccion" temprano en el pipeline. Esto permite que el resto del procesador, incluyendo la compleja Unidad de Riesgos, funcione como si estuviera ejecutando un programa RV32I puro, garantizando la correctitud y robustez del diseño.
 
-\subsection{Pseudocodigo de la Extension RVC}
-A continuacion se presenta el pseudocodigo correspondiente a la etapa de Fetch modificada con soporte RVC y el modulo descompresor combinacional de 16 a 32 bits, siguiendo el mismo formato de la primera entrega.
+\subsection{Código Verilog de la Extensión RVC}
+A continuación se presenta el código Verilog correspondiente al módulo descompresor combinacional de 16 a 32 bits (\texttt{decompressor.v}). Este módulo es responsable de expandir en tiempo cero las instrucciones de 16 bits de la extensión RVC a sus equivalentes base de 32 bits (RV32I).
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo de la etapa Fetch con RVC}]
-FETCH_RVC(clk, reset, StallF, PCSrcE, PCTargetE):
-  // 1. Seleccion del proximo PC
-  if (PCSrcE == 1):
-    PCF_next = PCTargetE;       // Salto tomado (de Execute)
-  else:
-    PCF_next = PCPlus4F;        // Secuencial (PC + 2 o PC + 4)
+Para ver cómo se integra este módulo en la primera etapa del datapath, consúltese el código de la etapa Fetch en la Sección 2.5, que detalla la alineación de la instrucción en base al bit \texttt{PCF[1]}, la instanciación de este descompresor, el multiplexor final de selección de instrucción y el sumador con incremento dinámico del PC.
 
-  // 2. Actualizar el PC (sincrono, sensible a StallF)
-  always @(posedge clk):
-    if (reset)         PCF = 0;
-    else if (!StallF)  PCF = PCF_next;
+\begin{lstlisting}[style=verilogstyle, caption={Código Verilog del módulo descompresor RVC}]
+module decompressor(
+    input  logic [15:0] cinstr,    // Instrucción de 16-bits
+    output logic [31:0] outstr,    // Instrucción expandida de 32-bits
+    output logic        is_compressed // Bandera indicadora
+);
+    // Toda instrucción comprimida termina en 00, 01 o 10. (11 es 32-bits)
+    assign is_compressed = (cinstr[1:0] != 2'b11);
 
-  // 3. Leer palabra de 32 bits de IMEM
-  raw_imem_data = instruction_memory[PCF / 4];
+    // ========================================================================
+    // VARIABLES AUXILIARES (Extracción de campos RVC)
+    // ========================================================================
+    logic [4:0] rd_rs1;
+    logic [4:0] rdp_rs1p; 
+    logic [4:0] rs2p;     
+    logic [4:0] rs2;
 
-  // 4. Mux de alineacion (segun PCF[1])
-  if (PCF[1] == 1):
-    actual_instr = {16'b0, raw_imem_data[31:16]}; // Desalineado a media palabra
-  else:
-    actual_instr = raw_imem_data;                 // Alineado a palabra completa
+    // Variables para inmediatos
+    logic [11:0] imm_addi;
+    logic [19:0] imm_lui;
+    logic [4:0]  shamt;
+    
+    // Nuevas variables para Memoria y Saltos
+    logic [6:0]  imm_lw_sw;
+    logic [7:0]  imm_lwsp;
+    logic [7:0]  imm_swsp;
+    logic [20:0] j_imm;
+    logic [12:0] b_imm;
 
-  // 5. Descompresion combinacional RVC
-  cinstr = actual_instr[15:0];
-  (decompressed_instr, is_compressed) = DECOMPRESSOR(cinstr);
+    // ========================================================================
+    // ASIGNACIONES CONTINUAS (Desempaquetado de bits)
+    // ========================================================================
+    assign rd_rs1   = cinstr[11:7];
+    assign rs2      = cinstr[6:2];
+    assign rdp_rs1p = {2'b01, cinstr[9:7]}; // Sumar 8 para registros RVC (x8-x15)
+    assign rs2p     = {2'b01, cinstr[4:2]}; // Sumar 8 para registros RVC (x8-x15)
+    
+    assign imm_addi = {{6{cinstr[12]}}, cinstr[12], cinstr[6:2]};
+    assign imm_lui  = {{15{cinstr[12]}}, cinstr[6:2]};
+    assign shamt    = {cinstr[12], cinstr[6:2]};
 
-  // 6. Mux final: Enganar al pipeline
-  if (is_compressed == 1):
-    InstrF = decompressed_instr;  // Enviamos la instruccion expandida
-  else:
-    InstrF = actual_instr;        // Enviamos la instruccion original
+    // Immediatos de Memoria
+    assign imm_lw_sw = {cinstr[5], cinstr[12:10], cinstr[6], 2'b00};
+    assign imm_lwsp  = {cinstr[3:2], cinstr[12], cinstr[6:4], 2'b00};
+    assign imm_swsp  = {cinstr[8:7], cinstr[12:9], 2'b00};
 
-  // 7. Incremento dinamico del PC
-  if (is_compressed == 1):
-    pc_increment = 2;             // Instruccion de 16 bits
-  else:
-    pc_increment = 4;             // Instruccion de 32 bits
+    // Immediatos de Saltos (J-Type y B-Type)
+    assign j_imm = {{10{cinstr[12]}}, cinstr[8], cinstr[10:9], cinstr[6], cinstr[7], cinstr[2], cinstr[11], cinstr[5:3], 1'b0};
+    assign b_imm = {{5{cinstr[12]}}, cinstr[6:5], cinstr[2], cinstr[11:10], cinstr[4:3], 1'b0};
 
-  PCPlus4F = PCF + pc_increment;
-\end{lstlisting}
+    // ========================================================================
+    // LÓGICA DE TRADUCCIÓN A 32-BITS
+    // ========================================================================
+    always_comb begin
+        outstr = 32'h00000013; // Por defecto: NOP (addi x0, x0, 0)
+        
+        if (is_compressed) begin
+            case (cinstr[1:0])
+                // -----------------------------------------------------------
+                // CUADRANTE 0 (Memoria basada en registros limitados)
+                // -----------------------------------------------------------
+                2'b00: begin 
+                    case (cinstr[15:13])
+                        3'b010: outstr = {5'b0, imm_lw_sw, rdp_rs1p, 3'b010, rs2p, 7'b0000011}; // c.lw
+                        3'b110: outstr = {5'b0, imm_lw_sw[6:5], rs2p, rdp_rs1p, 3'b010, imm_lw_sw[4:0], 7'b0100011}; // c.sw
+                    endcase
+                end
 
-\begin{lstlisting}[style=pseudo, caption={Pseudocódigo del Módulo Descompresor RVC}]
-DECOMPRESSOR(cinstr):
-  is_compressed = (cinstr[1:0] != 2'b11);
-  if not is_compressed:
-    return (raw_instruction, false);
+                // -----------------------------------------------------------
+                // CUADRANTE 1 (Aritmética, Saltos y Branches)
+                // -----------------------------------------------------------
+                2'b01: begin 
+                    case (cinstr[15:13])
+                        3'b000: outstr = {imm_addi, rd_rs1, 3'b000, rd_rs1, 7'b0010011}; // c.addi
+                        3'b001: outstr = {j_imm[20], j_imm[10:1], j_imm[11], j_imm[19:12], 5'b00001, 7'b1101111}; // c.jal
+                        3'b011: outstr = {imm_lui, rd_rs1, 7'b0110111};                  // c.lui
+                        3'b100: begin // Grupo ALU
+                            case (cinstr[11:10])
+                                2'b00: outstr = {7'b0000000, shamt, rdp_rs1p, 3'b101, rdp_rs1p, 7'b0010011}; // c.srli
+                                2'b01: outstr = {7'b0100000, shamt, rdp_rs1p, 3'b101, rdp_rs1p, 7'b0010011}; // c.srai
+                                2'b10: outstr = {imm_addi, rdp_rs1p, 3'b111, rdp_rs1p, 7'b0010011};          // c.andi
+                                2'b11: begin // Operaciones entre registros
+                                    case (cinstr[6:5])
+                                        2'b00: outstr = {7'b0100000, rs2p, rdp_rs1p, 3'b000, rdp_rs1p, 7'b0110011}; // c.sub
+                                        2'b01: outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b100, rdp_rs1p, 7'b0110011}; // c.xor
+                                        2'b10: outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b110, rdp_rs1p, 7'b0110011}; // c.or
+                                        2'b11: outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b111, rdp_rs1p, 7'b0110011}; // c.and
+                                    endcase
+                                end
+                            endcase
+                        end
+                        3'b101: outstr = {j_imm[20], j_imm[10:1], j_imm[11], j_imm[19:12], 5'b00000, 7'b1101111}; // c.j
+                        3'b110: outstr = {b_imm[12], b_imm[10:5], 5'b00000, rdp_rs1p, 3'b000, b_imm[4:1], b_imm[11], 7'b1100011}; // c.beqz
+                        3'b111: outstr = {b_imm[12], b_imm[10:5], 5'b00000, rdp_rs1p, 3'b001, b_imm[4:1], b_imm[11], 7'b1100011}; // c.bnez
+                    endcase
+                end
 
-  // 1. Decodificar registros RVC (mapeo x8-x15)
-  rdp_rs1p = 8 + cinstr[9:7];
-  rs2p     = 8 + cinstr[4:2];
-
-  // 2. Extraer inmediatos especificos (segun RVC ISA)
-  imm_addi = sign_extend(cinstr[12], cinstr[6:2]);
-  imm_lui  = {sign_extend(cinstr[12], cinstr[6:2]), 12'b0};
-  shamt    = {cinstr[12], cinstr[6:2]};
-  imm_mem  = extract_mem_offset(cinstr); // Desplazamiento lw/sw
-  j_offset = extract_jump_offset(cinstr); // Desplazamiento J/JAL
-
-  // 3. Traducir segun el cuadrante
-  outstr = 32'h00000013; // Valor por defecto: NOP (addi x0, x0, 0)
-  
-  switch (cinstr[1:0]):
-    case 2'b00: // Cuadrante 0: Cargas y Almacenamientos limitados
-      if (funct3 == 3'b010) outstr = RV32_LW(rdp_rs1p, rs2p, imm_mem);
-      if (funct3 == 3'b110) outstr = RV32_SW(rdp_rs1p, rs2p, imm_mem);
-
-    case 2'b01: // Cuadrante 1: Aritmetica, Saltos y Branches
-      switch (funct3):
-        case 3'b000: outstr = RV32_ADDI(rd_rs1, rd_rs1, imm_addi); // c.addi
-        case 3'b001: outstr = RV32_JAL(x1_ra, j_offset);           // c.jal
-        case 3'b011: outstr = RV32_LUI(rd_rs1, imm_lui);           // c.lui
-        case 3'b101: outstr = RV32_JAL(x0_zero, j_offset);         // c.j
-        case 3'b110: outstr = RV32_BEQ(rdp_rs1p, x0_zero, b_imm);  // c.beqz
-        case 3'b111: outstr = RV32_BNE(rdp_rs1p, x0_zero, b_imm);  // c.bnez
-        case 3'b100: outstr = translate_alu_register_ops(cinstr); // c.sub, c.xor, etc.
-
-    case 2'b10: // Cuadrante 2: Direccionamiento SP y Saltos indirectos
-      switch (funct3):
-        case 3'b000: outstr = RV32_SLLI(rd_rs1, rd_rs1, shamt);    // c.slli
-        case 3'b010: outstr = RV32_LW(rd_rs1, x2_sp, imm_lwsp);    // c.lwsp
-        case 3'b110: outstr = RV32_SW(x2_sp, rs2, imm_swsp);       // c.swsp
-        case 3'b100: // c.jr, c.jalr, c.add
-          if (cinstr[12] == 0):
-            outstr = (rs2 == 0) ? RV32_JALR(x0, rd_rs1, 0) : RV32_ADD(rd_rs1, rd_rs1, rs2);
-          else:
-            outstr = (rs2 == 0) ? RV32_JALR(x1_ra, rd_rs1, 0) : RV32_EBREAK();
-
-  return (outstr, true);
+                // -----------------------------------------------------------
+                // CUADRANTE 2 (Memoria Stack Pointer y Registros completos)
+                // -----------------------------------------------------------
+                2'b10: begin 
+                    case (cinstr[15:13])
+                        3'b000: outstr = {7'b0000000, shamt, rd_rs1, 3'b001, rd_rs1, 7'b0010011}; // c.slli
+                        3'b010: outstr = {4'b0, imm_lwsp, 5'd2, 3'b010, rd_rs1, 7'b0000011};      // c.lwsp
+                        3'b100: begin
+                            if (cinstr[12] == 0) begin
+                                if (cinstr[6:2] == 0) outstr = {12'b0, rd_rs1, 3'b000, 5'b00000, 7'b1100111}; // c.jr
+                                else                  outstr = {7'b0000000, rs2, rd_rs1, 3'b000, rd_rs1, 7'b0110011}; // c.add
+                            end else begin
+                                if (cinstr[6:2] == 0) outstr = {12'b0, rd_rs1, 3'b000, 5'b00001, 7'b1100111}; // c.jalr
+                            end
+                        end
+                        3'b110: outstr = {4'b0, imm_swsp[7:5], rs2, 5'd2, 3'b010, imm_swsp[4:0], 7'b0100011}; // c.swsp
+                    endcase
+                end
+            endcase
+        end
+    end
+endmodule
 \end{lstlisting}
 
 
 \subsection{Pruebas de la Extension RVC}
 
-\subsubsection{Test RVC Basico (\texttt{test\_rvc\_basic.mem})}
-El test basico tiene como finalidad comprobar que la logica de descompresion combinacional y el calculo dinamico de incremento del PC funcionan de manera integrada en el pipeline para flujos de instrucciones mixtas (16 y 32 bits). El programa ejecuta la siguiente secuencia de operaciones:
+\subsubsection{Test RVC Básico (\texttt{test\_rvc\_basic.mem})}
+El test básico tiene como finalidad comprobar que la lógica de descompresión combinacional y el calculo dinamico de incremento del PC funcionan de manera integrada en el pipeline para flujos de instrucciones mixtas (16 y 32 bits). El programa ejecuta la siguiente secuencia de operaciones:
 
-\begin{lstlisting}[style=pseudo, caption={Programa RVC Basico: test\_rvc\_basic.mem}]
+\begin{lstlisting}[style=pseudo, caption={Programa RVC Básico: test\_rvc\_basic.mem}]
 0x00: c.addi x8, 5         // x8 = 5 (Arithmetic immediate addition)
 0x02: c.addi x9, 10        // x9 = 10 (Arithmetic immediate addition)
 0x04: add    x10, x8, x9   // x10 = x8 + x9 = 15 (Normal 32-bit arithmetic)
@@ -1331,7 +1806,7 @@ El test basico tiene como finalidad comprobar que la logica de descompresion com
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png}
-\caption{Forma de onda general del test basico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final.}
+\caption{Forma de onda general del test básico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final.}
 \label{fig:waves_rvc_basic_general}
 \end{figure}
 
@@ -1345,26 +1820,26 @@ El test basico tiene como finalidad comprobar que la logica de descompresion com
 \textbf{Incremento Dinamico:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_basic_e1}, se visualiza la respuesta dinamica del PC en Fetch ante instrucciones mixtas. 
 \begin{itemize}
-  \item En el ciclo donde \texttt{PCF = 0x00}, la instruccion leida es comprimida. La senal interna \texttt{is\_compressed} se eleva a \texttt{1} y el incremento \texttt{pc\_increment} se calcula como \texttt{2}. Esto causa que en el siguiente ciclo el PC avance a \texttt{0x02}.
-  \item En el ciclo de \texttt{PCF = 0x02}, la instruccion sigue siendo comprimida (mitad superior de la palabra leida). \texttt{is\_compressed} sigue en \texttt{1} y \texttt{pc\_increment} en \texttt{2}, avanzando el PC en el siguiente ciclo a \texttt{0x04}.
-  \item En el ciclo de \texttt{PCF = 0x04}, se lee la instruccion de 32 bits \texttt{add}. El descompresor detecta los bits de control \texttt{11} en los bits menos significativos, por lo que \texttt{is\_compressed} cae a \texttt{0} y el incremento \texttt{pc\_increment} cambia automaticamente a \texttt{4}, enviando el PC en el ciclo siguiente a \texttt{0x08}.
+  \item En el ciclo donde \texttt{PCF = 0x00}, la instrucción leida es comprimida. La señal interna \texttt{is\_compressed} se eleva a \texttt{1} y el incremento \texttt{pc\_increment} se calcula como \texttt{2}. Esto causa que en el siguiente ciclo el PC avance a \texttt{0x02}.
+  \item En el ciclo de \texttt{PCF = 0x02}, la instrucción sigue siendo comprimida (mitad superior de la palabra leida). \texttt{is\_compressed} sigue en \texttt{1} y \texttt{pc\_increment} en \texttt{2}, avanzando el PC en el siguiente ciclo a \texttt{0x04}.
+  \item En el ciclo de \texttt{PCF = 0x04}, se lee la instrucción de 32 bits \texttt{add}. El descompresor detecta los bits de control \texttt{11} en los bits menos significativos, por lo que \texttt{is\_compressed} cae a \texttt{0} y el incremento \texttt{pc\_increment} cambia automaticamente a \texttt{4}, enviando el PC en el ciclo siguiente a \texttt{0x08}.
 \end{itemize}
 Esto demuestra el perfecto control dinamico de incremento del PC por hardware en la etapa Fetch.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png}
-\caption{Descompresion en Fetch}
+\caption{Descompresión en Fetch}
 \label{fig:waves_rvc_basic_e2}
 \end{figure}
 
-\textbf{Descompresion en Fetch:}
+\textbf{Descompresión en Fetch:}
 En la Fig. \ref{fig:waves_rvc_basic_e2}, se comprueba la traduccion de instrucciones comprimidas. En el ciclo 1, el PC apunta a \texttt{0x00}. La memoria entrega la palabra \texttt{raw\_imem\_data = 0x04A90415}.
 \begin{itemize}
-  \item Dado que \texttt{PCF[1] = 0}, la instruccion actual alineada a media palabra es \texttt{0x0415} (\texttt{c.addi x8, 5}).
-  \item El descompresor combinacional analiza los bits de esta instruccion y, de manera instantanea y en el mismo ciclo, coloca en el bus \texttt{InstrF} el valor \texttt{0x00540413}, que es la codificacion estandar de 32 bits de la instruccion \texttt{addi x8, x8, 5}.
+  \item Dado que \texttt{PCF[1] = 0}, la instrucción actual alineada a media palabra es \texttt{0x0415} (\texttt{c.addi x8, 5}).
+  \item El descompresor combinacional analiza los bits de esta instrucción y, de manera instantanea y en el mismo ciclo, coloca en el bus \texttt{InstrF} el valor \texttt{0x00540413}, que es la codificacion estandar de 32 bits de la instrucción \texttt{addi x8, x8, 5}.
 \end{itemize}
-Como el hardware traduce la instruccion antes de registrarla en el buffer \texttt{IF/ID}, la etapa Decode (\texttt{InstrD}) solo ve instrucciones estandar de 32 bits, evitando tener que propagar la complejidad de RVC en las etapas posteriores del pipeline.
+Como el hardware traduce la instrucción antes de registrarla en el buffer \texttt{IF/ID}, la etapa Decode (\texttt{InstrD}) solo ve instrucciones estandar de 32 bits, evitando tener que propagar la complejidad de RVC en las etapas posteriores del pipeline.
 
 \begin{figure}[H]
 \centering
@@ -1379,11 +1854,11 @@ La Fig. \ref{fig:waves_rvc_basic_e3} muestra la escritura secuencial de los resu
   \item El registro \texttt{x8} se escribe con \texttt{5}.
   \item El registro \texttt{x9} se escribe con \texttt{10} (\texttt{0x0A} en hex).
   \item El registro \texttt{x10} recibe la suma de ambos registros, escribiendo \texttt{15} (\texttt{0x0F} en hex).
-  \item La instruccion \texttt{c.sub x8, x9} en \texttt{0x08} escribe \texttt{-5} (\texttt{0xFFFFFFFB} o \texttt{*fb} en GTKWave) en el registro \texttt{x8}.
-  \item La instruccion \texttt{c.j skip} en \texttt{0x0A} realiza un salto incondicional directo hacia la etiqueta \texttt{skip} (\texttt{0x10}), lo que causa que la instruccion \texttt{nop} en la direccion \texttt{0x0C} sea descartada en Fetch y no altere ningun registro.
+  \item La instrucción \texttt{c.sub x8, x9} en \texttt{0x08} escribe \texttt{-5} (\texttt{0xFFFFFFFB} o \texttt{*fb} en GTKWave) en el registro \texttt{x8}.
+  \item La instrucción \texttt{c.j skip} en \texttt{0x0A} realiza un salto incondicional directo hacia la etiqueta \texttt{skip} (\texttt{0x10}), lo que causa que la instrucción \texttt{nop} en la dirección \texttt{0x0C} sea descartada en Fetch y no altere ningun registro.
   \item El programa aterriza en \texttt{skip} (\texttt{0x10}), escribiendo el valor final \texttt{100} (\texttt{0x64} en hex) en el registro \texttt{x11}.
 \end{itemize}
-Esto valida la correcta ejecucion e integridad de los datos en toda la arquitectura del procesador.
+Esto valida la correcta ejecución e integridad de los datos en toda la arquitectura del procesador.
 
 \subsubsection{Test RVC de Memoria (\texttt{test\_rvc\_memory.mem})}
 El test de memoria tiene como finalidad validar que las instrucciones de carga y almacenamiento comprimidas (\texttt{c.lw} y \texttt{c.sw}) interactuan de manera correcta con la memoria de datos de 32 bits a traves de las etapas del pipeline. El programa ejecuta la siguiente secuencia de instrucciones:
@@ -1410,15 +1885,15 @@ El test de memoria tiene como finalidad validar que las instrucciones de carga y
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png}
-\caption{Descompresion de Memorias}
+\caption{Descompresión de Memorias}
 \label{fig:waves_rvc_memory_e1}
 \end{figure}
 
-\textbf{Descompresion de Memorias:}
+\textbf{Descompresión de Memorias:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_memory_e1}:
-Enmarca la senal \texttt{pcF} avanzando de \texttt{0x08} a \texttt{0x0A}, y muestra que la instruccion comprimida \texttt{0xC044} se expande en tiempo real en la etapa Fetch a la instruccion de 32 bits \texttt{0x00942223} (\texttt{sw x9, 4(x8)}). De igual forma, en \texttt{pcF = 0x0A}, la instruccion comprimida \texttt{0x4048} se expande a la instruccion de 32 bits \texttt{0x00442503} (\texttt{lw x10, 4(x8)}).
+Enmarca la señal \texttt{pcF} avanzando de \texttt{0x08} a \texttt{0x0A}, y muestra que la instrucción comprimida \texttt{0xC044} se expande en tiempo real en la etapa Fetch a la instrucción de 32 bits \texttt{0x00942223} (\texttt{sw x9, 4(x8)}). De igual forma, en \texttt{pcF = 0x0A}, la instrucción comprimida \texttt{0x4048} se expande a la instrucción de 32 bits \texttt{0x00442503} (\texttt{lw x10, 4(x8)}).
 \\
-En la etapa Fetch, se visualiza el incremento de PC de 2 en 2 bytes (\texttt{0x08} a \texttt{0x0A}). Al estar en \texttt{pcF = 0x08}, la instruccion comprimida \texttt{0xC044} se expande instantaneamente a la instruccion de 32 bits \texttt{0x00942223} (\texttt{sw}). En \texttt{pcF = 0x0A}, la instruccion \texttt{0x4048} se expande a \texttt{0x00442503} (\texttt{lw}).
+En la etapa Fetch, se visualiza el incremento de PC de 2 en 2 bytes (\texttt{0x08} a \texttt{0x0A}). Al estar en \texttt{pcF = 0x08}, la instrucción comprimida \texttt{0xC044} se expande instantaneamente a la instrucción de 32 bits \texttt{0x00942223} (\texttt{sw}). En \texttt{pcF = 0x0A}, la instrucción \texttt{0x4048} se expande a \texttt{0x00442503} (\texttt{lw}).
 
 \begin{figure}[H]
 \centering
@@ -1429,9 +1904,9 @@ En la etapa Fetch, se visualiza el incremento de PC de 2 en 2 bytes (\texttt{0x0
 
 \textbf{Escritura en Memoria (Store):}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_memory_e2}:
-Enmarca la etapa Memory (\texttt{InstrM = 0x00942223}) donde la senal de habilitacion de escritura de la memoria de datos \texttt{MemWriteM} se activa en alto (\texttt{1}). Muestra que la direccion calculada es \texttt{ALUResultM = 4} y el bus de datos a escribir \texttt{WriteDataM} toma el valor \texttt{2a} (42 en decimal).
+Enmarca la etapa Memory (\texttt{InstrM = 0x00942223}) donde la señal de habilitacion de escritura de la memoria de datos \texttt{MemWriteM} se activa en alto (\texttt{1}). Muestra que la dirección calculada es \texttt{ALUResultM = 4} y el bus de datos a escribir \texttt{WriteDataM} toma el valor \texttt{2a} (42 en decimal).
 \\
-Cuando la instruccion de escritura llega a la etapa Memory (\texttt{InstrM = 0x00942223}), la senal de habilitacion de escritura de la memoria de datos \texttt{MemWriteM} se activa en alto (\texttt{1}). La direccion de destino calculada por la ALU es \texttt{ALUResultM = 4} (direccion base $0 + 4 = 4$) y el bus de datos a escribir \texttt{WriteDataM} toma el valor \texttt{2a} (42 en decimal).
+Cuando la instrucción de escritura llega a la etapa Memory (\texttt{InstrM = 0x00942223}), la señal de habilitacion de escritura de la memoria de datos \texttt{MemWriteM} se activa en alto (\texttt{1}). La dirección de destino calculada por la ALU es \texttt{ALUResultM = 4} (dirección base $0 + 4 = 4$) y el bus de datos a escribir \texttt{WriteDataM} toma el valor \texttt{2a} (42 en decimal).
 
 \begin{figure}[H]
 \centering
@@ -1442,9 +1917,9 @@ Cuando la instruccion de escritura llega a la etapa Memory (\texttt{InstrM = 0x0
 
 \textbf{Lectura de Memoria (Load):}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_memory_e3}:
-Enmarca la etapa Memory para la instruccion de carga (\texttt{InstrM = 0x00442503}), mostrando que la senal de control de escritura \texttt{MemWriteM} se mantiene en bajo (\texttt{0}) para realizar la lectura. Muestra que la direccion solicitada es \texttt{ALUResultM = 4} y que el bus de lectura de datos de la memoria entrega el valor de 32 bits \texttt{2a} (42 en decimal).
+Enmarca la etapa Memory para la instrucción de carga (\texttt{InstrM = 0x00442503}), mostrando que la señal de control de escritura \texttt{MemWriteM} se mantiene en bajo (\texttt{0}) para realizar la lectura. Muestra que la dirección solicitada es \texttt{ALUResultM = 4} y que el bus de lectura de datos de la memoria entrega el valor de 32 bits \texttt{2a} (42 en decimal).
 \\
-Cuando la instruccion de carga llega a la etapa Memory (\texttt{InstrM = 0x00442503}), la senal \texttt{MemWriteM} se desactiva en bajo (\texttt{0}) para realizar la lectura. La direccion a leer es \texttt{ALUResultM = 4}, retornando el dato de 32 bits \texttt{2a} (42 en decimal) almacenado en la RAM.
+Cuando la instrucción de carga llega a la etapa Memory (\texttt{InstrM = 0x00442503}), la señal \texttt{MemWriteM} se desactiva en bajo (\texttt{0}) para realizar la lectura. La dirección a leer es \texttt{ALUResultM = 4}, retornando el dato de 32 bits \texttt{2a} (42 en decimal) almacenado en la RAM.
 
 \begin{figure}[H]
 \centering
@@ -1455,14 +1930,14 @@ Cuando la instruccion de carga llega a la etapa Memory (\texttt{InstrM = 0x00442
 
 \textbf{Escritura Final en el Registro:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_memory_e4}:
-Enmarca la senal \texttt{ResultW[31:0]} mostrando el valor \texttt{2a} (42 en decimal) en el bus de escritura al registro en la etapa Writeback (WB), y la senal \texttt{InstrW} mostrando el valor \texttt{00442503} (que representa la instruccion \texttt{lw x10, 4(x8)}).
+Enmarca la señal \texttt{ResultW[31:0]} mostrando el valor \texttt{2a} (42 en decimal) en el bus de escritura al registro en la etapa Writeback (WB), y la señal \texttt{InstrW} mostrando el valor \texttt{00442503} (que representa la instrucción \texttt{lw x10, 4(x8)}).
 \\
-Cuando la instruccion de carga llega a la etapa Writeback (WB) (\texttt{InstrW = 0x00442503}), la senal \texttt{ResultW} escribe el valor de datos de retorno \texttt{2a} (42 en decimal) en el registro destino del banco de registros, completando la operacion exitosamente.
+Cuando la instrucción de carga llega a la etapa Writeback (WB) (\texttt{InstrW = 0x00442503}), la señal \texttt{ResultW} escribe el valor de datos de retorno \texttt{2a} (42 en decimal) en el registro destino del banco de registros, completando la operación exitosamente.
 Esto demuestra que el procesador segmentado soporta accesos de lectura y escritura alineados a media palabra desde instrucciones comprimidas de manera transparente.
 
 
 \subsubsection{Test RVC de Saltos (\texttt{test\_rvc\_branches.mem})}
-El test de saltos condicionales tiene como finalidad evaluar el comportamiento del camino de control y la resolucion de bifurcaciones comprimidas, verificando el calculo del destino y el vaciado del pipeline ante un salto tomado. El programa ejecuta la siguiente secuencia de instrucciones:
+El test de saltos condicionales tiene como finalidad evaluar el comportamiento del camino de control y la resolución de bifurcaciones comprimidas, verificando el calculo del destino y el vaciado del pipeline ante un salto tomado. El programa ejecuta la siguiente secuencia de instrucciones:
 
 \begin{lstlisting}[style=pseudo, caption={Programa RVC Saltos: test\_rvc\_branches.mem}]
 0x00: addi   x8, x0, 0     // x8 = 0 (Base register initialized)
@@ -1480,7 +1955,7 @@ El test de saltos condicionales tiene como finalidad evaluar el comportamiento d
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png}
-\caption{Forma de onda general del test de saltos RVC, mostrando la ejecucion secuencial de las instrucciones y la respuesta del pipeline.}
+\caption{Forma de onda general del test de saltos RVC, mostrando la ejecución secuencial de las instrucciones y la respuesta del pipeline.}
 \label{fig:waves_rvc_branches_general}
 \end{figure}
 
@@ -1493,7 +1968,7 @@ El test de saltos condicionales tiene como finalidad evaluar el comportamiento d
 
 \textbf{Branch No Tomado:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_branches_e1}:
-Enmarca la senal \texttt{pcF} en \texttt{0x08}, y muestra que cuando esa instruccion esta en Execute (\texttt{InstrE}), la senal \texttt{PCSrcE} permanece en \texttt{0}.
+Enmarca la señal \texttt{pcF} en \texttt{0x08}, y muestra que cuando esa instrucción esta en Execute (\texttt{InstrE}), la señal \texttt{PCSrcE} permanece en \texttt{0}.
 \\
 *Qué decir en tu informe:*
 Aquí se evalúa la instrucción \texttt{c.beqz x9, 4}. Como el registro \texttt{x9 = 1} (no es cero), el salto condicional no se toma (\texttt{PCSrcE = 0}). El PC avanza linealmente de \texttt{0x08} a \texttt{0x0A}.
@@ -1507,7 +1982,7 @@ Aquí se evalúa la instrucción \texttt{c.beqz x9, 4}. Como el registro \texttt
 
 \textbf{Branch Tomado:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_branches_e2}:
-Enmarca el ciclo donde la instruccion \texttt{c.bnez} llega a Execute (\texttt{InstrE = 00049163}). Senala que la bandera \texttt{PCSrcE} sube a \texttt{1}, la direccion destino \texttt{PCTargetE} marca \texttt{C} (hexadecimal) y en ese mismo instante el PC de Fetch (\texttt{pcF}) marca \texttt{10} (hexadecimal).
+Enmarca el ciclo donde la instrucción \texttt{c.bnez} llega a Execute (\texttt{InstrE = 00049163}). Senala que la bandera \texttt{PCSrcE} sube a \texttt{1}, la dirección destino \texttt{PCTargetE} marca \texttt{C} (hexadecimal) y en ese mismo instante el PC de Fetch (\texttt{pcF}) marca \texttt{10} (hexadecimal).
 \\
 *Qué decir en tu informe:*
 Al evaluarse \texttt{c.bnez x9, 4} en Execute, dado que \texttt{x9 = 1 != 0}, la condición de salto se cumple. Se genera \texttt{PCSrcE = 1}, la dirección calculada de destino es \texttt{PCTargetE = 0x0C} (C en hex) y en ese instante el PC en Fetch marca \texttt{10} (hex) debido a la precarga secuencial.
@@ -1521,7 +1996,7 @@ Al evaluarse \texttt{c.bnez x9, 4} en Execute, dado que \texttt{x9 = 1 != 0}, la
 
 \textbf{Activacion de Burbujas:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_branches_e3}:
-Enmarca el ciclo donde \texttt{FlushD} y \texttt{FlushE} se ponen en \texttt{1} (ocurre al mismo tiempo que \texttt{PCSrcE = 1}). Enmarca tambien la senal \texttt{InstrD} en el ciclo siguiente, mostrando que el \texttt{nop} especulativo cargado en \texttt{0x0C} se limpia (se vuelve \texttt{0x00000000}), y el PC de Fetch (\texttt{pcF}) regresa a \texttt{C} (hexadecimal).
+Enmarca el ciclo donde \texttt{FlushD} y \texttt{FlushE} se ponen en \texttt{1} (ocurre al mismo tiempo que \texttt{PCSrcE = 1}). Enmarca también la señal \texttt{InstrD} en el ciclo siguiente, mostrando que el \texttt{nop} especulativo cargado en \texttt{0x0C} se limpia (se vuelve \texttt{0x00000000}), y el PC de Fetch (\texttt{pcF}) regresa a \texttt{C} (hexadecimal).
 \\
 *Qué decir en tu informe:*
 Cuando el salto es tomado (\texttt{PCSrcE = 1}), las señales \texttt{FlushD} y \texttt{FlushE} de la Hazard Unit se activan en alto. Esto limpia de inmediato las etapas Decode y Execute, convirtiendo la instrucción especulativa de \texttt{0x0C} en un NOP para evitar que altere registros. En Fetch, el \texttt{pcF} se corrige y regresa a la dirección destino \texttt{0x0C}.
@@ -1535,13 +2010,13 @@ Cuando el salto es tomado (\texttt{PCSrcE = 1}), las señales \texttt{FlushD} y 
 
 \textbf{Escritura del Registro Destino:}
 En la forma de onda de la Fig. \ref{fig:waves_rvc_branches_e4}:
-Enmarca la senal \texttt{ResultW[31:0]} mostrando el valor \texttt{63} (hexadecimal de \texttt{99}), y al mismo tiempo enmarca la senal \texttt{InstrW[31:0]} mostrando el valor \texttt{06300513} (que representa a \texttt{addi x10, x0, 99}) en el ultimo ciclo.
+Enmarca la señal \texttt{ResultW[31:0]} mostrando el valor \texttt{63} (hexadecimal de \texttt{99}), y al mismo tiempo enmarca la señal \texttt{InstrW[31:0]} mostrando el valor \texttt{06300513} (que representa a \texttt{addi x10, x0, 99}) en el ultimo ciclo.
 \\
 *Qué decir en tu informe:*
 Se comprueba que la instrucción destino del salto (\texttt{addi x10, x0, 99}) se completa con éxito: en la etapa de Writeback (WB), la señal `InstrW` muestra `06300513` y `ResultW` escribe el valor correcto `63` (99 en decimal) en el banco de registros, validando el correcto funcionamiento del pipeline.
 
 \subsubsection{Test RVC de Cobertura Completa (\texttt{test\_rvc\_remaining.mem})}
-El test de cobertura completa tiene como finalidad validar las 14 instrucciones de la extension comprimida RVC especificadas en el proyecto que no fueron evaluadas en las pruebas anteriores. Esto garantiza el cumplimiento total de la tabla de instrucciones del diseno. El programa ejecuta la siguiente secuencia de instrucciones:
+El test de cobertura completa tiene como finalidad validar las 14 instrucciones de la extension comprimida RVC especificadas en el proyecto que no fueron evaluadas en las pruebas anteriores. Esto garantiza el cumplimiento total de la tabla de instrucciones del diseño. El programa ejecuta la siguiente secuencia de instrucciones:
 
 \begin{lstlisting}[style=pseudo, caption={Programa RVC Cobertura Completa: test\_rvc\_remaining.mem}]
 0x00: c.addi sp, 16        // Inicializar Stack Pointer sp (x2) = 16
@@ -1564,7 +2039,7 @@ El test de cobertura completa tiene como finalidad validar las 14 instrucciones 
 0x22: c.lwsp x14, 4(sp)    // Cargar x14 desde sp+4 = 20 (Load SP)
 0x24: c.jal target_jal     // Salto y enlace (x1 = PC+2 = 0x26), salta a 0x38
 0x26: c.nop                // NOP de retorno del jal
-0x28: addi x15, x0, 60     // Cargar direccion del jalr (60 = 0x3C) en x15
+0x28: addi x15, x0, 60     // Cargar dirección del jalr (60 = 0x3C) en x15
 0x2C: c.jalr x15           // Salto y enlace indirecto, ra = 0x2E, salta a 0x3C
 0x2E: c.nop                // NOP de retorno del jalr
 0x30: c.j end_loop         // Bucle infinito de parada
@@ -1587,47 +2062,47 @@ El test de cobertura completa tiene como finalidad validar las 14 instrucciones 
 \label{fig:waves_rvc_remaining_general}
 \end{figure}
 
-\textbf{Comprobacion y Analisis de los Aspectos Clave de la Simulacion:}
-A traves de la forma de onda de la Fig. \ref{fig:waves_rvc_remaining_general}, se puede analizar y comprobar la correcta ejecucion e integracion de estas nuevas instrucciones en la microarquitectura segmentada, destacando tres aspectos fundamentales:
+\textbf{Comprobacion y Analisis de los Aspectos Clave de la Simulación:}
+A traves de la forma de onda de la Fig. \ref{fig:waves_rvc_remaining_general}, se puede analizar y comprobar la correcta ejecución e integracion de estas nuevas instrucciones en la microarquitectura segmentada, destacando tres aspectos fundamentales:
 
 \begin{itemize}
   \item \textbf{Interaccion RVC con la Hazard Unit (Reenvio de Datos):} 
-    El programa prueba directamente la resolucion de dependencias tipo RAW entre instrucciones comprimidas. La instruccion \texttt{c.add x11, x12} (en PC \texttt{0x1E}) escribe en el registro destino \texttt{x11}, y la instruccion inmediatamente posterior, \texttt{c.swsp x11, 4(sp)} (en PC \texttt{0x20}), lee dicho registro como operando fuente. En el ciclo 18 de la simulacion, mientras \texttt{c.swsp} esta en Execute (EX) y \texttt{c.add} esta en Memory (MEM), la Hazard Unit detecta la coincidencia de registros y activa la senal de reenvio \texttt{ForwardBE = 2'b10}. Esto inyecta de manera combinacional el valor correcto calculado por la ALU (\texttt{16389} o \texttt{0x00004005}) directamente en el bus de datos a escribir en memoria (\texttt{WriteDataM}) en el ciclo siguiente, sin insertar retardos ni burbujas en el pipeline.
+    El programa prueba directamente la resolución de dependencias tipo RAW entre instrucciones comprimidas. La instrucción \texttt{c.add x11, x12} (en PC \texttt{0x1E}) escribe en el registro destino \texttt{x11}, y la instrucción inmediatamente posterior, \texttt{c.swsp x11, 4(sp)} (en PC \texttt{0x20}), lee dicho registro como operando fuente. En el ciclo 18 de la simulación, mientras \texttt{c.swsp} esta en Execute (EX) y \texttt{c.add} esta en Memory (MEM), la Hazard Unit detecta la coincidencia de registros y activa la señal de reenvio \texttt{ForwardBE = 2'b10}. Esto inyecta de manera combinacional el valor correcto calculado por la ALU (\texttt{16389} o \texttt{0x00004005}) directamente en el bus de datos a escribir en memoria (\texttt{WriteDataM}) en el ciclo siguiente, sin insertar retardos ni burbujas en el pipeline.
     
   \item \textbf{Accesos a Memoria Relativos a Stack Pointer:} 
     Las instrucciones de pila se ejecutan con exito referenciando al registro \texttt{x2} (\texttt{sp}) cargado combinacionalmente:
     \begin{itemize}
-      \item En la etapa MEM de \texttt{c.swsp} (ciclo 19), la senal \texttt{MemWriteM} se activa en alto (\texttt{1}) y se escribe el valor \texttt{16389} en la direccion de memoria calculada \texttt{ALUResultM = 20} (direccion base del \texttt{sp} en $16$ mas el desplazamiento de $4$ bytes).
-      \item En la etapa MEM de la instruccion consecutiva \texttt{c.lwsp x14, 4(sp)} (ciclo 20), la senal de control \texttt{MemWriteM} se desactiva a bajo (\texttt{0}) para realizar la lectura de la direccion \texttt{ALUResultM = 20}. La memoria RAM entrega el dato leido de 32 bits \texttt{0x00004005} (16389 decimal), el cual en la etapa de Writeback (WB) es escrito exitosamente en el registro destino \texttt{x14} a traves de los puertos de escritura del banco de registros (\texttt{we3 = 1}, \texttt{a3 = 14}, \texttt{wd3 = 0x4005}).
+      \item En la etapa MEM de \texttt{c.swsp} (ciclo 19), la señal \texttt{MemWriteM} se activa en alto (\texttt{1}) y se escribe el valor \texttt{16389} en la dirección de memoria calculada \texttt{ALUResultM = 20} (dirección base del \texttt{sp} en $16$ más el desplazamiento de $4$ bytes).
+      \item En la etapa MEM de la instrucción consecutiva \texttt{c.lwsp x14, 4(sp)} (ciclo 20), la señal de control \texttt{MemWriteM} se desactiva a bajo (\texttt{0}) para realizar la lectura de la dirección \texttt{ALUResultM = 20}. La memoria RAM entrega el dato leido de 32 bits \texttt{0x00004005} (16389 decimal), el cual en la etapa de Writeback (WB) es escrito exitosamente en el registro destino \texttt{x14} a traves de los puertos de escritura del banco de registros (\texttt{we3 = 1}, \texttt{a3 = 14}, \texttt{wd3 = 0x4005}).
     \end{itemize}
 
   \item \textbf{Control de Flujo de Saltos Comprimidos y Enlace (Link):}
     \begin{itemize}
-      \item \textbf{Salto y Enlace Relativo (\texttt{c.jal}):} Al evaluarse \texttt{c.jal target\_jal} (PC \texttt{0x24}) en la etapa Execute (ciclo 21), la ALU calcula el destino relativo \texttt{PCTargetE = 0x38}. La senal de control \texttt{PCSrcE} sube a \texttt{1}, corrigiendo el PC. Simultaneamente, la Hazard Unit activa \texttt{FlushD = 1} y \texttt{FlushE = 1} para vaciar la instruccion especulativa en Decode (el \texttt{c.nop} en \texttt{0x26}), insertando la burbuja. El registro de enlace \texttt{ra} (\texttt{x1}) se actualiza en Writeback con la direccion de retorno correcta \texttt{0x26} (correspondiente a \texttt{PC + 2}, validando que el hardware reconoce el ancho comprimido de la instruccion).
-      \item \textbf{Retorno Indirecto (\texttt{c.jr ra}):} En la direccion \texttt{0x38}, la instruccion \texttt{c.jr ra} lee el registro de retorno \texttt{ra = 0x26} a traves del puerto \texttt{rd1} y salta de vuelta al pipeline secuencial.
-      \item \textbf{Salto Indirecto con Enlace (\texttt{c.jalr}):} Se carga la direccion absoluta de \texttt{target\_jalr} (\texttt{60} o \texttt{0x3C}) en el registro \texttt{x15}. Al ejecutarse \texttt{c.jalr x15} en PC \texttt{0x2C}, la CPU salta a \texttt{0x3C} y almacena en el registro de enlace \texttt{ra} la direccion de retorno corregida \texttt{0x2E} (\texttt{PC + 2}). Finalmente, otra instruccion \texttt{c.jr ra} en \texttt{0x3C} retorna la ejecucion a la direccion de parada del bucle infinito en \texttt{0x30}.
+      \item \textbf{Salto y Enlace Relativo (\texttt{c.jal}):} Al evaluarse \texttt{c.jal target\_jal} (PC \texttt{0x24}) en la etapa Execute (ciclo 21), la ALU calcula el destino relativo \texttt{PCTargetE = 0x38}. La señal de control \texttt{PCSrcE} sube a \texttt{1}, corrigiendo el PC. Simultaneamente, la Hazard Unit activa \texttt{FlushD = 1} y \texttt{FlushE = 1} para vaciar la instrucción especulativa en Decode (el \texttt{c.nop} en \texttt{0x26}), insertando la burbuja. El registro de enlace \texttt{ra} (\texttt{x1}) se actualiza en Writeback con la dirección de retorno correcta \texttt{0x26} (correspondiente a \texttt{PC + 2}, validando que el hardware reconoce el ancho comprimido de la instrucción).
+      \item \textbf{Retorno Indirecto (\texttt{c.jr ra}):} En la dirección \texttt{0x38}, la instrucción \texttt{c.jr ra} lee el registro de retorno \texttt{ra = 0x26} a traves del puerto \texttt{rd1} y salta de vuelta al pipeline secuencial.
+      \item \textbf{Salto Indirecto con Enlace (\texttt{c.jalr}):} Se carga la dirección absoluta de \texttt{target\_jalr} (\texttt{60} o \texttt{0x3C}) en el registro \texttt{x15}. Al ejecutarse \texttt{c.jalr x15} en PC \texttt{0x2C}, la CPU salta a \texttt{0x3C} y almacena en el registro de enlace \texttt{ra} la dirección de retorno corregida \texttt{0x2E} (\texttt{PC + 2}). Finalmente, otra instrucción \texttt{c.jr ra} en \texttt{0x3C} retorna la ejecución a la dirección de parada del bucle infinito en \texttt{0x30}.
     \end{itemize}
 \end{itemize}
-De esta forma, se demuestra que todas las extensiones de control, descompresion y operaciones de datos de RVC interactuan de manera transparente con los mecanismos de riesgos del procesador segmentado, logrando una cobertura del 100\% de la ISA especificada y completando la verificacion exhaustiva.
+De esta forma, se demuestra que todas las extensiones de control, descompresión y operaciones de datos de RVC interactuan de manera transparente con los mecanismos de riesgos del procesador segmentado, logrando una cobertura del 100\% de la ISA especificada y completando la verificacion exhaustiva.
 
 \subsection{Analisis de Performance y Justificacion de la Extension RVC}
-La incorporacion de la extension RVC representa un compromiso de diseno (trade-off) entre el area de silicio, el consumo de potencia, la frecuencia de reloj y el tamano del binario. A continuacion se detallan los resultados del analisis de performance y las directrices arquitectonicas de uso.
+La incorporación de la extension RVC representa un compromiso de diseño (trade-off) entre el area de silicio, el consumo de potencia, la frecuencia de reloj y el tamaño del binario. A continuación se detallan los resultados del analisis de performance y las directrices arquitectonicas de uso.
 
 \subsubsection{Analisis de Ciclos de Reloj (Timing Analysis)}
-Una de las mayores ventajas de nuestra estrategia de diseno (descompresion combinacional en la etapa de Fetch) es la \textbf{ausencia de penalizacion en ciclos de reloj}. 
+Una de las mayores ventajas de nuestra estrategia de diseño (descompresión combinacional en la etapa de Fetch) es la \textbf{ausencia de penalización en ciclos de reloj}. 
 \begin{itemize}
-    \item Debido a que la expansion de 16 a 32 bits se realiza en tiempo cero (combinacionalmente antes de registrar la instruccion en el buffer \texttt{IF/ID}), cada instruccion comprimida fluye a traves de las 5 etapas del pipeline exactamente de la misma forma que una instruccion RV32I.
-    \item En la ejecucion de la prueba basica (\texttt{test\_rvc\_basic.mem}), el programa RVC consta de 6 instrucciones efectivas (incluyendo un salto incondicional). Al igual que su equivalente en RV32I, el procesador requiere exactamente 12 ciclos de reloj para completar la ejecucion de las 6 instrucciones, confirmando que la descompresion no anade burbujas ni latencia adicional al pipeline de datos.
-    \item El unico impacto de tiempo se da en el retardo de propagacion (critical path) de la etapa Fetch. La adicion del descompresor RVC (multiplexores combinacionales) y el multiplexor de alineacion (alignmux) introduce un retardo en el camino de lectura de instrucciones. Si bien en este procesador el critical path sigue estando dominado por la ALU (etapa Execute) o los retardos de memoria, en disenos a muy altas frecuencias esto podria reducir levemente la frecuencia maxima de reloj ($f_{max}$).
+    \item Debido a que la expansion de 16 a 32 bits se realiza en tiempo cero (combinacionalmente antes de registrar la instrucción en el buffer \texttt{IF/ID}), cada instrucción comprimida fluye a traves de las 5 etapas del pipeline exactamente de la misma forma que una instrucción RV32I.
+    \item En la ejecución de la prueba básica (\texttt{test\_rvc\_basic.mem}), el programa RVC consta de 6 instrucciones efectivas (incluyendo un salto incondicional). Al igual que su equivalente en RV32I, el procesador requiere exactamente 12 ciclos de reloj para completar la ejecución de las 6 instrucciones, confirmando que la descompresión no anade burbujas ni latencia adicional al pipeline de datos.
+    \item El único impacto de tiempo se da en el retardo de propagacion (critical path) de la etapa Fetch. La adicion del descompresor RVC (multiplexores combinacionales) y el multiplexor de alineacion (alignmux) introduce un retardo en el camino de lectura de instrucciones. Si bien en este procesador el critical path sigue estando dominado por la ALU (etapa Execute) o los retardos de memoria, en diseños a muy altas frecuencias esto podria reducir levemente la frecuencia maxima de reloj ($f_{max}$).
 \end{itemize}
 
-\subsubsection{Reduccion de Tamano de Codigo (Code Density)}
-Para el programa basico evaluado, se realiza la comparacion de consumo de bytes en memoria de instrucciones:
+\subsubsection{Reducción de Tamaño de Código (Code Density)}
+Para el programa básico evaluado, se realiza la comparación de consumo de bytes en memoria de instrucciones:
 \begin{table}[H]
 \centering
 \begin{tabular}{l|c|c|c}
 \toprule
-\textbf{Instruccion} & \textbf{Ancho RV32I} & \textbf{Ancho RVC} & \textbf{Ahorro en Memoria} \\
+\textbf{Instrucción} & \textbf{Ancho RV32I} & \textbf{Ancho RVC} & \textbf{Ahorro en Memoria} \\
 \midrule
 1. Inicializar x8 & 4 bytes (\texttt{addi}) & 2 bytes (\texttt{c.addi}) & 50\% \\
 2. Inicializar x9 & 4 bytes (\texttt{addi}) & 2 bytes (\texttt{c.addi}) & 50\% \\
@@ -1640,35 +2115,35 @@ Para el programa basico evaluado, se realiza la comparacion de consumo de bytes 
 \textbf{Total Programa} & \textbf{28 bytes} & \textbf{20 bytes} & \textbf{28.5\%} \\
 \bottomrule
 \end{tabular}
-\caption{Comparativa del tamano de codigo en memoria entre la implementacion RV32I y RVC para el test basico.}
+\caption{Comparativa del tamaño de código en memoria entre la implementación RV32I y RVC para el test básico.}
 \label{tab:ahorro_memoria}
 \end{table}
 
-Este resultado del 28.5\% de ahorro en memoria de instrucciones demuestra empiricamente que RVC cumple con el objetivo de diseno teorico (tipicamente entre 25\% y 30\% de reduccion), permitiendo almacenar programas mas grandes en memorias fisicamente mas pequenas.
+Este resultado del 28.5\% de ahorro en memoria de instrucciones demuestra empíricamente que RVC cumple con el objetivo de diseño teorico (tipicamente entre 25\% y 30\% de reducción), permitiendo almacenar programas más grandes en memorias fisicamente más pequenas.
 
 \subsubsection{Guia de Uso: Cuando usar RVC y cuando no}
-El empleo de la extension RVC se justifica bajo ciertos escenarios de diseno de hardware:
+El empleo de la extension RVC se justifica bajo ciertos escenarios de diseño de hardware:
 \begin{itemize}
     \item \textbf{Por que y cuando usar RVC (Ventajas):}
     \begin{enumerate}
-        \item \textbf{Limitacion de Memoria (Sistemas Embebidos):} En microcontroladores o dispositivos IoT con memoria flash interna muy reducida (ej. 32 KB a 256 KB), el ahorro de un 30\% del espacio permite anadir mayor funcionalidad al firmware sin aumentar el costo del chip.
-        \item \textbf{Mejora en la Cache de Instrucciones (I-Cache):} Al comprimir el codigo, caben mas instrucciones en una misma linea de cache, lo que reduce la tasa de fallos de cache (cache misses) y mejora el rendimiento general del procesador ante accesos lentos a la memoria principal.
-        \item \textbf{Reduccion de Consumo de Energia:} Dado que se transfieren menos bits por los buses de memoria externa en cada fetch de instruccion, el consumo de energia dinamica disminuye significativamente.
+        \item \textbf{Limitacion de Memoria (Sistemas Embebidos):} En microcontroladores o dispositivos IoT con memoria flash interna muy reducida (ej. 32 KB a 256 KB), el ahorro de un 30\% del espacio permite añadir mayor funcionalidad al firmware sin aumentar el costo del chip.
+        \item \textbf{Mejora en la Cache de Instrucciones (I-Cache):} Al comprimir el código, caben más instrucciones en una misma línea de cache, lo que reduce la tasa de fallos de cache (cache misses) y mejora el rendimiento general del procesador ante accesos lentos a la memoria principal.
+        \item \textbf{Reducción de Consumo de Energia:} Dado que se transfieren menos bits por los buses de memoria externa en cada fetch de instrucción, el consumo de energia dinamica disminuye significativamente.
     \end{enumerate}
     
     \item \textbf{Cuando NO usar RVC (Limitaciones):}
     \begin{enumerate}
-        \item \textbf{Procesadores Superescalares de Muy Alto Rendimiento:} En procesadores que decodifican 4 o mas instrucciones en paralelo por ciclo, la descompresion RVC paralela anade una complejidad circuital y un area de silicio prohibitivas, limitando la frecuencia de reloj.
-        \item \textbf{Buses de Memoria Anchos no Optimizados:} Si el procesador cuenta con un bus de datos extremadamente ancho hacia la memoria y la capacidad de almacenamiento no es una restriccion de diseno (ej. computadoras de escritorio o servidores), el hardware de descompresion combinacional introduce un retardo innecesario en la etapa de Fetch.
+        \item \textbf{Procesadores Superescalares de Muy Alto Rendimiento:} En procesadores que decodifican 4 o más instrucciones en paralelo por ciclo, la descompresión RVC paralela anade una complejidad circuital y un area de silicio prohibitivas, limitando la frecuencia de reloj.
+        \item \textbf{Buses de Memoria Anchos no Optimizados:} Si el procesador cuenta con un bus de datos extremadamente ancho hacia la memoria y la capacidad de almacenamiento no es una restricción de diseño (ej. computadoras de escritorio o servidores), el hardware de descompresión combinacional introduce un retardo innecesario en la etapa de Fetch.
     \end{enumerate}
 \end{itemize}
 
 \subsection{Analisis de Modos de Fallo de la Extension RVC}
-Con el fin de validar la robustez de la extension RVC y demostrar de manera practica que ocurre ante fallos en los nuevos componentes de Fetch, se realizo una simulacion mediante inyeccion de fallos. En particular, se evaluo el \textbf{Fallo en el Incremento Dinamico (Incremento rigido a +4)}.
+Con el fin de validar la robustez de la extension RVC y demostrar de manera practica que ocurre ante fallos en los nuevos componentes de Fetch, se realizo una simulación mediante inyeccion de fallos. En particular, se evaluo el \textbf{Fallo en el Incremento Dinamico (Incremento rigido a +4)}.
 
-Este fallo se inyecto forzando la senal \texttt{pc\_increment = 32'd4} de manera estatica en el modulo \texttt{fetch.v}, ignorando el valor de la bandera de descompresion \texttt{is\_compressed}. 
+Este fallo se inyecto forzando la señal \texttt{pc\_increment = 32'd4} de manera estatica en el módulo \texttt{fetch.v}, ignorando el valor de la bandera de descompresión \texttt{is\_compressed}. 
 
-A continuacion se presenta la comparacion ciclo a ciclo de las trazas de simulacion (wave-tables) para el flujo correcto y el flujo con fallo utilizando el test RVC basico (\texttt{test\_rvc\_basic.mem}):
+A continuación se presenta la comparación ciclo a ciclo de las trazas de simulación (wave-tables) para el flujo correcto y el flujo con fallo utilizando el test RVC básico (\texttt{test\_rvc\_basic.mem}):
 
 \begin{table}[H]
 \centering
@@ -1678,7 +2153,7 @@ A continuacion se presenta la comparacion ciclo a ciclo de las trazas de simulac
 \toprule
 \textbf{Ciclo} & \textbf{Etapa IF (PC)} & \textbf{Etapa ID (Instr)} & \textbf{Etapa EX (Instr)} & \textbf{ALUResultE} & \textbf{Efecto / Estado} \\
 \midrule
-\multicolumn{6}{c}{\textbf{Ejecucion Correcta (Incremento Dinamico Activo)}} \\
+\multicolumn{6}{c}{\textbf{Ejecución Correcta (Incremento Dinamico Activo)}} \\
 \midrule
 0 & PC = 0x00 & Instr = -- & Instr = -- & -- & Fetch c.addi x8, 5 \\
 1 & PC = 0x02 & Instr = c.addi x8, 5 & Instr = -- & -- & Fetch c.addi x9, 10 (+2 bytes) \\
@@ -1686,7 +2161,7 @@ A continuacion se presenta la comparacion ciclo a ciclo de las trazas de simulac
 3 & PC = 0x08 & Instr = add x10, x8, x9 & Instr = c.addi x9, 10 & ALUResult = 10 & x8 = 5 (WB). Fetch c.sub (+4 bytes) \\
 4 & PC = 0x0A & Instr = c.sub x8, x9 & Instr = add x10, x8, x9 & ALUResult = 15 & x9 = 10 (WB). x10 = 15 (Correcto) \\
 \midrule
-\multicolumn{6}{c}{\textbf{Ejecucion con Fallo (Incremento Rigido a +4)}} \\
+\multicolumn{6}{c}{\textbf{Ejecución con Fallo (Incremento Rigido a +4)}} \\
 \midrule
 0 & PC = 0x00 & Instr = -- & Instr = -- & -- & Fetch c.addi x8, 5 \\
 1 & PC = 0x04 & Instr = c.addi x8, 5 & Instr = -- & -- & Fetch add x10, x8, x9 (¡Salta 0x02!) \\
@@ -1695,97 +2170,97 @@ A continuacion se presenta la comparacion ciclo a ciclo de las trazas de simulac
 \bottomrule
 \end{tabular}%
 }
-\caption{Comparativa de la traza de ejecucion (wave-table) entre la ejecucion correcta de RVC y la ejecucion con fallo de incremento rigido a +4.}
+\caption{Comparativa de la traza de ejecución (wave-table) entre la ejecución correcta de RVC y la ejecución con fallo de incremento rigido a +4.}
 \label{tab:comparativa_fallo}
 \end{table}
 
 \subsubsection{Analisis de Consecuencias del Fallo}
-Al observar la comparacion de trazas en la Tabla \ref{tab:comparativa_fallo} y analizando las senales del puerto de escritura del banco de registros (donde \texttt{a3} es la direccion del registro, \texttt{wd3} es el dato a escribir y \texttt{we3} es la senal de habilitacion de escritura), se concluyen las siguientes consecuencias graves:
+Al observar la comparación de trazas en la Tabla \ref{tab:comparativa_fallo} y analizando las señales del puerto de escritura del banco de registros (donde \texttt{a3} es la dirección del registro, \texttt{wd3} es el dato a escribir y \texttt{we3} es la señal de habilitacion de escritura), se concluyen las siguientes consecuencias graves:
 \begin{itemize}
-    \item \textbf{Omision de Instrucciones (Omission Hazard):} En la ejecucion con fallo, el PC avanza de \texttt{0x00} directamente a \texttt{0x04}. La instruccion comprimida \texttt{c.addi x9, 10} ubicada en la direccion \texttt{0x02} jamas es cargada por el procesador, perdiéndose instrucciones críticas del programa.
-    \item \textbf{Ausencia de Escritura del Registro Destino (\texttt{we3}/\texttt{a3}):} Dado que la instruccion de \texttt{0x02} fue omitida, el registro \texttt{x9} nunca recibe su valor de \texttt{10}. En la traza con fallo se observa que la habilitacion \texttt{we3} nunca se activa con la direccion \texttt{a3 = 9} (x9), de modo que dicho registro permanece en su estado inicial de cero (\texttt{0}).
-    \item \textbf{Propagacion de Datos Corruptos (\texttt{wd3}):} Cuando la instruccion \texttt{add x10, x8, x9} (en \texttt{0x04}) llega a Execute, realiza la suma utilizando el valor no inicializado de \texttt{x9 = 0}. En consecuencia, cuando llega a Writeback, la direccion de escritura \texttt{a3} selecciona el registro \texttt{10} (\texttt{x10}) pero el dato escrito \texttt{wd3} toma el valor corrupto de \texttt{5} en lugar de \texttt{15}.
-    \item \textbf{Desalineacion y Saltos Invalidos:} Si el codigo continuara y tratara de ejecutar un salto relativo comprimido, los desplazamientos calculados en base a un PC incorrecto harian que la CPU salte a direcciones desalineadas, decodificando datos basura y provocando una excepcion de instruccion ilegal.
+    \item \textbf{Omision de Instrucciones (Omission Hazard):} En la ejecución con fallo, el PC avanza de \texttt{0x00} directamente a \texttt{0x04}. La instrucción comprimida \texttt{c.addi x9, 10} ubicada en la dirección \texttt{0x02} jamas es cargada por el procesador, perdiéndose instrucciones críticas del programa.
+    \item \textbf{Ausencia de Escritura del Registro Destino (\texttt{we3}/\texttt{a3}):} Dado que la instrucción de \texttt{0x02} fue omitida, el registro \texttt{x9} nunca recibe su valor de \texttt{10}. En la traza con fallo se observa que la habilitacion \texttt{we3} nunca se activa con la dirección \texttt{a3 = 9} (x9), de modo que dicho registro permanece en su estado inicial de cero (\texttt{0}).
+    \item \textbf{Propagacion de Datos Corruptos (\texttt{wd3}):} Cuando la instrucción \texttt{add x10, x8, x9} (en \texttt{0x04}) llega a Execute, realiza la suma utilizando el valor no inicializado de \texttt{x9 = 0}. En consecuencia, cuando llega a Writeback, la dirección de escritura \texttt{a3} selecciona el registro \texttt{10} (\texttt{x10}) pero el dato escrito \texttt{wd3} toma el valor corrupto de \texttt{5} en lugar de \texttt{15}.
+    \item \textbf{Desalineacion y Saltos Invalidos:} Si el código continuara y tratara de ejecutar un salto relativo comprimido, los desplazamientos calculados en base a un PC incorrecto harian que la CPU salte a direcciones desalineadas, decodificando datos basura y provocando una excepcion de instrucción ilegal.
 \end{itemize}
 
 \subsubsection{Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}
-Para corroborar empiricamente las consecuencias del fallo de incremento rigido a +4, se presentan a continuacion las capturas de pantalla obtenidas directamente de la simulacion en GTKWave. Cada comparativa consta de la traza funcional (izquierda) y la traza con fallo inyectado (derecha).
+Para corroborar empíricamente las consecuencias del fallo de incremento rigido a +4, se presentan a continuación las capturas de pantalla obtenidas directamente de la simulación en GTKWave. Cada comparativa consta de la traza funcional (izquierda) y la traza con fallo inyectado (derecha).
 
 \renewcommand{\thefigure}{22.\arabic{figure}}
 \renewcommand{\theHfigure}{22.\arabic{figure}}
 \setcounter{figure}{0}
 
 \paragraph{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}
-En la Fig. \ref{fig:comp_e1} se compara el avance del PC de Fetch (\texttt{pcF}) y la senal del incrementador (\texttt{pc\_increment}). 
+En la Fig. \ref{fig:comp_e1} se compara el avance del PC de Fetch (\texttt{pcF}) y la señal del incrementador (\texttt{pc\_increment}). 
 
 \begin{figure}[H]
   \centering
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/good_e1.png}
-    \caption{Ejecucion Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica.}
+    \caption{Ejecución Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica.}
     \label{fig:good_e1}
   \end{minipage}
   \hfill
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/bad_e1.png}
-    \caption{Ejecucion con Fallo: El PC salta de 0 directamente a 4, omitiendo la direccion 0x02.}
+    \caption{Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02.}
     \label{fig:bad_e1}
   \end{minipage}
-  \caption{Comparativa del Program Counter y la senal de incremento del PC (\texttt{e1}).}
+  \caption{Comparativa del Program Counter y la señal de incremento del PC (\texttt{e1}).}
   \label{fig:comp_e1}
 \end{figure}
 
-Como se observa en la Fig. \ref{fig:good_e1}, la senal \texttt{pc\_increment} se activa en \texttt{2} en los ciclos correspondientes a instrucciones de 16 bits (\texttt{c.addi}), permitiendo que la ejecucion secuencial sea perfecta. Por el contrario, en la Fig. \ref{fig:bad_e1}, la senal \texttt{pc\_increment} se mantiene rigidamente en \texttt{4}, lo que provoca la omision de la instruccion comprimida en \texttt{0x02}.
+Como se observa en la Fig. \ref{fig:good_e1}, la señal \texttt{pc\_increment} se activa en \texttt{2} en los ciclos correspondientes a instrucciones de 16 bits (\texttt{c.addi}), permitiendo que la ejecución secuencial sea perfecta. Por el contrario, en la Fig. \ref{fig:bad_e1}, la señal \texttt{pc\_increment} se mantiene rigidamente en \texttt{4}, lo que provoca la omision de la instrucción comprimida en \texttt{0x02}.
 
 \paragraph{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}
-La Fig. \ref{fig:comp_e3} muestra la instruccion decodificada en la etapa Decode (\texttt{InstrD}).
+La Fig. \ref{fig:comp_e3} muestra la instrucción decodificada en la etapa Decode (\texttt{InstrD}).
 
 \begin{figure}[H]
   \centering
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/good_e3.png}
-    \caption{Ejecucion Correcta: Decodificacion secuencial de las tres instrucciones.}
+    \caption{Ejecución Correcta: Decodificacion secuencial de las tres instrucciones.}
     \label{fig:good_e3}
   \end{minipage}
   \hfill
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/bad_e3.png}
-    \caption{Ejecucion con Fallo: La instruccion comprimida no aparece en Decode.}
+    \caption{Ejecución con Fallo: La instrucción comprimida no aparece en Decode.}
     \label{fig:bad_e3}
   \end{minipage}
   \caption{Comparativa de la decodificacion de instrucciones en la etapa Decode (\texttt{e3}).}
   \label{fig:comp_e3}
 \end{figure}
 
-En la ejecucion correcta (Fig. \ref{fig:good_e3}), la etapa Decode recibe de manera secuencial la instruccion \texttt{c.addi x8, 5} (descomprimida como \texttt{0x00540413}), luego la instruccion \texttt{c.addi x9, 10} (descomprimida como \texttt{0x00a48493}), y por ultimo la instruccion \texttt{add x10, x8, x9} (\texttt{0x00940533}). En la ejecucion con fallo (Fig. \ref{fig:bad_e3}), se pasa de la primera instruccion de suma inmediata directamente a la instruccion \texttt{add}, confirmando que la instruccion intermedia de \texttt{0x02} jamas entro en la etapa de decodificacion.
+En la ejecución correcta (Fig. \ref{fig:good_e3}), la etapa Decode recibe de manera secuencial la instrucción \texttt{c.addi x8, 5} (descomprimida como \texttt{0x00540413}), luego la instrucción \texttt{c.addi x9, 10} (descomprimida como \texttt{0x00a48493}), y por ultimo la instrucción \texttt{add x10, x8, x9} (\texttt{0x00940533}). En la ejecución con fallo (Fig. \ref{fig:bad_e3}), se pasa de la primera instrucción de suma inmediata directamente a la instrucción \texttt{add}, confirmando que la instrucción intermedia de \texttt{0x02} jamas entro en la etapa de decodificacion.
 
 \paragraph{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}
-La Fig. \ref{fig:comp_e2} muestra los puertos de escritura del banco de registros, analizando la habilitacion de escritura (\texttt{we3}), la direccion de escritura (\texttt{a3}) y el dato a escribir (\texttt{wd3}).
+La Fig. \ref{fig:comp_e2} muestra los puertos de escritura del banco de registros, analizando la habilitacion de escritura (\texttt{we3}), la dirección de escritura (\texttt{a3}) y el dato a escribir (\texttt{wd3}).
 
 \begin{figure}[H]
   \centering
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/good_e2.png}
-    \caption{Ejecucion Correcta: Escritura exitosa de x8=5, x9=10 y x10=15.}
+    \caption{Ejecución Correcta: Escritura exitosa de x8=5, x9=10 y x10=15.}
     \label{fig:good_e2}
   \end{minipage}
   \hfill
   \begin{minipage}{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{../Images/Entrega2/comparative/bad_e2.png}
-    \caption{Ejecucion con Fallo: Escritura ausente en x9 y suma corrupta en x10.}
+    \caption{Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10.}
     \label{fig:bad_e2}
   \end{minipage}
-  \caption{Comparativa de las senales de escritura en el Banco de Registros (\texttt{e2}).}
+  \caption{Comparativa de las señales de escritura en el Banco de Registros (\texttt{e2}).}
   \label{fig:comp_e2}
 \end{figure}
 
-En la Fig. \ref{fig:good_e2}, se observa la escritura secuencial correcta en la etapa de Writeback, culminando con la escritura de \texttt{15} (\texttt{0x0F}) en el registro destino \texttt{x10} (\texttt{a3 = 10}). Sin embargo, en la Fig. \ref{fig:bad_e2}, la escritura en el registro \texttt{x9} (\texttt{a3 = 9}) nunca se realiza debido a la omision de la instruccion, por lo que su valor permanece en \texttt{0}. Esto altera la ejecucion de la instruccion \texttt{add x10, x8, x9}, la cual escribe en Writeback el valor erroneo de \texttt{5} (\texttt{0x05}) en el registro \texttt{x10}.
+En la Fig. \ref{fig:good_e2}, se observa la escritura secuencial correcta en la etapa de Writeback, culminando con la escritura de \texttt{15} (\texttt{0x0F}) en el registro destino \texttt{x10} (\texttt{a3 = 10}). Sin embargo, en la Fig. \ref{fig:bad_e2}, la escritura en el registro \texttt{x9} (\texttt{a3 = 9}) nunca se realiza debido a la omision de la instrucción, por lo que su valor permanece en \texttt{0}. Esto altera la ejecución de la instrucción \texttt{add x10, x8, x9}, la cual escribe en Writeback el valor erroneo de \texttt{5} (\texttt{0x05}) en el registro \texttt{x10}.
 
 \renewcommand{\thefigure}{\arabic{figure}}
 \renewcommand{\theHfigure}{\arabic{figure}}
@@ -1800,7 +2275,7 @@ En la Fig. \ref{fig:good_e2}, se observa la escritura secuencial correcta en la 
 Microarchitecture-Pipelined/
 |-- riscv_pipeline.v            (Top module)
 |-- tb.v                        (Testbench)
-|-- run_sim.sh                  (Script de simulacion)
+|-- run_sim.sh                  (Script de simulación)
 |-- Datapath/
 |   |-- Fetch/     fetch.v, imem.v, decompressor.v
 |   |-- Decode/    decode.v, regfile.v

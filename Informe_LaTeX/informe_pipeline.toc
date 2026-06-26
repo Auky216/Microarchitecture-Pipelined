@@ -13,60 +13,60 @@
 \contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{9}{subsubsection.2.3.2}%
 \contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{9}{subsubsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt {riscv\_pipeline}}{9}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{10}{subsection.2.5}%
-\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{10}{subsubsection.2.5.1}%
-\contentsline {subsubsection}{\numberline {2.5.2}Pseudocódigo}{10}{subsubsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{11}{subsection.2.6}%
-\contentsline {subsection}{\numberline {2.7}Componentes Activos}{11}{subsection.2.7}%
-\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{11}{subsubsection.2.7.1}%
-\contentsline {subsubsection}{\numberline {2.7.2}Pseudocódigo de Decode}{12}{subsubsection.2.7.2}%
-\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{12}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Componentes Activos}{13}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Pseudocódigo Completo del Execute}{13}{subsection.3.2}%
-\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{14}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Componentes Activos}{15}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Pseudocódigo de ambas etapas}{15}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{16}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{16}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{16}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{17}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{17}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{17}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{17}{subsection.6.2}%
-\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{18}{subsubsection.6.2.1}%
-\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{18}{subsubsection.6.2.2}%
-\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{19}{subsubsection.6.2.3}%
-\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{19}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{19}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{20}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{20}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{21}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{21}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{21}{subsection.7.6}%
-\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{23}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{23}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{23}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{24}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Programa Extra: Set Completo de Operaciones y Validación de la ISA y Hazard Unit}{24}{subsection.8.4}%
-\contentsline {section}{\numberline {9}Extension RVC (16-bits)}{27}{section.9}%
-\contentsline {subsection}{\numberline {9.1}El Reto Arquitectonico y la Solucion}{27}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Modificaciones al Codigo}{27}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{28}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Pseudocodigo de la Extension RVC}{29}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Pruebas de la Extension RVC}{31}{subsection.9.5}%
-\contentsline {subsubsection}{\numberline {9.5.1}Test RVC Basico (\texttt {test\_rvc\_basic.mem})}{31}{subsubsection.9.5.1}%
-\contentsline {subsubsection}{\numberline {9.5.2}Test RVC de Memoria (\texttt {test\_rvc\_memory.mem})}{33}{subsubsection.9.5.2}%
-\contentsline {subsubsection}{\numberline {9.5.3}Test RVC de Saltos (\texttt {test\_rvc\_branches.mem})}{36}{subsubsection.9.5.3}%
-\contentsline {subsubsection}{\numberline {9.5.4}Test RVC de Cobertura Completa (\texttt {test\_rvc\_remaining.mem})}{38}{subsubsection.9.5.4}%
-\contentsline {subsection}{\numberline {9.6}Analisis de Performance y Justificacion de la Extension RVC}{40}{subsection.9.6}%
-\contentsline {subsubsection}{\numberline {9.6.1}Analisis de Ciclos de Reloj (Timing Analysis)}{40}{subsubsection.9.6.1}%
-\contentsline {subsubsection}{\numberline {9.6.2}Reduccion de Tamano de Codigo (Code Density)}{41}{subsubsection.9.6.2}%
-\contentsline {subsubsection}{\numberline {9.6.3}Guia de Uso: Cuando usar RVC y cuando no}{41}{subsubsection.9.6.3}%
-\contentsline {subsection}{\numberline {9.7}Analisis de Modos de Fallo de la Extension RVC}{42}{subsection.9.7}%
-\contentsline {subsubsection}{\numberline {9.7.1}Analisis de Consecuencias del Fallo}{42}{subsubsection.9.7.1}%
-\contentsline {subsubsection}{\numberline {9.7.2}Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}{43}{subsubsection.9.7.2}%
-\contentsline {paragraph}{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}{43}{paragraph*.1}%
-\contentsline {paragraph}{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}{44}{paragraph*.2}%
-\contentsline {paragraph}{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}{44}{paragraph*.3}%
-\contentsline {section}{\numberline {10}Jerarquia de Archivos}{45}{section.10}%
-\contentsline {section}{\numberline {11}Conclusiones}{45}{section.11}%
+\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{12}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{12}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Código Verilog}{12}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{14}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Componentes Activos}{14}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{14}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}Código Verilog de Decode}{15}{subsubsection.2.7.2}%
+\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{17}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Componentes Activos}{18}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Código Verilog de la etapa Execute}{18}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{21}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Componentes Activos}{22}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Código Verilog de las etapas Memory y Writeback}{22}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{25}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{25}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{25}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{26}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{26}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{26}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{26}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{27}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{27}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{28}{subsubsection.6.2.3}%
+\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{29}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{29}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{30}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{31}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{31}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{31}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{31}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{33}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{33}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{33}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{34}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Programa Extra: Set Completo de Operaciones y Validación de la ISA y Hazard Unit}{34}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Extension RVC (16-bits)}{37}{section.9}%
+\contentsline {subsection}{\numberline {9.1}El Reto Arquitectonico y la Solucion}{37}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Modificaciones al Código}{37}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{38}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Código Verilog de la Extensión RVC}{39}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Pruebas de la Extension RVC}{42}{subsection.9.5}%
+\contentsline {subsubsection}{\numberline {9.5.1}Test RVC Básico (\texttt {test\_rvc\_basic.mem})}{42}{subsubsection.9.5.1}%
+\contentsline {subsubsection}{\numberline {9.5.2}Test RVC de Memoria (\texttt {test\_rvc\_memory.mem})}{45}{subsubsection.9.5.2}%
+\contentsline {subsubsection}{\numberline {9.5.3}Test RVC de Saltos (\texttt {test\_rvc\_branches.mem})}{47}{subsubsection.9.5.3}%
+\contentsline {subsubsection}{\numberline {9.5.4}Test RVC de Cobertura Completa (\texttt {test\_rvc\_remaining.mem})}{50}{subsubsection.9.5.4}%
+\contentsline {subsection}{\numberline {9.6}Analisis de Performance y Justificacion de la Extension RVC}{52}{subsection.9.6}%
+\contentsline {subsubsection}{\numberline {9.6.1}Analisis de Ciclos de Reloj (Timing Analysis)}{52}{subsubsection.9.6.1}%
+\contentsline {subsubsection}{\numberline {9.6.2}Reducción de Tamaño de Código (Code Density)}{52}{subsubsection.9.6.2}%
+\contentsline {subsubsection}{\numberline {9.6.3}Guia de Uso: Cuando usar RVC y cuando no}{53}{subsubsection.9.6.3}%
+\contentsline {subsection}{\numberline {9.7}Analisis de Modos de Fallo de la Extension RVC}{54}{subsection.9.7}%
+\contentsline {subsubsection}{\numberline {9.7.1}Analisis de Consecuencias del Fallo}{54}{subsubsection.9.7.1}%
+\contentsline {subsubsection}{\numberline {9.7.2}Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}{55}{subsubsection.9.7.2}%
+\contentsline {paragraph}{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}{55}{paragraph*.1}%
+\contentsline {paragraph}{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}{55}{paragraph*.2}%
+\contentsline {paragraph}{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}{56}{paragraph*.3}%
+\contentsline {section}{\numberline {10}Jerarquia de Archivos}{56}{section.10}%
+\contentsline {section}{\numberline {11}Conclusiones}{57}{section.11}%
