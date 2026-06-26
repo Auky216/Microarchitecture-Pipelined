@@ -51,10 +51,22 @@
 \contentsline {section}{\numberline {9}Extension RVC (16-bits)}{27}{section.9}%
 \contentsline {subsection}{\numberline {9.1}El Reto Arquitectonico y la Solucion}{27}{subsection.9.1}%
 \contentsline {subsection}{\numberline {9.2}Modificaciones al Codigo}{27}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{27}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Pruebas de la Extension RVC}{28}{subsection.9.4}%
-\contentsline {subsubsection}{\numberline {9.4.1}Test RVC Basico (\texttt {test\_rvc\_basic.mem})}{28}{subsubsection.9.4.1}%
-\contentsline {subsubsection}{\numberline {9.4.2}Test RVC de Memoria (\texttt {test\_rvc\_memory.mem})}{29}{subsubsection.9.4.2}%
-\contentsline {subsubsection}{\numberline {9.4.3}Test RVC de Saltos (\texttt {test\_rvc\_branches.mem})}{30}{subsubsection.9.4.3}%
-\contentsline {section}{\numberline {10}Jerarquia de Archivos}{30}{section.10}%
-\contentsline {section}{\numberline {11}Conclusiones}{31}{section.11}%
+\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{28}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Pseudocodigo de la Extension RVC}{29}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Pruebas de la Extension RVC}{31}{subsection.9.5}%
+\contentsline {subsubsection}{\numberline {9.5.1}Test RVC Basico (\texttt {test\_rvc\_basic.mem})}{31}{subsubsection.9.5.1}%
+\contentsline {subsubsection}{\numberline {9.5.2}Test RVC de Memoria (\texttt {test\_rvc\_memory.mem})}{33}{subsubsection.9.5.2}%
+\contentsline {subsubsection}{\numberline {9.5.3}Test RVC de Saltos (\texttt {test\_rvc\_branches.mem})}{36}{subsubsection.9.5.3}%
+\contentsline {subsubsection}{\numberline {9.5.4}Test RVC de Cobertura Completa (\texttt {test\_rvc\_remaining.mem})}{38}{subsubsection.9.5.4}%
+\contentsline {subsection}{\numberline {9.6}Analisis de Performance y Justificacion de la Extension RVC}{40}{subsection.9.6}%
+\contentsline {subsubsection}{\numberline {9.6.1}Analisis de Ciclos de Reloj (Timing Analysis)}{40}{subsubsection.9.6.1}%
+\contentsline {subsubsection}{\numberline {9.6.2}Reduccion de Tamano de Codigo (Code Density)}{41}{subsubsection.9.6.2}%
+\contentsline {subsubsection}{\numberline {9.6.3}Guia de Uso: Cuando usar RVC y cuando no}{41}{subsubsection.9.6.3}%
+\contentsline {subsection}{\numberline {9.7}Analisis de Modos de Fallo de la Extension RVC}{42}{subsection.9.7}%
+\contentsline {subsubsection}{\numberline {9.7.1}Analisis de Consecuencias del Fallo}{42}{subsubsection.9.7.1}%
+\contentsline {subsubsection}{\numberline {9.7.2}Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}{43}{subsubsection.9.7.2}%
+\contentsline {paragraph}{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}{43}{paragraph*.1}%
+\contentsline {paragraph}{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}{44}{paragraph*.2}%
+\contentsline {paragraph}{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}{44}{paragraph*.3}%
+\contentsline {section}{\numberline {10}Jerarquia de Archivos}{45}{section.10}%
+\contentsline {section}{\numberline {11}Conclusiones}{45}{section.11}%

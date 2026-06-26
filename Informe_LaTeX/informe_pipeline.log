@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  25 JUN 2026 00:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  25 JUN 2026 20:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**informe_pipeline.tex
-(./informe_pipeline.tex
+**Informe_LaTeX/informe_pipeline.tex
+(./Informe_LaTeX/informe_pipeline.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/base/article.cls
@@ -290,7 +290,62 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@count@id=\count314
 \enitdp@description=\count315
 )
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip57
+\f@nch@offset@elh=\skip58
+\f@nch@offset@erh=\skip59
+\f@nch@offset@olh=\skip60
+\f@nch@offset@orh=\skip61
+\f@nch@offset@elf=\skip62
+\f@nch@offset@erf=\skip63
+\f@nch@offset@olf=\skip64
+\f@nch@offset@orf=\skip65
+\f@nch@height=\skip66
+\f@nch@footalignment=\skip67
+\f@nch@widthL=\skip68
+\f@nch@widthC=\skip69
+\f@nch@widthR=\skip70
+\@temptokenb=\toks30
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2025/01/04 v2.17 Sectioning titles
+\ttl@box=\box60
+\beforetitleunit=\skip71
+\aftertitleunit=\skip72
+\ttl@plus=\dimen187
+\ttl@minus=\dimen188
+\ttl@toksa=\toks31
+\titlewidth=\dimen189
+\titlewidthlast=\dimen190
+\titlewidthfirst=\dimen191
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count316
+\float@exts=\toks32
+\float@box=\box61
+\@float@everytoks=\toks33
+\@floatcapt=\box62
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+)
+\Gin@req@height=\dimen192
+\Gin@req@width=\dimen193
+) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.
@@ -323,15 +378,15 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ing.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count316
+\c@section@level=\count317
 )
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen187
-\Hy@linkcounter=\count317
-\Hy@pagecounter=\count318
+\@linkdim=\dimen194
+\Hy@linkcounter=\count318
+\Hy@pagecounter=\count319
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
@@ -341,7 +396,7 @@ Now handling font encoding PD1 ...
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count319
+\Hy@SavedSpaceFactor=\count320
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
@@ -355,14 +410,14 @@ Package hyperref Info: Plain pages OFF on input line 4216.
 Package hyperref Info: Backreferencing OFF on input line 4221.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4468.
-\c@Hy@tempcnt=\count320
+\c@Hy@tempcnt=\count321
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4807.
-\XeTeXLinkMargin=\dimen188
+\XeTeXLinkMargin=\dimen195
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -371,9 +426,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count321
-\Field@Width=\dimen189
-\Fld@charsize=\dimen190
+\Fld@menulength=\count322
+\Field@Width=\dimen196
+\Fld@charsize=\dimen197
 Package hyperref Info: Hyper figures OFF on input line 6084.
 Package hyperref Info: Link nesting OFF on input line 6089.
 Package hyperref Info: Hyper index ON on input line 6092.
@@ -381,15 +436,15 @@ Package hyperref Info: backreferencing OFF on input line 6099.
 Package hyperref Info: Link coloring OFF on input line 6104.
 Package hyperref Info: Link coloring with OCG OFF on input line 6109.
 Package hyperref Info: PDF/A mode OFF on input line 6114.
-\Hy@abspage=\count322
-\c@Item=\count323
-\c@Hfootnote=\count324
+\Hy@abspage=\count323
+\c@Item=\count324
+\c@Hfootnote=\count325
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
  (/usr/local/texlive/2026basic/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
-\Fld@listcount=\count325
-\c@bookmark@seq@number=\count326
+\Fld@listcount=\count326
+\c@bookmark@seq@number=\count327
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/rerunfilecheck/rerunfilechec
 k.sty
@@ -402,68 +457,11 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip57
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
-Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
-
-\f@nch@headwidth=\skip58
-\f@nch@offset@elh=\skip59
-\f@nch@offset@erh=\skip60
-\f@nch@offset@olh=\skip61
-\f@nch@offset@orh=\skip62
-\f@nch@offset@elf=\skip63
-\f@nch@offset@erf=\skip64
-\f@nch@offset@olf=\skip65
-\f@nch@offset@orf=\skip66
-\f@nch@height=\skip67
-\f@nch@footalignment=\skip68
-\f@nch@widthL=\skip69
-\f@nch@widthC=\skip70
-\f@nch@widthR=\skip71
-\@temptokenb=\toks30
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/titlesec/titlesec.sty
-Package: titlesec 2025/01/04 v2.17 Sectioning titles
-\ttl@box=\box60
-\beforetitleunit=\skip72
-\aftertitleunit=\skip73
-\ttl@plus=\dimen191
-\ttl@minus=\dimen192
-\ttl@toksa=\toks31
-\titlewidth=\dimen193
-\titlewidthlast=\dimen194
-\titlewidthfirst=\dimen195
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/float/float.sty
-Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count327
-\float@exts=\toks32
-\float@box=\box61
-\@float@everytoks=\toks33
-\@floatcapt=\box62
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/graphicx.sty
-Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
-
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/graphics.sty
-Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
-
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics/trig.sty
-Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
-File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
-)
-Package graphics Info: Driver file: pdftex.def on input line 106.
-)
-\Gin@req@height=\dimen196
-\Gin@req@width=\dimen197
+\Hy@SectionHShift=\skip73
 ) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/mathpazo.sty
 Package: mathpazo 2020/03/25 PSNFSS-v9.3 Palatino w/ Pazo Math (D.Puga, WaS) 
 \symupright=\mathgroup6
-)
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/helvet.sty
+) (/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/helvet.sty
 Package: helvet 2020/03/25 PSNFSS-v9.3 (WaS) 
 )
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/courier.sty
@@ -814,7 +812,7 @@ File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
 ef
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count350
-) (./informe_pipeline.aux
+) (Informe_LaTeX/informe_pipeline.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 Package babel Info: 'spanish' activates 'spanish' shorthands.
@@ -905,11 +903,11 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 Package hyperref Info: Link coloring ON on input line 239.
- (./informe_pipeline.out) (./informe_pipeline.out)
+ (Informe_LaTeX/informe_pipeline.out) (Informe_LaTeX/informe_pipeline.out)
 \@outlinefile=\write4
 \openout4 = `informe_pipeline.out'.
 
-<../Images/UTEC.png, id=212, 963.6pt x 963.6pt>
+<../Images/UTEC.png, id=280, 963.6pt x 963.6pt>
 File: ../Images/UTEC.png Graphic file (type png)
 <use ../Images/UTEC.png>
 Package pdftex.def Info: ../Images/UTEC.png  used on input line 247.
@@ -975,13 +973,13 @@ File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 
 {/Users/antonio/Library/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdf
 tex.map}{/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/base/8r.enc} <
-../Images/UTEC.png>]
+Informe_LaTeX/../Images/UTEC.png>]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 10.07397pt on input line 279.
  [2]
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 15.89755pt on input line 281.
- (./informe_pipeline.toc
+ (Informe_LaTeX/informe_pipeline.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 
@@ -1016,21 +1014,7 @@ Overfull \hbox (13.73608pt too wide) in paragraph at lines 373--374
  [][] 
  []
 
-[3] [4
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.403   \item \textbf
-                     {Se√±ales para Writeback (WB)}: Indican la escritura en...
-
-pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
- been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.403   \item \textbf
-                     {Se√±ales para Writeback (WB)}: Indican la escritura en...
-]
+[3] [4]
 Overfull \hbox (26.92361pt too wide) in paragraph at lines 403--404
 []\T1/ppl/b/n/12 SeÒales pa-ra Wri-te-back (WB)\T1/ppl/m/n/12 : In-di-can la es
 -cri-tu-ra en el ban-co de re-gis-tros (\T1/pcr/m/n/12 RegWrite\T1/ppl/m/n/12 ,
@@ -1049,14 +1033,8 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 7.91925pt on input line 418.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 6.25204pt on input line 418.
-[5] [6
-pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
- been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.457 
-      ]
-<../Images/diagrama_base.png, id=314, 1479.5275pt x 626.34pt>
+[5] [6]
+<../Images/diagrama_base.png, id=400, 1479.5275pt x 626.34pt>
 File: ../Images/diagrama_base.png Graphic file (type png)
 <use ../Images/diagrama_base.png>
 Package pdftex.def Info: ../Images/diagrama_base.png  used on input line 487.
@@ -1070,39 +1048,21 @@ LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 10.07397pt on input line 511.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 5.51999pt on input line 515.
- [8
-pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.537 
-       <../Images/diagrama_base.png>]
+ [8 <Informe_LaTeX/../Images/diagrama_base.png>]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 544.
- [9
-pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.574   // 
-           6. Instanciar Hazard Unit]
-<../Images/fetch_stage.png, id=361, 440.64626pt x 241.90375pt>
+ [9]
+<../Images/fetch_stage.png, id=446, 440.64626pt x 241.90375pt>
 File: ../Images/fetch_stage.png Graphic file (type png)
 <use ../Images/fetch_stage.png>
 Package pdftex.def Info: ../Images/fetch_stage.png  used on input line 584.
 (pdftex.def)             Requested size: 386.96027pt x 212.4404pt.
-<../Images/decode_stage.png, id=362, 440.64626pt x 469.755pt>
+<../Images/decode_stage.png, id=447, 440.64626pt x 469.755pt>
 File: ../Images/decode_stage.png Graphic file (type png)
 <use ../Images/decode_stage.png>
 Package pdftex.def Info: ../Images/decode_stage.png  used on input line 616.
 (pdftex.def)             Requested size: 386.96027pt x 412.53987pt.
- [10
-pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.619 
-       <../Images/fetch_stage.png>]
+ [10 <Informe_LaTeX/../Images/fetch_stage.png>]
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
 (Font)              scaled to size 11.40997pt on input line 628.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
@@ -1111,156 +1071,77 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 11.40997pt on input line 628.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 8.33606pt on input line 628.
- [11
-pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.644 
-       <../Images/decode_stage.png>] [12
-pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has
- been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.682 
-      ]
-<../Images/execute_stage.png, id=425, 525.965pt x 469.755pt>
+ [11 <Informe_LaTeX/../Images/decode_stage.png>] [12]
+<../Images/execute_stage.png, id=510, 525.965pt x 469.755pt>
 File: ../Images/execute_stage.png Graphic file (type png)
 <use ../Images/execute_stage.png>
 Package pdftex.def Info: ../Images/execute_stage.png  used on input line 687.
 (pdftex.def)             Requested size: 386.96027pt x 345.62059pt.
- [13
-pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.706   else 
-             if (ForwardAE == 2'b01): SrcAE = ResultW;     // de Writeback <../
-Images/execute_stage.png>]
-<../Images/memory_writeback_stage.png, id=443, 469.755pt x 469.755pt>
+ [13 <Informe_LaTeX/../Images/execute_stage.png>]
+<../Images/memory_writeback_stage.png, id=528, 469.755pt x 469.755pt>
 File: ../Images/memory_writeback_stage.png Graphic file (type png)
 <use ../Images/memory_writeback_stage.png>
 Package pdftex.def Info: ../Images/memory_writeback_stage.png  used on input li
 ne 759.
 (pdftex.def)             Requested size: 386.96027pt x 386.95773pt.
- [14] [15
-pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.783   // 
-           2. Seleccionar resultado final <../Images/memory_writeback_stage.png
->]
-<../Images/waves_isa.png, id=506, 1715.40875pt x 228.855pt>
+ [14] [15 <Informe_LaTeX/../Images/memory_writeback_stage.png>]
+<../Images/waves_isa.png, id=592, 1715.40875pt x 228.855pt>
 File: ../Images/waves_isa.png Graphic file (type png)
 <use ../Images/waves_isa.png>
 Package pdftex.def Info: ../Images/waves_isa.png  used on input line 822.
 (pdftex.def)             Requested size: 400.61703pt x 53.4457pt.
- [16
-pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.829   \item L
-               a se√±al \texttt{ALUResultE} muestra el valor \texttt{0x05} c...
- <../Images/waves_isa.png>] [17]
-<../Images/waves_forwarding_NO_HAZARD.png, id=543, 1716.4125pt x 275.0275pt>
+ [16 <Informe_LaTeX/../Images/waves_isa.png>] [17]
+<../Images/waves_forwarding_NO_HAZARD.png, id=628, 1716.4125pt x 275.0275pt>
 File: ../Images/waves_forwarding_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_forwarding_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_forwarding_NO_HAZARD.png  used on inpu
 t line 866.
 (pdftex.def)             Requested size: 364.19667pt x 58.3534pt.
-<../Images/waves_stalling_NO_HAZARD.png, id=544, 1716.4125pt x 270.00874pt>
+<../Images/waves_stalling_NO_HAZARD.png, id=629, 1716.4125pt x 270.00874pt>
 File: ../Images/waves_stalling_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_stalling_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_stalling_NO_HAZARD.png  used on input 
 line 886.
 (pdftex.def)             Requested size: 373.3035pt x 58.7223pt.
- [18
-pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.895 
-      
-pdfTeX warning (ext4): destination with the same identifier (name{figure.10}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.895 
-       <../Images/waves_forwarding_NO_HAZARD.png> <../Images/waves_stalling_NO_
-HAZARD.png>]
-<../Images/waves_flushing_NO_HAZARD.png, id=564, 1716.4125pt x 255.95625pt>
+ [18 <Informe_LaTeX/../Images/waves_forwarding_NO_HAZARD.png> <Informe_LaTeX/..
+/Images/waves_stalling_NO_HAZARD.png>]
+<../Images/waves_flushing_NO_HAZARD.png, id=649, 1716.4125pt x 255.95625pt>
 File: ../Images/waves_flushing_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_flushing_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_flushing_NO_HAZARD.png  used on input 
 line 907.
 (pdftex.def)             Requested size: 382.40338pt x 57.02135pt.
- [19
-pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.962 \end{figure}
-                   <../Images/waves_flushing_NO_HAZARD.png>] [20
-pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.988 StallF 
-             = lwStall;    // Congelar PC (no avanza)]
-<../Images/diagrama_final.png, id=595, 1479.5275pt x 711.65875pt>
+ [19 <Informe_LaTeX/../Images/waves_flushing_NO_HAZARD.png>] [20]
+<../Images/diagrama_final.png, id=681, 1479.5275pt x 711.65875pt>
 File: ../Images/diagrama_final.png Graphic file (type png)
 <use ../Images/diagrama_final.png>
 Package pdftex.def Info: ../Images/diagrama_final.png  used on input line 1023.
 
 (pdftex.def)             Requested size: 455.24411pt x 218.97221pt.
- [21] [22
-pdfTeX warning (ext4): destination with the same identifier (name{figure.13}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1032 \end{itemize}
-                     <../Images/diagrama_final.png>]
-<../Images/waves_forwarding.png, id=616, 1714.405pt x 274.02374pt>
+ [21] [22 <Informe_LaTeX/../Images/diagrama_final.png>]
+<../Images/waves_forwarding.png, id=702, 1714.405pt x 274.02374pt>
 File: ../Images/waves_forwarding.png Graphic file (type png)
 <use ../Images/waves_forwarding.png>
 Package pdftex.def Info: ../Images/waves_forwarding.png  used on input line 105
 5.
 (pdftex.def)             Requested size: 409.71692pt x 65.4869pt.
-<../Images/waves_stalling.png, id=617, 1716.4125pt x 272.01625pt>
+<../Images/waves_stalling.png, id=703, 1716.4125pt x 272.01625pt>
 File: ../Images/waves_stalling.png Graphic file (type png)
 <use ../Images/waves_stalling.png>
 Package pdftex.def Info: ../Images/waves_stalling.png  used on input line 1075.
 
 (pdftex.def)             Requested size: 418.82375pt x 66.3727pt.
- [23
-pdfTeX warning (ext4): destination with the same identifier (name{figure.14}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1078 
-        <../Images/waves_forwarding.png>]
-<../Images/waves_flushing.png, id=637, 1716.4125pt x 248.93pt>
+ [23 <Informe_LaTeX/../Images/waves_forwarding.png>]
+<../Images/waves_flushing.png, id=722, 1716.4125pt x 248.93pt>
 File: ../Images/waves_flushing.png Graphic file (type png)
 <use ../Images/waves_flushing.png>
 Package pdftex.def Info: ../Images/waves_flushing.png  used on input line 1096.
 
 (pdftex.def)             Requested size: 391.51021pt x 56.7779pt.
- [24
-pdfTeX warning (ext4): destination with the same identifier (name{figure.15}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1105 
-       
-pdfTeX warning (ext4): destination with the same identifier (name{figure.16}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1105 
-        <../Images/waves_stalling.png> <../Images/waves_flushing.png>] [25]
-<../Images/waves_remaining_ops.png, id=698, 1715.40875pt x 229.85875pt>
+ [24 <Informe_LaTeX/../Images/waves_stalling.png> <Informe_LaTeX/../Images/wave
+s_flushing.png>]
+[25]
+<../Images/waves_remaining_ops.png, id=784, 1715.40875pt x 229.85875pt>
 File: ../Images/waves_remaining_ops.png Graphic file (type png)
 <use ../Images/waves_remaining_ops.png>
 Package pdftex.def Info: ../Images/waves_remaining_ops.png  used on input line 
@@ -1268,88 +1149,255 @@ Package pdftex.def Info: ../Images/waves_remaining_ops.png  used on input line
 (pdftex.def)             Requested size: 432.48051pt x 57.94855pt.
 LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 1
 160.
-
-(/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/ts1ppl.fd
+ (/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
-) [26
-pdfTeX warning (ext4): destination with the same identifier (name{figure.17}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1182 
-        <../Images/waves_remaining_ops.png>]
+)
+[26 <Informe_LaTeX/../Images/waves_remaining_ops.png>]
+<../Images/Entrega2/diagrama_fetch_rvc.png, id=792, 541.02126pt x 284.06125pt>
+File: ../Images/Entrega2/diagrama_fetch_rvc.png Graphic file (type png)
+<use ../Images/Entrega2/diagrama_fetch_rvc.png>
+Package pdftex.def Info: ../Images/Entrega2/diagrama_fetch_rvc.png  used on inp
+ut line 1185.
+(pdftex.def)             Requested size: 432.48051pt x 227.08025pt.
+ [27 <Informe_LaTeX/../Images/Entrega2/diagrama_fetch_rvc.png>] [28] [29] [30]
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png, id=903, 1365.1pt x 336
+.25626pt>
+File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png Graphic file (type
+ png)
+<use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png
+  used on input line 1333.
+(pdftex.def)             Requested size: 432.48051pt x 106.52672pt.
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png, id=904, 1064.97874p
+t x 382.42876pt>
+File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png Graphic file (t
+ype png)
+<use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.
+png  used on input line 1340.
+(pdftex.def)             Requested size: 432.48051pt x 155.2971pt.
+ [31 <Informe_LaTeX/../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png> <In
+forme_LaTeX/../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png>]
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png, id=922, 1051.93pt x
+ 372.39125pt>
+File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png Graphic file (t
+ype png)
+<use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.
+png  used on input line 1356.
+(pdftex.def)             Requested size: 432.48051pt x 153.10188pt.
 
-LaTeX Warning: File `../Images/waves_rvc_basic.png' not found on input line 120
-4.
+Overfull \hbox (1.91656pt too wide) in paragraph at lines 1364--1365
+[]\T1/ppl/m/n/12 Dado que \T1/pcr/m/n/12 PCF[1] = 0\T1/ppl/m/n/12 , la ins-truc
+-cion ac-tual ali-nea-da a me-dia pa-la-bra es \T1/pcr/m/n/12 0x0415
+ []
+
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png, id=924, 1067.99pt x
+ 294.09875pt>
+File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png Graphic file (t
+ype png)
+<use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.
+png  used on input line 1371.
+(pdftex.def)             Requested size: 432.48051pt x 119.09587pt.
+[32 <Informe_LaTeX/../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png, id=932, 1716.4125pt 
+x 356.33125pt>
+File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png Graphic file (ty
+pe png)
+<use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.p
+ng  used on input line 1405.
+(pdftex.def)             Requested size: 432.48051pt x 89.78398pt.
+
+[33 <Informe_LaTeX/../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png, id=945, 1365.1pt 
+x 351.3125pt>
+File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png Graphic file 
+(type png)
+<use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
+1.png  used on input line 1412.
+(pdftex.def)             Requested size: 432.48051pt x 111.29657pt.
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png, id=947, 1337.9987
+5pt x 384.43625pt>
+File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png Graphic file 
+(type png)
+<use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
+2.png  used on input line 1425.
+(pdftex.def)             Requested size: 432.48051pt x 124.25984pt.
+
+Overfull \hbox (1.28062pt too wide) in paragraph at lines 1430--1435
+\T1/ppl/m/n/12 Cuando la ins-truc-cion de es-cri-tu-ra lle-ga a la eta-pa Me-mo
+ry (\T1/pcr/m/n/12 InstrM = 0x00942223\T1/ppl/m/n/12 ),
+ []
+
+[34 <Informe_LaTeX/../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png> <I
+nforme_LaTeX/../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png> <Info
+rme_LaTeX/../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png, id=959, 1283.7962
+5pt x 375.4025pt>
+File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png Graphic file 
+(type png)
+<use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
+3.png  used on input line 1438.
+(pdftex.def)             Requested size: 432.48051pt x 126.46088pt.
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png, id=961, 1298.8525
+pt x 248.93pt>
+File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png Graphic file 
+(type png)
+<use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
+4.png  used on input line 1451.
+(pdftex.def)             Requested size: 432.48051pt x 82.88403pt.
+
+Overfull \hbox (21.10411pt too wide) in paragraph at lines 1456--1462
+\T1/ppl/m/n/12 Cuando la ins-truc-cion de car-ga lle-ga a la eta-pa Wri-te-back
+ (WB) (\T1/pcr/m/n/12 InstrW = 0x00442503\T1/ppl/m/n/12 ),
+ []
+
+[35 <Informe_LaTeX/../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png>
+ <Informe_LaTeX/../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png>]
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png, id=972, 1361.085
+pt x 413.545pt>
+File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png Graphic file
+ (type png)
+<use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
+es.png  used on input line 1482.
+(pdftex.def)             Requested size: 432.48051pt x 131.40318pt.
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png, id=973, 1
+024.82875pt x 402.50375pt>
+File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png Graph
+ic file (type png)
+<use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
+es_e1.png.png  used on input line 1489.
+(pdftex.def)             Requested size: 432.48051pt x 169.85498pt.
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png, id=975, 1
+270.7475pt x 393.47pt>
+File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png Graph
+ic file (type png)
+<use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
+es_e2.png.png  used on input line 1503.
+(pdftex.def)             Requested size: 432.48051pt x 133.91011pt.
+
+[36 <Informe_LaTeX/../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png
+> <Informe_LaTeX/../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.pn
+g.png>]
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png, id=992, 2376.
+88pt x 834.11626pt>
+File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png Graphic f
+ile (type png)
+<use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
+es_e3.png  used on input line 1517.
+(pdftex.def)             Requested size: 432.48051pt x 151.76358pt.
+
+Overfull \hbox (9.36928pt too wide) in paragraph at lines 1522--1528
+\T1/ppl/m/n/12 *QuÈ de-cir en tu in-for-me:* Cuan-do el sal-to es to-ma-do (\T1
+/pcr/m/n/12 PCSrcE = 1\T1/ppl/m/n/12 ), las se-Òa-les \T1/pcr/m/n/12 FlushD
+ []
+
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png, id=994, 1377.
+145pt x 145.54375pt>
+File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png Graphic f
+ile (type png)
+<use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
+es_e4.png  used on input line 1531.
+(pdftex.def)             Requested size: 432.48051pt x 45.7066pt.
+[37 <Informe_LaTeX/../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.
+png.png> <Informe_LaTeX/../Images/Entrega2/waves_rvc_branches/waves_rvc_branche
+s_e3.png>] [38 <Informe_LaTeX/../Images/Entrega2/waves_rvc_branches/waves_rvc_b
+ranches_e4.png>]
+<../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png, id=1041, 1710.
+39pt x 590.205pt>
+File: ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png Graphic fi
+le (type png)
+<use ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png>
+Package pdftex.def Info: ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remai
+ning.png  used on input line 1585.
+(pdftex.def)             Requested size: 432.48051pt x 149.23497pt.
+ [39 <Informe_LaTeX/../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.
+png>]
+Overfull \hbox (28.20854pt too wide) in paragraph at lines 1606--1607
+\T1/pcr/m/n/12 0x24\T1/ppl/m/n/12 ) en la eta-pa Execu-te (ci-clo 21), la ALU c
+al-cu-la el des-tino re-la-ti-vo \T1/pcr/m/n/12 PCTargetE
+ []
 
 
-! Package pdftex.def Error: File `../Images/waves_rvc_basic.png' not found: usi
-ng draft setting.
+Overfull \hbox (48.59995pt too wide) in paragraph at lines 1608--1609
+[]\T1/ppl/b/n/12 Salto In-di-rec-to con En-la-ce (\T1/pcr/b/n/12 c.jalr\T1/ppl/
+b/n/12 ): \T1/ppl/m/n/12 Se car-ga la di-rec-cion ab-so-lu-ta de \T1/pcr/m/n/12
+ target_jalr
+ []
 
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1204 ...extwidth]{../Images/waves_rvc_basic.png}
-                                                   % Placeholder
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+[40] [41]
+Overfull \hbox (22.28165pt too wide) in paragraph at lines 1669--1670
+\T1/ppl/m/n/12 el mo-du-lo \T1/pcr/m/n/12 fetch.v\T1/ppl/m/n/12 , ig-no-ran-do 
+el va-lor de la ban-de-ra de des-com-pre-sion \T1/pcr/m/n/12 is_compressed\T1/p
+pl/m/n/12 . 
+ []
 
-[27]
+[42]
+Overfull \hbox (42.31915pt too wide) in paragraph at lines 1719--1720
+[][]\T1/ppl/m/n/12 22.3[][] se com-pa-ra el avan-ce del PC de Fetch (\T1/pcr/m/
+n/12 pcF\T1/ppl/m/n/12 ) y la se-nal del in-cre-men-ta-dor (\T1/pcr/m/n/12 pc_i
+ncrement\T1/ppl/m/n/12 ). 
+ []
 
-LaTeX Warning: File `../Images/waves_rvc_memory.png' not found on input line 12
-17.
+<../Images/Entrega2/comparative/good_e1.png, id=1072, 1043.9pt x 374.39874pt>
+File: ../Images/Entrega2/comparative/good_e1.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/good_e1.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/good_e1.png  used on in
+put line 1725.
+(pdftex.def)             Requested size: 218.51521pt x 78.36897pt.
+<../Images/Entrega2/comparative/bad_e1.png, id=1073, 948.54375pt x 372.39125pt>
 
+File: ../Images/Entrega2/comparative/bad_e1.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/bad_e1.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e1.png  used on inp
+ut line 1732.
+(pdftex.def)             Requested size: 218.51521pt x 85.78455pt.
+[43 <Informe_LaTeX/../Images/Entrega2/comparative/good_e1.png> <Informe_LaTeX/.
+./Images/Entrega2/comparative/bad_e1.png>]
+<../Images/Entrega2/comparative/good_e3.png, id=1087, 860.21375pt x 255.95625pt
+>
+File: ../Images/Entrega2/comparative/good_e3.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/good_e3.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/good_e3.png  used on in
+put line 1749.
+(pdftex.def)             Requested size: 218.51521pt x 65.01607pt.
+<../Images/Entrega2/comparative/bad_e3.png, id=1088, 934.49126pt x 201.75375pt>
 
-! Package pdftex.def Error: File `../Images/waves_rvc_memory.png' not found: us
-ing draft setting.
+File: ../Images/Entrega2/comparative/bad_e3.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/bad_e3.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e3.png  used on inp
+ut line 1756.
+(pdftex.def)             Requested size: 218.51521pt x 47.17508pt.
+<../Images/Entrega2/comparative/good_e2.png, id=1092, 1032.85875pt x 365.365pt>
 
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1217 ...xtwidth]{../Images/waves_rvc_memory.png}
-                                                   % Placeholder
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[28
-pdfTeX warning (ext4): destination with the same identifier (name{figure.18}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1220 
-       ]
-
-LaTeX Warning: File `../Images/waves_rvc_branches.png' not found on input line 
-1229.
-
-
-! Package pdftex.def Error: File `../Images/waves_rvc_branches.png' not found: 
-using draft setting.
-
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.1229 ...width]{../Images/waves_rvc_branches.png}
-                                                   % Placeholder
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[29
-pdfTeX warning (ext4): destination with the same identifier (name{figure.19}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1232 
-       ] [30
-pdfTeX warning (ext4): destination with the same identifier (name{figure.20}) h
-as been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.1269 \end{verbatim}
-                     ] [31] (./informe_pipeline.aux
+File: ../Images/Entrega2/comparative/good_e2.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/good_e2.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/good_e2.png  used on in
+put line 1773.
+(pdftex.def)             Requested size: 218.51521pt x 77.29756pt.
+<../Images/Entrega2/comparative/bad_e2.png, id=1093, 1048.91875pt x 368.37625pt
+>
+File: ../Images/Entrega2/comparative/bad_e2.png Graphic file (type png)
+<use ../Images/Entrega2/comparative/bad_e2.png>
+Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e2.png  used on inp
+ut line 1780.
+(pdftex.def)             Requested size: 218.51521pt x 76.73737pt.
+ [44 <Informe_LaTeX/../Images/Entrega2/comparative/good_e3.png> <Informe_LaTeX/
+../Images/Entrega2/comparative/bad_e3.png> <Informe_LaTeX/../Images/Entrega2/co
+mparative/good_e2.png> <Informe_LaTeX/../Images/Entrega2/comparative/bad_e2.png
+>] [45] [46]
+(Informe_LaTeX/informe_pipeline.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -1357,24 +1405,17 @@ LaTeX Info: Redefining \% on input line 11.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-Package rerunfilecheck Warning: File `informe_pipeline.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `informe_pipeline.out':
-(rerunfilecheck)             Before: 74E023C1C56778B0827B86CAF97125F4;12311
-(rerunfilecheck)             After:  E9F32279C328467C227366C863AC2E94;14299.
+Package rerunfilecheck Info: File `informe_pipeline.out' has not changed.
+(rerunfilecheck)             Checksum: C90B99E7D9712E846F2668BD8FD490BA;17131.
  ) 
 Here is how much of TeX's memory you used:
- 27572 strings out of 468658
- 505026 string characters out of 5439871
- 1829968 words of memory out of 5000000
- 55450 multiletter control sequences out of 15000+600000
- 706408 words of font info for 166 fonts, out of 8000000 for 9000
+ 28058 strings out of 468658
+ 516601 string characters out of 5439871
+ 1830054 words of memory out of 5000000
+ 55733 multiletter control sequences out of 15000+600000
+ 708368 words of font info for 170 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 84i,13n,94p,1145b,2065s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,94p,1159b,2065s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10
 .pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/courier/ucrb8
@@ -1384,10 +1425,11 @@ fb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb
 /usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></u
 sr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr
 /local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on informe_pipeline.pdf (33 pages, 1245622 bytes).
+Output written on Informe_LaTeX/informe_pipeline.pdf (48 pages, 5770936 bytes).
+
 PDF statistics:
- 866 PDF objects out of 1000 (max. 8388607)
- 776 compressed objects within 8 object streams
- 382 named destinations out of 1000 (max. 500000)
- 496 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1291 PDF objects out of 1440 (max. 8388607)
+ 1138 compressed objects within 12 object streams
+ 580 named destinations out of 1000 (max. 500000)
+ 742 words of extra memory for PDF output out of 10000 (max. 10000000)
 

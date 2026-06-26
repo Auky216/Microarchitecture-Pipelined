@@ -1,0 +1,123 @@
+================================================================================
+          MICROARQUITECTURA DE PROCESADOR PIPELINED DE 5 ETAPAS (RISC-V)
+       Diagrama de Bloques y Componentes RVC (Fetch hasta Registro IF/ID)
+================================================================================
+
+Este documento describe la organizacion visual y el flujo de senales en la etapa 
+de Fetch (IF) modificada para soportar la Extension RVC (instrucciones comprimidas 
+de 16 bits), conectandose hasta el registro de acoplamiento de clock IF/ID.
+
+1. DIAGRAMA DE FLUJO (ASCII ART)
+================================
+
+                          PCSrcE (de Decode/Execute)
+                              |
+                              v
+    PCTargetE ------------>\  0  / (PCPlus4F)
+    (de Execute)            \===/ (pcmux)
+                              |
+                              v PCF_Next
+                        +-----------+
+                        |  Reg PC   | <--- clk / StallF (Hazard Unit)
+                        +-----------+
+                              |
+                  +-----------+-----------+----------------------+
+                  | PCF                   |                      |
+                  v                       v                      |
+           +-------------+                |                      |
+           | Memoria de  |                |                      |
+           | Instrucciones|               |                      |
+           |   (IMEM)    |                |                      |
+           +-------------+                |                      |
+                  |                       |                      |
+                  | raw[31:0]             |                      |
+                  |                       v                      |
+                  |     PCF[1]         +-----+                   |
+                  |       |            |     |                   |
+                  v       v            |  +  | <--- pc_increment |
+               +-------------+         |     |      (2 o 4)      |
+     raw ----> |  alignmux   |         +-----+                   |
+               +-------------+            | (pcadd)              |
+                  |                       |                      |
+                  v actual_instr[31:0]    v PCPlus4F             |
+           +------+------+                |                      |
+           |             |                |                      |
+           |             v cinstr[15:0]   |                      |
+           |       +-----------+          |                      |
+           |       | Descompres|          |                      |
+           |       |  or RVC   |          |                      |
+           |       +-----------+          |                      |
+           |             |                |                      |
+           |             v decomp[31:0]   |                      |
+           |             |                |                      |
+           |             +--------+       |                      |
+           |                      |       |                      |
+           |       is_compressed  v       |                      |
+           |             +--------+-------+----------------------+
+           |             |        |
+           v             v        v
+         +-------------------+  +-----------+
+         |     instrmux      |  |  incmux   |
+         +-------------------+  +-----------+
+                   |                  |
+                   | InstrF           +---> [ +2 / +4 ]
+                   v                        (a sumador pcadd)
+           +---------------+
+           |   Registro    | <--- clk
+           |  de Pipeline  | <--- StallD (de Hazard Unit)
+           |     IF/ID     | <--- FlushD (de Hazard Unit)
+           +---------------+
+             |           |
+             v InstrD    v PCD, PCPlus4D (Hacia etapa Decode)
+
+
+2. DESCRIPCION DE LOS COMPONENTES
+=================================
+
+* Reg PC:
+  Registro de 32 bits que almacena la direccion de la instruccion a leer en la 
+  siguiente transicion de reloj. Se actualiza si StallF = 0.
+
+* Memoria de Instrucciones (IMEM):
+  Memoria de lectura de 32 bits. Utiliza la direccion PCF para leer una palabra 
+  completa. Debido a que las instrucciones comprimidas pueden iniciar en 
+  direcciones impares de media palabra (ej. 0x2, 0x6), se lee la palabra de 
+  32 bits alinea a 4 bytes mas cercana.
+
+* alignmux:
+  Multiplexor de 2 a 1 controlado por PCF[1].
+  - Si PCF[1] = 0 (alineacion normal de 4 bytes): la instruccion comienza en 
+    el bit 0. Deja pasar raw[31:0] como actual_instr.
+  - Si PCF[1] = 1 (desalineada, a media palabra): la instruccion comprimida o 
+    la primera mitad de la normal de 32 bits esta en raw[31:16]. Desplaza la 
+    palabra a la derecha 16 bits y rellena con ceros. Output: {16'b0, raw[31:16]}.
+
+* Descompresor RVC (decompressor.v):
+  Bloque combinacional que analiza los 16 bits menos significativos de 
+  actual_instr (cinstr[15:0]).
+  - Identifica si los bits de menor peso [1:0] != 2'b11. En ese caso, es una 
+    instruccion comprimida (RVC) de 16 bits. Activa la senal "is_compressed" en 1.
+  - Traduce combinacionalmente la instruccion de 16 bits a su equivalente RV32I 
+    de 32 bits (decomp[31:0]).
+
+* instrmux:
+  Multiplexor de 2 a 1 controlado por la senal is_compressed.
+  - Si is_compressed = 0 (32 bits): Deja pasar actual_instr directamente.
+  - Si is_compressed = 1 (16 bits): Deja pasar decomp[31:0].
+  El resultado de este multiplexor es InstrF, que representa la instruccion 
+  traducida que entrara al pipeline en la etapa de Decode (ID).
+
+* incmux y sumador pcadd:
+  Calcula dinamicamente la siguiente direccion del PC secuencial (PCPlus4F).
+  - Si is_compressed = 1, la instruccion consumida mide 2 bytes (16 bits). El 
+    incremento es +2.
+  - Si is_compressed = 0, la instruccion consumida mide 4 bytes (32 bits). El 
+    incremento es +4.
+  El sumador realiza PCF + pc_increment para producir PCPlus4F.
+
+* Registro de Pipeline IF/ID:
+  Mantiene los valores de la instruccion e informacion asociada para Decode.
+  Es un registro secuencial síncrono controlado por clk, StallD (mantiene el 
+  estado en caso de Load-Use hazard) y FlushD (limpia el registro a 0 en caso 
+  de un salto tomado para anular la instruccion mal cargada).
+================================================================================

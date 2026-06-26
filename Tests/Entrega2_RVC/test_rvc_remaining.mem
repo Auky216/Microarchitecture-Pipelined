@@ -1,0 +1,83 @@
+// test_rvc_remaining.mem
+//
+// Memoria con instrucciones que faltaban probar para completar la tabla del proyecto.
+// 14 instrucciones RVC añadidas.
+//
+// 0x00: c.addi sp, 16      (16-bit) -> 0x0141
+// 0x02: c.addi x8, 12      (16-bit) -> 0x0419
+// Word 0 = 0x04190141
+04190141
+
+// 0x04: c.addi x9, 3       (16-bit) -> 0x048D
+// 0x06: c.addi x10, 10     (16-bit) -> 0x0515
+// Word 1 = 0x0515048D
+0515048D
+
+// 0x08: c.addi x12, 5      (16-bit) -> 0x0615
+// 0x0A: c.addi x13, 8      (16-bit) -> 0x06A1
+// Word 2 = 0x06A10615
+06A10615
+
+// 0x0C: c.lui x11, 4       (16-bit) -> 0x6591
+// 0x0E: c.slli x8, 2       (16-bit) -> 0x040A
+// Word 3 = 0x040A6591
+040A6591
+
+// 0x10: c.srli x9, 1       (16-bit) -> 0x8085
+// 0x12: c.srai x8, 3       (16-bit) -> 0x840D
+// Word 4 = 0x840D8085
+840D8085
+
+// 0x14: c.andi x10, 7      (16-bit) -> 0x891D
+// 0x16: c.andi x9, 3       (16-bit) -> 0x888D
+// Word 5 = 0x888D891D
+888D891D
+
+// 0x18: c.xor x10, x12     (16-bit) -> 0x8D31
+// 0x1A: c.or x10, x13      (16-bit) -> 0x8D55
+// Word 6 = 0x8D558D31
+8D558D31
+
+// 0x1C: c.and x10, x9      (16-bit) -> 0x8D65
+// 0x1E: c.add x11, x12     (16-bit) -> 0x85B2
+// Word 7 = 0x85B28D65
+85B28D65
+
+// 0x20: c.swsp x11, 4(sp)  (16-bit) -> 0xC216
+// 0x22: c.lwsp x14, 4(sp)  (16-bit) -> 0x4712
+// Word 8 = 0x4712C216
+4712C216
+
+// 0x24: c.jal target_jal   (16-bit) -> 0x2811
+// 0x26: c.nop              (16-bit) -> 0x0001
+// Word 9 = 0x00012811
+00012811
+
+// 0x28: addi x15, x0, 60   (32-bit) -> 0x03C00793
+// Word 10 = 0x03C00793
+03C00793
+
+// 0x2C: c.jalr x15         (16-bit) -> 0x9782
+// 0x2E: c.nop              (16-bit) -> 0x0001
+// Word 11 = 0x00019782
+00019782
+
+// 0x30: c.j end_loop       (16-bit) -> 0xA001
+// 0x32: c.nop              (16-bit) -> 0x0001
+// Word 12 = 0x0001A001
+0001A001
+
+// 0x34: c.nop              (16-bit) -> 0x0001
+// 0x36: c.nop              (16-bit) -> 0x0001
+// Word 13 = 0x00010001
+00010001
+
+// 0x38: c.jr ra            (16-bit) -> 0x8082
+// 0x3A: c.nop              (16-bit) -> 0x0001
+// Word 14 = 0x00018082
+00018082
+
+// 0x3C: c.jr ra            (16-bit) -> 0x8082
+// 0x3D: c.nop              (16-bit) -> 0x0001
+// Word 15 = 0x00018082
+00018082
