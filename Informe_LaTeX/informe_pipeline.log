@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  25 JUN 2026 22:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.6)  30 JUN 2026 21:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -907,7 +907,7 @@ Package hyperref Info: Link coloring ON on input line 244.
 \@outlinefile=\write4
 \openout4 = `informe_pipeline.out'.
 
-<../Images/UTEC.png, id=280, 963.6pt x 963.6pt>
+<../Images/UTEC.png, id=348, 963.6pt x 963.6pt>
 File: ../Images/UTEC.png Graphic file (type png)
 <use ../Images/UTEC.png>
 Package pdftex.def Info: ../Images/UTEC.png  used on input line 252.
@@ -973,7 +973,7 @@ File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 
 {/Users/antonio/Library/texlive/2026basic/texmf-var/fonts/map/pdftex/updmap/pdf
 tex.map}{/usr/local/texlive/2026basic/texmf-dist/fonts/enc/dvips/base/8r.enc} <
-./../Images/UTEC.png>]
+../Images/UTEC.png>]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 10.07397pt on input line 284.
  [2]
@@ -987,18 +987,18 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.42 ...all (Load-Use Hazard)}{31}{subsection.7.3}
-                                                  % [1])
-\tf@toc=\write5
-\openout5 = `informe_pipeline.toc'.
-
-
+l.42 ...all (Load-Use Hazard)}{32}{subsection.7.3}
+                                                  % [1]
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.287 \newpage
-               [2]
+l.86 ...mberline {12}Conclusiones}{75}{section.12}
+                                                  % [2])
+\tf@toc=\write5
+\openout5 = `informe_pipeline.toc'.
+
+ [3]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 13.24796pt on input line 294.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
@@ -1014,7 +1014,7 @@ Overfull \hbox (13.73608pt too wide) in paragraph at lines 378--379
  [][] 
  []
 
-[3] [4]
+[4] [5]
 Overfull \hbox (26.92361pt too wide) in paragraph at lines 408--409
 []\T1/ppl/b/n/12 Señales pa-ra Wri-te-back (WB)\T1/ppl/m/n/12 : In-di-can la es
 -cri-tu-ra en el ban-co de re-gis-tros (\T1/pcr/m/n/12 RegWrite\T1/ppl/m/n/12 ,
@@ -1033,13 +1033,13 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 7.91925pt on input line 423.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 6.25204pt on input line 423.
-[5] [6]
-<../Images/diagrama_base.png, id=400, 1479.5275pt x 626.34pt>
+[6] [7]
+<../Images/diagrama_base.png, id=491, 1479.5275pt x 626.34pt>
 File: ../Images/diagrama_base.png Graphic file (type png)
 <use ../Images/diagrama_base.png>
 Package pdftex.def Info: ../Images/diagrama_base.png  used on input line 492.
 (pdftex.def)             Requested size: 455.24411pt x 192.72025pt.
- [7]
+ [8]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
 (Font)              scaled to size 11.03998pt on input line 501.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
@@ -1048,24 +1048,24 @@ LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 10.07397pt on input line 516.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 5.51999pt on input line 520.
- [8 <./../Images/diagrama_base.png>]
+ [9 <../Images/diagrama_base.png>]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 549.
 LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <10> not available
 (Font)              Font shape `T1/pcr/m/sl' tried instead on input line 568.
- [9] [10]
-<../Images/fetch_stage.png, id=507, 440.64626pt x 241.90375pt>
+ [10] [11]
+<../Images/fetch_stage.png, id=599, 440.64626pt x 241.90375pt>
 File: ../Images/fetch_stage.png Graphic file (type png)
 <use ../Images/fetch_stage.png>
 Package pdftex.def Info: ../Images/fetch_stage.png  used on input line 680.
 (pdftex.def)             Requested size: 386.96027pt x 212.4404pt.
- [11] [12 <./../Images/fetch_stage.png>]
-<../Images/decode_stage.png, id=588, 440.64626pt x 469.755pt>
+ [12] [13 <../Images/fetch_stage.png>]
+<../Images/decode_stage.png, id=678, 440.64626pt x 469.755pt>
 File: ../Images/decode_stage.png Graphic file (type png)
 <use ../Images/decode_stage.png>
 Package pdftex.def Info: ../Images/decode_stage.png  used on input line 760.
 (pdftex.def)             Requested size: 386.96027pt x 412.53987pt.
- [13]
+ [14]
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
 (Font)              scaled to size 11.40997pt on input line 772.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
@@ -1074,7 +1074,7 @@ LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 11.40997pt on input line 772.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
 (Font)              scaled to size 8.33606pt on input line 772.
- [14 <./../Images/decode_stage.png>]
+ [15 <../Images/decode_stage.png>]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 825--826
 [][][][] 
  []
@@ -1084,7 +1084,7 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 827--829
 [][][][] 
  []
 
-[15]
+[16]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 847--848
 [][][][] 
  []
@@ -1104,13 +1104,13 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 857--859
 [][][][] 
  []
 
-[16]
-<../Images/execute_stage.png, id=727, 525.965pt x 469.755pt>
+[17]
+<../Images/execute_stage.png, id=819, 525.965pt x 469.755pt>
 File: ../Images/execute_stage.png Graphic file (type png)
 <use ../Images/execute_stage.png>
 Package pdftex.def Info: ../Images/execute_stage.png  used on input line 911.
 (pdftex.def)             Requested size: 386.96027pt x 345.62059pt.
- [17] [18 <./../Images/execute_stage.png>]
+ [18] [19 <../Images/execute_stage.png>]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 969--970
 [][][][] 
  []
@@ -1125,19 +1125,19 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 985--986
 [][][][] 
  []
 
-[19]
+[20]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 987--989
 [][][][] 
  []
 
-[20]
-<../Images/memory_writeback_stage.png, id=892, 469.755pt x 469.755pt>
+[21]
+<../Images/memory_writeback_stage.png, id=982, 469.755pt x 469.755pt>
 File: ../Images/memory_writeback_stage.png Graphic file (type png)
 <use ../Images/memory_writeback_stage.png>
 Package pdftex.def Info: ../Images/memory_writeback_stage.png  used on input li
 ne 1083.
 (pdftex.def)             Requested size: 386.96027pt x 386.95773pt.
- [21] [22 <./../Images/memory_writeback_stage.png>]
+ [22] [23 <../Images/memory_writeback_stage.png>]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 1117--1118
 [][][][] 
  []
@@ -1157,7 +1157,7 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 1132--1134
 [][][][] 
  []
 
-[23]
+[24]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 1172--1173
 [][][][] 
  []
@@ -1177,21 +1177,21 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 1187--1189
 [][][][] 
  []
 
-[24]
-<../Images/waves_isa.png, id=1047, 1715.40875pt x 228.855pt>
+[25]
+<../Images/waves_isa.png, id=1138, 1715.40875pt x 228.855pt>
 File: ../Images/waves_isa.png Graphic file (type png)
 <use ../Images/waves_isa.png>
 Package pdftex.def Info: ../Images/waves_isa.png  used on input line 1238.
 (pdftex.def)             Requested size: 400.61703pt x 53.4457pt.
- [25 <./../Images/waves_isa.png>] [26]
-<../Images/waves_forwarding_NO_HAZARD.png, id=1080, 1716.4125pt x 275.0275pt>
+ [26 <../Images/waves_isa.png>] [27]
+<../Images/waves_forwarding_NO_HAZARD.png, id=1170, 1716.4125pt x 275.0275pt>
 File: ../Images/waves_forwarding_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_forwarding_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_forwarding_NO_HAZARD.png  used on inpu
 t line 1282.
 (pdftex.def)             Requested size: 364.19667pt x 58.3534pt.
- [27 <./../Images/waves_forwarding_NO_HAZARD.png>]
-<../Images/waves_stalling_NO_HAZARD.png, id=1097, 1716.4125pt x 270.00874pt>
+ [28 <../Images/waves_forwarding_NO_HAZARD.png>]
+<../Images/waves_stalling_NO_HAZARD.png, id=1187, 1716.4125pt x 270.00874pt>
 File: ../Images/waves_stalling_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_stalling_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_stalling_NO_HAZARD.png  used on input 
@@ -1203,8 +1203,8 @@ Overfull \hbox (1.65341pt too wide) in paragraph at lines 1320--1321
 ión (\T1/pcr/m/n/12 StallF = 0\T1/ppl/m/n/12 , \T1/pcr/m/n/12 StallD
  []
 
-[28 <./../Images/waves_stalling_NO_HAZARD.png>]
-<../Images/waves_flushing_NO_HAZARD.png, id=1116, 1716.4125pt x 255.95625pt>
+[29 <../Images/waves_stalling_NO_HAZARD.png>]
+<../Images/waves_flushing_NO_HAZARD.png, id=1207, 1716.4125pt x 255.95625pt>
 File: ../Images/waves_flushing_NO_HAZARD.png Graphic file (type png)
 <use ../Images/waves_flushing_NO_HAZARD.png>
 Package pdftex.def Info: ../Images/waves_flushing_NO_HAZARD.png  used on input 
@@ -1216,35 +1216,35 @@ Overfull \hbox (1.53017pt too wide) in paragraph at lines 1348--1349
 e re-di-rec-ción del PC (\T1/pcr/m/n/12 PCSrcE
  []
 
-[29 <./../Images/waves_flushing_NO_HAZARD.png>] [30]
-<../Images/diagrama_final.png, id=1149, 1479.5275pt x 711.65875pt>
+[30 <../Images/waves_flushing_NO_HAZARD.png>] [31]
+<../Images/diagrama_final.png, id=1240, 1479.5275pt x 711.65875pt>
 File: ../Images/diagrama_final.png Graphic file (type png)
 <use ../Images/diagrama_final.png>
 Package pdftex.def Info: ../Images/diagrama_final.png  used on input line 1465.
 
 (pdftex.def)             Requested size: 455.24411pt x 218.97221pt.
- [31] [32 <./../Images/diagrama_final.png>]
-<../Images/waves_forwarding.png, id=1173, 1714.405pt x 274.02374pt>
+ [32] [33 <../Images/diagrama_final.png>]
+<../Images/waves_forwarding.png, id=1264, 1714.405pt x 274.02374pt>
 File: ../Images/waves_forwarding.png Graphic file (type png)
 <use ../Images/waves_forwarding.png>
 Package pdftex.def Info: ../Images/waves_forwarding.png  used on input line 149
 7.
 (pdftex.def)             Requested size: 409.71692pt x 65.4869pt.
-<../Images/waves_stalling.png, id=1174, 1716.4125pt x 272.01625pt>
+<../Images/waves_stalling.png, id=1265, 1716.4125pt x 272.01625pt>
 File: ../Images/waves_stalling.png Graphic file (type png)
 <use ../Images/waves_stalling.png>
 Package pdftex.def Info: ../Images/waves_stalling.png  used on input line 1517.
 
 (pdftex.def)             Requested size: 418.82375pt x 66.3727pt.
- [33 <./../Images/waves_forwarding.png>]
-<../Images/waves_flushing.png, id=1193, 1716.4125pt x 248.93pt>
+ [34 <../Images/waves_forwarding.png>]
+<../Images/waves_flushing.png, id=1283, 1716.4125pt x 248.93pt>
 File: ../Images/waves_flushing.png Graphic file (type png)
 <use ../Images/waves_flushing.png>
 Package pdftex.def Info: ../Images/waves_flushing.png  used on input line 1538.
 
 (pdftex.def)             Requested size: 391.51021pt x 56.7779pt.
- [34 <./../Images/waves_stalling.png> <./../Images/waves_flushing.png>] [35]
-<../Images/waves_remaining_ops.png, id=1255, 1715.40875pt x 229.85875pt>
+ [35 <../Images/waves_stalling.png> <../Images/waves_flushing.png>] [36]
+<../Images/waves_remaining_ops.png, id=1346, 1715.40875pt x 229.85875pt>
 File: ../Images/waves_remaining_ops.png Graphic file (type png)
 <use ../Images/waves_remaining_ops.png>
 Package pdftex.def Info: ../Images/waves_remaining_ops.png  used on input line 
@@ -1255,15 +1255,15 @@ LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 1
 
 (/usr/local/texlive/2026basic/texmf-dist/tex/latex/psnfss/ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
-) [36 <./../Images/waves_remaining_ops.png>]
-<../Images/Entrega2/diagrama_fetch_rvc.png, id=1263, 541.02126pt x 284.06125pt>
+) [37 <../Images/waves_remaining_ops.png>]
+<../Images/Entrega2/diagrama_fetch_rvc.png, id=1354, 541.02126pt x 284.06125pt>
 
 File: ../Images/Entrega2/diagrama_fetch_rvc.png Graphic file (type png)
 <use ../Images/Entrega2/diagrama_fetch_rvc.png>
 Package pdftex.def Info: ../Images/Entrega2/diagrama_fetch_rvc.png  used on inp
 ut line 1627.
 (pdftex.def)             Requested size: 432.48051pt x 227.08025pt.
- [37 <./../Images/Entrega2/diagrama_fetch_rvc.png>] [38]
+ [38 <../Images/Entrega2/diagrama_fetch_rvc.png>] [39]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 1674--1675
 [][][][] 
  []
@@ -1283,7 +1283,7 @@ Overfull \hbox (20.76053pt too wide) in paragraph at lines 1696--1697
 [][][][] 
  []
 
-[39]
+[40]
 Overfull \hbox (20.76053pt too wide) in paragraph at lines 1715--1716
 [][][][] 
  []
@@ -1313,7 +1313,7 @@ Overfull \hbox (14.76047pt too wide) in paragraph at lines 1735--1736
 [][][][] 
  []
 
-[40]
+[41]
 Overfull \hbox (14.76047pt too wide) in paragraph at lines 1762--1763
 [][][][] 
  []
@@ -1323,239 +1323,351 @@ Overfull \hbox (14.76047pt too wide) in paragraph at lines 1764--1765
 [][][][] 
  []
 
-[41]
-<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png, id=1395, 1365.1pt x 33
+[42]
+Overfull \hbox (15.92151pt too wide) in paragraph at lines 1793--1794
+\T1/ppl/m/n/12 bits se for-ma com-bi-nan-do el bit de signo \T1/pcr/m/n/12 cins
+tr[12] \T1/ppl/m/n/12 y los bits \T1/pcr/m/n/12 cinstr[6:2]\T1/ppl/m/n/12 ,
+ []
+
+
+Overfull \hbox (14.3386pt too wide) in paragraph at lines 1805--1806
+\T1/ppl/m/n/12 com-ple-to de 5 bits pa-ra \T1/pcr/m/n/12 rd/rs1 \T1/ppl/m/n/12 
+(\T1/pcr/m/n/12 cinstr[11:7]\T1/ppl/m/n/12 ) y pa-ra \T1/pcr/m/n/12 rs2 \T1/ppl
+/m/n/12 (\T1/pcr/m/n/12 cinstr[6:2]\T1/ppl/m/n/12 ).
+ []
+
+[43] [44]
+Overfull \hbox (1.20044pt too wide) in paragraph at lines 1851--1852
+\T1/ppl/m/n/12 dos en re-gis-tros res-trin-gi-dos \T1/pcr/m/n/12 x8-x15\T1/ppl/
+m/n/12 . La ins-truc-cion equi-va-len-te tie-ne funct7
+ []
+
+
+Overfull \hbox (2.91827pt too wide) in paragraph at lines 1862--1863
+\T1/pcr/m/n/12 shamt \T1/ppl/m/n/12 es de 5 bits y se to-ma de \T1/pcr/m/n/12 c
+instr[6:2]\T1/ppl/m/n/12 . En RV32C el bit \T1/pcr/m/n/12 cinstr[12]
+ []
+
+[45]
+Overfull \hbox (34.44244pt too wide) in paragraph at lines 1885--1886
+\T1/ppl/m/n/12 afec-ta-do es el res-trin-gi-do \T1/pcr/m/n/12 rd' \T1/ppl/m/n/1
+2 (\T1/pcr/m/n/12 rdp_rs1p\T1/ppl/m/n/12 ). El \T1/pcr/m/n/12 shamt \T1/ppl/m/n
+/12 es de 5 bits de \T1/pcr/m/n/12 cinstr[6:2]\T1/ppl/m/n/12 .
+ []
+
+[46]
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png, id=1569, 1365.1pt x 33
 6.25626pt>
 File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png Graphic file (type
  png)
 <use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png
-  used on input line 1808.
+  used on input line 1976.
 (pdftex.def)             Requested size: 432.48051pt x 106.52672pt.
- [42]
-<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png, id=1425, 1064.97874
+ [47]
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png, id=1603, 1064.97874
 pt x 382.42876pt>
 File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png Graphic file (t
 ype png)
 <use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e1.
-png  used on input line 1815.
+png  used on input line 1983.
 (pdftex.def)             Requested size: 432.48051pt x 155.2971pt.
-<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png, id=1427, 1051.93pt 
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png, id=1605, 1051.93pt 
 x 372.39125pt>
 File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png Graphic file (t
 ype png)
 <use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.
-png  used on input line 1831.
+png  used on input line 1999.
 (pdftex.def)             Requested size: 432.48051pt x 153.10188pt.
- [43 <./../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png> <./../Images/En
-trega2/waves_rvc_basic/waves_rvc_basic_e1.png>]
-Overfull \hbox (1.91656pt too wide) in paragraph at lines 1839--1840
+ [48 <../Images/Entrega2/waves_rvc_basic/waves_rvc_basic.png> <../Images/Entreg
+a2/waves_rvc_basic/waves_rvc_basic_e1.png>]
+Overfull \hbox (1.91656pt too wide) in paragraph at lines 2007--2008
 []\T1/ppl/m/n/12 Dado que \T1/pcr/m/n/12 PCF[1] = 0\T1/ppl/m/n/12 , la ins-truc
 -ción ac-tual ali-nea-da a me-dia pa-la-bra es \T1/pcr/m/n/12 0x0415
  []
 
-<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png, id=1437, 1067.99pt 
+<../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png, id=1615, 1067.99pt 
 x 294.09875pt>
 File: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png Graphic file (t
 ype png)
 <use ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e3.
-png  used on input line 1846.
+png  used on input line 2014.
 (pdftex.def)             Requested size: 432.48051pt x 119.09587pt.
-[44 <./../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png> <./../Images/
-Entrega2/waves_rvc_basic/waves_rvc_basic_e3.png>]
-<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png, id=1447, 1716.4125pt
+[49 <../Images/Entrega2/waves_rvc_basic/waves_rvc_basic_e2.png> <../Images/Entr
+ega2/waves_rvc_basic/waves_rvc_basic_e3.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png, id=1625, 1716.4125pt
  x 356.33125pt>
 File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png Graphic file (ty
 pe png)
 <use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.p
-ng  used on input line 1880.
+ng  used on input line 2048.
 (pdftex.def)             Requested size: 432.48051pt x 89.78398pt.
-<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png, id=1448, 1365.1pt
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png, id=1626, 1365.1pt
  x 351.3125pt>
 File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png Graphic file 
 (type png)
 <use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
-1.png  used on input line 1887.
+1.png  used on input line 2055.
 (pdftex.def)             Requested size: 432.48051pt x 111.29657pt.
- [45 <./../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png> <./../Images/
-Entrega2/waves_rvc_memory/waves_rvc_memory_e1.png>]
-<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png, id=1464, 1337.998
+ [50 <../Images/Entrega2/waves_rvc_memory/waves_rvc_memory.png> <../Images/Entr
+ega2/waves_rvc_memory/waves_rvc_memory_e1.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png, id=1642, 1337.998
 75pt x 384.43625pt>
 File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png Graphic file 
 (type png)
 <use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
-2.png  used on input line 1900.
+2.png  used on input line 2068.
 (pdftex.def)             Requested size: 432.48051pt x 124.25984pt.
 
-Overfull \hbox (1.28062pt too wide) in paragraph at lines 1905--1910
+Overfull \hbox (1.28062pt too wide) in paragraph at lines 2073--2078
 \T1/ppl/m/n/12 Cuando la ins-truc-ción de es-cri-tu-ra lle-ga a la eta-pa Me-mo
 ry (\T1/pcr/m/n/12 InstrM = 0x00942223\T1/ppl/m/n/12 ),
  []
 
-<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png, id=1466, 1283.796
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png, id=1644, 1283.796
 25pt x 375.4025pt>
 File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png Graphic file 
 (type png)
 <use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
-3.png  used on input line 1913.
+3.png  used on input line 2081.
 (pdftex.def)             Requested size: 432.48051pt x 126.46088pt.
-[46 <./../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png> <./../Image
-s/Entrega2/waves_rvc_memory/waves_rvc_memory_e3.png>]
-<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png, id=1476, 1298.852
+[51 <../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e2.png> <../Images/En
+trega2/waves_rvc_memory/waves_rvc_memory_e3.png>]
+<../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png, id=1655, 1298.852
 5pt x 248.93pt>
 File: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png Graphic file 
 (type png)
 <use ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e
-4.png  used on input line 1926.
+4.png  used on input line 2094.
 (pdftex.def)             Requested size: 432.48051pt x 82.88403pt.
 
-Overfull \hbox (21.10411pt too wide) in paragraph at lines 1931--1937
+Overfull \hbox (21.10411pt too wide) in paragraph at lines 2099--2105
 \T1/ppl/m/n/12 Cuando la ins-truc-ción de car-ga lle-ga a la eta-pa Wri-te-back
  (WB) (\T1/pcr/m/n/12 InstrW = 0x00442503\T1/ppl/m/n/12 ),
  []
 
-<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png, id=1478, 1361.08
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png, id=1657, 1361.08
 5pt x 413.545pt>
 File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png Graphic file
  (type png)
 <use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
-es.png  used on input line 1957.
+es.png  used on input line 2125.
 (pdftex.def)             Requested size: 432.48051pt x 131.40318pt.
-[47 <./../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png>]
-<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png, id=1493, 
+[52 <../Images/Entrega2/waves_rvc_memory/waves_rvc_memory_e4.png>]
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png, id=1671, 
 1024.82875pt x 402.50375pt>
 File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png Graph
 ic file (type png)
 <use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
-es_e1.png.png  used on input line 1964.
+es_e1.png.png  used on input line 2132.
 (pdftex.def)             Requested size: 432.48051pt x 169.85498pt.
-<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png, id=1495, 
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png, id=1673, 
 1270.7475pt x 393.47pt>
 File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png Graph
 ic file (type png)
 <use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e2.png.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
-es_e2.png.png  used on input line 1978.
+es_e2.png.png  used on input line 2146.
 (pdftex.def)             Requested size: 432.48051pt x 133.91011pt.
- [48 <./../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png> <./../Ima
-ges/Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png> <./../Images/Ent
-rega2/waves_rvc_branches/waves_rvc_branches_e2.png.png>]
-<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png, id=1507, 2376
+ [53 <../Images/Entrega2/waves_rvc_branches/waves_rvc_branches.png> <../Images/
+Entrega2/waves_rvc_branches/waves_rvc_branches_e1.png.png> <../Images/Entrega2/
+waves_rvc_branches/waves_rvc_branches_e2.png.png>]
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png, id=1686, 2376
 .88pt x 834.11626pt>
 File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png Graphic f
 ile (type png)
 <use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
-es_e3.png  used on input line 1992.
+es_e3.png  used on input line 2160.
 (pdftex.def)             Requested size: 432.48051pt x 151.76358pt.
 
-Overfull \hbox (9.36928pt too wide) in paragraph at lines 1997--2003
+Overfull \hbox (9.36928pt too wide) in paragraph at lines 2165--2171
 \T1/ppl/m/n/12 *Qué de-cir en tu in-for-me:* Cuan-do el sal-to es to-ma-do (\T1
 /pcr/m/n/12 PCSrcE = 1\T1/ppl/m/n/12 ), las se-ña-les \T1/pcr/m/n/12 FlushD
  []
 
-<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png, id=1509, 1377
+<../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png, id=1688, 1377
 .145pt x 145.54375pt>
 File: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png Graphic f
 ile (type png)
 <use ../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_branches/waves_rvc_branch
-es_e4.png  used on input line 2006.
+es_e4.png  used on input line 2174.
 (pdftex.def)             Requested size: 432.48051pt x 45.7066pt.
-[49 <./../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png> <./../I
-mages/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png>]
-<../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png, id=1519, 1710.
+[54 <../Images/Entrega2/waves_rvc_branches/waves_rvc_branches_e3.png> <../Image
+s/Entrega2/waves_rvc_branches/waves_rvc_branches_e4.png>]
+<../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png, id=1698, 1710.
 39pt x 590.205pt>
 File: ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png Graphic fi
 le (type png)
 <use ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png>
 Package pdftex.def Info: ../Images/Entrega2/waves_rvc_remaining/waves_rvc_remai
-ning.png  used on input line 2060.
+ning.png  used on input line 2228.
 (pdftex.def)             Requested size: 432.48051pt x 149.23497pt.
- [50 <./../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png>]
-Overfull \hbox (28.20854pt too wide) in paragraph at lines 2081--2082
+ [55 <../Images/Entrega2/waves_rvc_remaining/waves_rvc_remaining.png>]
+Overfull \hbox (28.20854pt too wide) in paragraph at lines 2249--2250
 \T1/pcr/m/n/12 0x24\T1/ppl/m/n/12 ) en la eta-pa Execu-te (ci-clo 21), la ALU c
 al-cu-la el des-tino re-la-ti-vo \T1/pcr/m/n/12 PCTargetE
  []
 
 
-Overfull \hbox (48.59995pt too wide) in paragraph at lines 2083--2084
+Overfull \hbox (48.59995pt too wide) in paragraph at lines 2251--2252
 []\T1/ppl/b/n/12 Salto In-di-rec-to con En-la-ce (\T1/pcr/b/n/12 c.jalr\T1/ppl/
 b/n/12 ): \T1/ppl/m/n/12 Se car-ga la di-rec-ción ab-so-lu-ta de \T1/pcr/m/n/12
  target_jalr
  []
 
-[51] [52] [53]
-Overfull \hbox (22.28165pt too wide) in paragraph at lines 2144--2145
+[56] [57] [58]
+Overfull \hbox (22.28165pt too wide) in paragraph at lines 2312--2313
 \T1/ppl/m/n/12 el mó-du-lo \T1/pcr/m/n/12 fetch.v\T1/ppl/m/n/12 , ig-no-ran-do 
 el va-lor de la ban-de-ra de des-com-pre-sión \T1/pcr/m/n/12 is_compressed\T1/p
 pl/m/n/12 . 
  []
 
-[54]
-Overfull \hbox (42.31915pt too wide) in paragraph at lines 2194--2195
-[][]\T1/ppl/m/n/12 22.3[][] se com-pa-ra el avan-ce del PC de Fetch (\T1/pcr/m/
-n/12 pcF\T1/ppl/m/n/12 ) y la se-ñal del in-cre-men-ta-dor (\T1/pcr/m/n/12 pc_i
-ncrement\T1/ppl/m/n/12 ). 
- []
-
-<../Images/Entrega2/comparative/good_e1.png, id=1585, 1043.9pt x 374.39874pt>
+[59]
+<../Images/Entrega2/comparative/good_e1.png, id=1764, 1043.9pt x 374.39874pt>
 File: ../Images/Entrega2/comparative/good_e1.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/good_e1.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/good_e1.png  used on in
-put line 2200.
+put line 2367.
 (pdftex.def)             Requested size: 218.51521pt x 78.36897pt.
-<../Images/Entrega2/comparative/bad_e1.png, id=1586, 948.54375pt x 372.39125pt>
+<../Images/Entrega2/comparative/bad_e1.png, id=1765, 948.54375pt x 372.39125pt>
 
 File: ../Images/Entrega2/comparative/bad_e1.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/bad_e1.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e1.png  used on inp
-ut line 2207.
+ut line 2374.
 (pdftex.def)             Requested size: 218.51521pt x 85.78455pt.
-<../Images/Entrega2/comparative/good_e3.png, id=1590, 860.21375pt x 255.95625pt
+<../Images/Entrega2/comparative/good_e3.png, id=1770, 860.21375pt x 255.95625pt
 >
 File: ../Images/Entrega2/comparative/good_e3.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/good_e3.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/good_e3.png  used on in
-put line 2224.
+put line 2388.
 (pdftex.def)             Requested size: 218.51521pt x 65.01607pt.
-<../Images/Entrega2/comparative/bad_e3.png, id=1591, 934.49126pt x 201.75375pt>
+<../Images/Entrega2/comparative/bad_e3.png, id=1771, 934.49126pt x 201.75375pt>
 
 File: ../Images/Entrega2/comparative/bad_e3.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/bad_e3.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e3.png  used on inp
-ut line 2231.
+ut line 2395.
 (pdftex.def)             Requested size: 218.51521pt x 47.17508pt.
-[55 <./../Images/Entrega2/comparative/good_e1.png> <./../Images/Entrega2/compar
-ative/bad_e1.png>]
-<../Images/Entrega2/comparative/good_e2.png, id=1607, 1032.85875pt x 365.365pt>
+ [60 <../Images/Entrega2/comparative/good_e1.png> <../Images/Entrega2/comparati
+ve/bad_e1.png> <../Images/Entrega2/comparative/good_e3.png> <../Images/Entrega2
+/comparative/bad_e3.png>]
+<../Images/Entrega2/comparative/good_e2.png, id=1789, 1032.85875pt x 365.365pt>
 
 File: ../Images/Entrega2/comparative/good_e2.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/good_e2.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/good_e2.png  used on in
-put line 2248.
+put line 2409.
 (pdftex.def)             Requested size: 218.51521pt x 77.29756pt.
-<../Images/Entrega2/comparative/bad_e2.png, id=1608, 1048.91875pt x 368.37625pt
+<../Images/Entrega2/comparative/bad_e2.png, id=1790, 1048.91875pt x 368.37625pt
 >
 File: ../Images/Entrega2/comparative/bad_e2.png Graphic file (type png)
 <use ../Images/Entrega2/comparative/bad_e2.png>
 Package pdftex.def Info: ../Images/Entrega2/comparative/bad_e2.png  used on inp
-ut line 2255.
+ut line 2416.
 (pdftex.def)             Requested size: 218.51521pt x 76.73737pt.
- [56 <./../Images/Entrega2/comparative/good_e3.png> <./../Images/Entrega2/compa
-rative/bad_e3.png> <./../Images/Entrega2/comparative/good_e2.png> <./../Images/
-Entrega2/comparative/bad_e2.png>] [57]
-(./informe_pipeline.aux
+ [61 <../Images/Entrega2/comparative/good_e2.png> <../Images/Entrega2/comparati
+ve/bad_e2.png>] [62] [63] [64] [65]
+Overfull \hbox (32.76065pt too wide) in paragraph at lines 2671--2672
+[][] 
+ []
+
+
+Overfull \hbox (32.76065pt too wide) in paragraph at lines 2674--2675
+[][] 
+ []
+
+[66]
+Overfull \hbox (32.76065pt too wide) in paragraph at lines 2722--2723
+[][] 
+ []
+
+
+Overfull \hbox (32.76065pt too wide) in paragraph at lines 2725--2726
+[][] 
+ []
+
+[67]
+Overfull \hbox (18.67924pt too wide) in paragraph at lines 2771--2772
+\T1/ppl/m/n/12 29 ins-truc-cio-nes de 32 bits (116 by-tes), mien-tras que la ve
+r-sión RVC (\T1/pcr/m/n/12 matmul_rvc.s\T1/ppl/m/n/12 )
+ []
+
+[68]
+<../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c1.png, id=2021, 745.7862
+5pt x 342.27875pt>
+File: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c1.png Graphic file 
+(type png)
+<use ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c1.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c
+1.png  used on input line 2783.
+(pdftex.def)             Requested size: 432.48051pt x 198.48524pt.
+<../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c2.png, id=2022, 674.52pt
+ x 290.08376pt>
+File: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c2.png Graphic file 
+(type png)
+<use ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c2.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c
+2.png  used on input line 2790.
+(pdftex.def)             Requested size: 432.48051pt x 185.99379pt.
+ [69 <../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c1.png> <../Images/E
+ntrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c2.png>]
+<../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c3.png, id=2033, 1039.885
+pt x 293.095pt>
+File: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c3.png Graphic file 
+(type png)
+<use ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c3.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c
+3.png  used on input line 2817.
+(pdftex.def)             Requested size: 432.48051pt x 121.89601pt.
+ [70 <../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c3.png>]
+<../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c1.png, id=2041, 
+839.135pt x 330.23375pt>
+File: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c1.png Graph
+ic file (type png)
+<use ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c1.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_c
+ontrol_c1.png  used on input line 2837.
+(pdftex.def)             Requested size: 432.48051pt x 170.19572pt.
+<../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c2.png, id=2043, 
+540.0175pt x 234.8775pt>
+File: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c2.png Graph
+ic file (type png)
+<use ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c2.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_c
+ontrol_c2.png  used on input line 2856.
+(pdftex.def)             Requested size: 432.48051pt x 188.11012pt.
+ [71 <../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c1.png>]
+<../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c3.png, id=2052, 
+1242.6425pt x 327.2225pt>
+File: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c3.png Graph
+ic file (type png)
+<use ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c3.png>
+Package pdftex.def Info: ../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_c
+ontrol_c3.png  used on input line 2872.
+(pdftex.def)             Requested size: 432.48051pt x 113.88548pt.
+
+Overfull \hbox (29.20425pt too wide) in paragraph at lines 2883--2884
+[]\T1/ppl/m/n/12 Enmarca la es-cri-tu-ra fi-nal en la di-rec-ción \T1/pcr/m/n/1
+2 200 \T1/ppl/m/n/12 de me-mo-ria, don-de la se-ñal \T1/pcr/m/n/12 ALUResultE
+ []
+
+[72 <../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c2.png> <../I
+mages/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c3.png>] [73] [74]
+[75] (./informe_pipeline.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -1564,16 +1676,16 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `informe_pipeline.out' has not changed.
-(rerunfilecheck)             Checksum: 1D3721C124E6D076800412B530F00A12;17309.
+(rerunfilecheck)             Checksum: 24F20929722B969EEF51C9A450791CD3;23685.
  ) 
 Here is how much of TeX's memory you used:
- 28665 strings out of 468658
- 524435 string characters out of 5439871
+ 29057 strings out of 468658
+ 532142 string characters out of 5439871
  1830492 words of memory out of 5000000
- 55871 multiletter control sequences out of 15000+600000
+ 55968 multiletter control sequences out of 15000+600000
  710967 words of font info for 174 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 84i,13n,94p,1145b,2275s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,13n,94p,1145b,2309s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10
 .pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/courier/ucrb8
@@ -1584,10 +1696,10 @@ fb></usr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb
 sr/local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr
 /local/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/l
 ocal/texlive/2026basic/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on ./informe_pipeline.pdf (59 pages, 5831886 bytes).
+Output written on informe_pipeline.pdf (77 pages, 7458469 bytes).
 PDF statistics:
- 1898 PDF objects out of 2073 (max. 8388607)
- 1726 compressed objects within 18 object streams
- 1048 named destinations out of 1200 (max. 500000)
- 742 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2408 PDF objects out of 2487 (max. 8388607)
+ 2201 compressed objects within 23 object streams
+ 1343 named destinations out of 1440 (max. 500000)
+ 908 words of extra memory for PDF output out of 10000 (max. 10000000)
 

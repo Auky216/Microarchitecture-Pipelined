@@ -1783,6 +1783,174 @@ module decompressor(
 endmodule
 \end{lstlisting}
 
+\subsection{Explicacion Detallada de Cada Instruccion RVC (10 Instrucciones de la Parte 1)}
+Para dar cumplimiento a los requerimientos de la Entrega 2, se presenta una explicacion del formato de 16 bits, el comportamiento y el codigo Verilog de descompresion asociado a cada una de las 10 instrucciones de la primera parte:
+
+\begin{enumerate}
+    \item \textbf{c.addi (c.addi rd, imm):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Suma un inmediato de 6 bits con signo al valor del registro destino \texttt{rd} y almacena el resultado en \texttt{rd}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{addi rd, rd, imm}. El registro fuente \texttt{rs1} es identico al registro destino \texttt{rd} (\texttt{cinstr[11:7]}). El inmediato de 6 bits se forma combinando el bit de signo \texttt{cinstr[12]} y los bits \texttt{cinstr[6:2]}, y se extiende de signo a 12 bits.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign imm_addi = {{6{cinstr[12]}}, cinstr[12], cinstr[6:2]};
+// En case (cinstr[15:13]) -> 3'b000:
+outstr = {imm_addi, rd_rs1, 3'b000, rd_rs1, 7'b0010011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.add (c.add rd, rs2):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Suma el contenido de los registros \texttt{rd} y \texttt{rs2}, y guarda el resultado en \texttt{rd}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{add rd, rd, rs2}. Utiliza el registro completo de 5 bits para \texttt{rd/rs1} (\texttt{cinstr[11:7]}) y para \texttt{rs2} (\texttt{cinstr[6:2]}). La instruccion equivalente tiene funct7 = \texttt{0000000}, funct3 = \texttt{000} y opcode = \texttt{0110011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100: (con cinstr[12] == 0 y cinstr[6:2] != 0)
+outstr = {7'b0000000, rs2, rd_rs1, 3'b000, rd_rs1, 7'b0110011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.sub (c.sub rd', rs2'):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Resta el contenido del registro \texttt{rs2'} al del registro \texttt{rd'} y almacena el resultado en \texttt{rd'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{sub rd', rd', rs2'}. Utiliza el rango de registros restringidos \texttt{x8-x15} (\texttt{rdp\_rs1p} y \texttt{rs2p}), decodificados a partir de 3 bits concatenando un prefijo constante \texttt{2'b01} en los bits mas significativos. La instruccion equivalente tiene funct7 = \texttt{0100000}, funct3 = \texttt{000} y opcode = \texttt{0110011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign rdp_rs1p = {2'b01, cinstr[9:7]};
+assign rs2p     = {2'b01, cinstr[4:2]};
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b11 -> case (cinstr[6:5]) -> 2'b00:
+outstr = {7'b0100000, rs2p, rdp_rs1p, 3'b000, rdp_rs1p, 7'b0110011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.and (c.and rd', rs2'):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Realiza un AND bit a bit entre los registros \texttt{rd'} y \texttt{rs2'}, y almacena el resultado en \texttt{rd'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{and rd', rd', rs2'}. Utiliza operandos en registros restringidos \texttt{x8-x15}. La instruccion expandida posee funct7 = \texttt{0000000}, funct3 = \texttt{111} y opcode = \texttt{0110011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b11 -> case (cinstr[6:5]) -> 2'b11:
+outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b111, rdp_rs1p, 7'b0110011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.or (c.or rd', rs2'):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Realiza un OR bit a bit entre los registros \texttt{rd'} y \texttt{rs2'}, y almacena el resultado en \texttt{rd'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{or rd', rd', rs2'}. Utiliza operandos en registros restringidos \texttt{x8-x15}. La instruccion equivalente tiene funct7 = \texttt{0000000}, funct3 = \texttt{110} y opcode = \texttt{0110011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b11 -> case (cinstr[6:5]) -> 2'b10:
+outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b110, rdp_rs1p, 7'b0110011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.xor (c.xor rd', rs2'):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Realiza un XOR bit a bit entre los registros \texttt{rd'} y \texttt{rs2'}, y almacena el resultado en \texttt{rd'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{xor rd', rd', rs2'}. Utiliza operandos en registros restringidos \texttt{x8-x15}. La instruccion equivalente tiene funct7 = \texttt{0000000}, funct3 = \texttt{100} y opcode = \texttt{0110011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b11 -> case (cinstr[6:5]) -> 2'b01:
+outstr = {7'b0000000, rs2p, rdp_rs1p, 3'b100, rdp_rs1p, 7'b0110011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.slli (c.slli rd, shamt):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Desplaza logicamente a la izquierda el registro destino \texttt{rd} segun el valor inmediato de desplazamiento \texttt{shamt}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{slli rd, rd, shamt}. Utiliza el registro completo de 5 bits \texttt{rd} (\texttt{cinstr[11:7]}). El valor de desplazamiento \texttt{shamt} es de 5 bits y se toma de \texttt{cinstr[6:2]}. En RV32C el bit \texttt{cinstr[12]} debe ser 0. La instruccion equivalente tiene funct7 = \texttt{0000000}, funct3 = \texttt{001} y opcode = \texttt{0010011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign shamt = {cinstr[12], cinstr[6:2]}; // En RV32C cinstr[12] es 0, quedando de 5 bits
+// En case (cinstr[15:13]) -> 3'b000 (en Cuadrante 2, cinstr[1:0] == 2'b10):
+outstr = {7'b0000000, shamt, rd_rs1, 3'b001, rd_rs1, 7'b0010011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.srli (c.srli rd', shamt):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Desplaza logicamente a la derecha el registro restringido \texttt{rd'} segun el valor inmediato de desplazamiento \texttt{shamt}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{srli rd', rd', shamt}. El registro destino y primer operando es el registro restringido \texttt{rd'} (\texttt{rdp\_rs1p}). El desplazamiento \texttt{shamt} es de 5 bits extraidos de \texttt{cinstr[6:2]}. La instruccion equivalente tiene funct7 = \texttt{0000000}, funct3 = \texttt{101} y opcode = \texttt{0010011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b00:
+outstr = {7'b0000000, shamt, rdp_rs1p, 3'b101, rdp_rs1p, 7'b0010011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.srai (c.srai rd', shamt):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Desplaza aritmeticamente a la derecha el registro restringido \texttt{rd'} segun el valor inmediato \texttt{shamt} (conservando el bit de signo).
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{srai rd', rd', shamt}. El registro afectado es el restringido \texttt{rd'} (\texttt{rdp\_rs1p}). El \texttt{shamt} es de 5 bits de \texttt{cinstr[6:2]}. La instruccion equivalente requiere funct7 = \texttt{0100000} (indicando desplazamiento aritmetico), funct3 = \texttt{101} y opcode = \texttt{0010011}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 -> case (cinstr[11:10]) -> 2'b01:
+outstr = {7'b0100000, shamt, rdp_rs1p, 3'b101, rdp_rs1p, 7'b0010011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.lui (c.lui rd, nzimm):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Carga un inmediato no nulo de 6 bits desplazado a la izquierda por 12 bits en el registro destino \texttt{rd}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{lui rd, nzimm}. El registro destino es \texttt{rd} (\texttt{cinstr[11:7]}), el cual no puede ser ni \texttt{x0} ni \texttt{x2} (SP). El inmediato superior de 20 bits se forma extendiendo de signo el bit \texttt{cinstr[12]} por 15 bits a la izquierda y concatenando los 5 bits \texttt{cinstr[6:2]}. Opcode de la instruccion es \texttt{0110111}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign imm_lui  = {{15{cinstr[12]}}, cinstr[6:2]};
+// En case (cinstr[15:13]) -> 3'b011:
+outstr = {imm_lui, rd_rs1, 7'b0110111};
+        \end{lstlisting}
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Cambios en el Datapath para la Adaptacion de RVC}
+Para soportar la extension comprimida, se implementaron cambios clave en el datapath de la etapa Fetch (\texttt{fetch.v}), detallados y justificados a continuacion junto con sus fragmentos de codigo Verilog correspondientes:
+
+\begin{enumerate}
+    \item \textbf{Logica de Alineacion a Media Palabra (Half-Word Alignment Mux):}
+    \begin{itemize}
+        \item \textit{Descripcion:} Dado que la memoria de instrucciones original lee en bloques alineados a 4 bytes, pero las instrucciones comprimidas de 16 bits provocan que las instrucciones puedan comenzar en una direccion impar de media palabra (ej. \texttt{0x02}, \texttt{0x06}), se agrego un multiplexor que detecta si el PC actual apunta a una direccion desalineada mediante el bit \texttt{PCF[1]}.
+        \item \textit{Codigo del Cambio:}
+        \begin{lstlisting}[style=verilogstyle]
+// Si PCF[1] == 1, la instruccion util empieza en los bits superiores [31:16]
+assign actual_instr = PCF[1] ? {16'b0, raw_imem_data[31:16]} : raw_imem_data;
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{Integracion del Modulo de Descompresion y Multiplexor de Seleccion (Zero-Time Expansion):}
+    \begin{itemize}
+        \item \textit{Descripcion:} Se extrae la media palabra inferior de la instruccion alineada y se pasa por el modulo combinacional \texttt{decompressor}. Luego, un multiplexor final selecciona entre la instruccion de 32 bits original o la instruccion descomprimida.
+        \item \textit{Codigo del Cambio:}
+        \begin{lstlisting}[style=verilogstyle]
+assign cinstr = actual_instr[15:0];
+
+decompressor decomp (
+  .cinstr(cinstr),
+  .outstr(decompressed_instr),
+  .is_compressed(is_compressed)
+);
+
+// Mux final de seleccion de instruccion
+assign InstrF = is_compressed ? decompressed_instr : actual_instr;
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{Incremento Dinamico del PC:}
+    \begin{itemize}
+        \item \textit{Descripcion:} Para que el PC avance secuencialmente la cantidad correcta de bytes, ya no se incrementa rigidamente en $+4$. Si la instruccion actual es de 16 bits, el PC avanza $+2$ bytes; de lo contrario, avanza $+4$ bytes.
+        \item \textit{Codigo del Cambio:}
+        \begin{lstlisting}[style=verilogstyle]
+assign pc_increment = is_compressed ? 32'd2 : 32'd4;
+
+adder pcadd (
+  .a(PCF),
+  .b(pc_increment),
+  .y(PCPlus4F)
+);
+        \end{lstlisting}
+    \end{itemize}
+\end{enumerate}
+
 
 \subsection{Pruebas de la Extension RVC}
 
@@ -2190,8 +2358,7 @@ Para corroborar empíricamente las consecuencias del fallo de incremento rigido 
 \renewcommand{\theHfigure}{22.\arabic{figure}}
 \setcounter{figure}{0}
 
-\paragraph{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}
-En la Fig. \ref{fig:comp_e1} se compara el avance del PC de Fetch (\texttt{pcF}) y la señal del incrementador (\texttt{pc\_increment}). 
+En la Fig. \ref{fig:good_e1} y \ref{fig:bad_e1} se compara el avance del PC de Fetch (\texttt{pcF}) y la señal del incrementador (\texttt{pc\_increment}). 
 
 \begin{figure}[H]
   \centering
@@ -2208,14 +2375,11 @@ En la Fig. \ref{fig:comp_e1} se compara el avance del PC de Fetch (\texttt{pcF})
     \caption{Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02.}
     \label{fig:bad_e1}
   \end{minipage}
-  \caption{Comparativa del Program Counter y la señal de incremento del PC (\texttt{e1}).}
-  \label{fig:comp_e1}
 \end{figure}
 
 Como se observa en la Fig. \ref{fig:good_e1}, la señal \texttt{pc\_increment} se activa en \texttt{2} en los ciclos correspondientes a instrucciones de 16 bits (\texttt{c.addi}), permitiendo que la ejecución secuencial sea perfecta. Por el contrario, en la Fig. \ref{fig:bad_e1}, la señal \texttt{pc\_increment} se mantiene rigidamente en \texttt{4}, lo que provoca la omision de la instrucción comprimida en \texttt{0x02}.
 
-\paragraph{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}
-La Fig. \ref{fig:comp_e3} muestra la instrucción decodificada en la etapa Decode (\texttt{InstrD}).
+La Fig. \ref{fig:good_e3} y \ref{fig:bad_e3} muestra la instrucción decodificada en la etapa Decode (\texttt{InstrD}).
 
 \begin{figure}[H]
   \centering
@@ -2232,14 +2396,11 @@ La Fig. \ref{fig:comp_e3} muestra la instrucción decodificada en la etapa Decod
     \caption{Ejecución con Fallo: La instrucción comprimida no aparece en Decode.}
     \label{fig:bad_e3}
   \end{minipage}
-  \caption{Comparativa de la decodificacion de instrucciones en la etapa Decode (\texttt{e3}).}
-  \label{fig:comp_e3}
 \end{figure}
 
 En la ejecución correcta (Fig. \ref{fig:good_e3}), la etapa Decode recibe de manera secuencial la instrucción \texttt{c.addi x8, 5} (descomprimida como \texttt{0x00540413}), luego la instrucción \texttt{c.addi x9, 10} (descomprimida como \texttt{0x00a48493}), y por ultimo la instrucción \texttt{add x10, x8, x9} (\texttt{0x00940533}). En la ejecución con fallo (Fig. \ref{fig:bad_e3}), se pasa de la primera instrucción de suma inmediata directamente a la instrucción \texttt{add}, confirmando que la instrucción intermedia de \texttt{0x02} jamas entro en la etapa de decodificacion.
 
-\paragraph{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}
-La Fig. \ref{fig:comp_e2} muestra los puertos de escritura del banco de registros, analizando la habilitacion de escritura (\texttt{we3}), la dirección de escritura (\texttt{a3}) y el dato a escribir (\texttt{wd3}).
+La Fig. \ref{fig:good_e2} y \ref{fig:bad_e2} muestra los puertos de escritura del banco de registros, analizando la habilitacion de escritura (\texttt{we3}), la dirección de escritura (\texttt{a3}) y el dato a escribir (\texttt{wd3}).
 
 \begin{figure}[H]
   \centering
@@ -2256,8 +2417,6 @@ La Fig. \ref{fig:comp_e2} muestra los puertos de escritura del banco de registro
     \caption{Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10.}
     \label{fig:bad_e2}
   \end{minipage}
-  \caption{Comparativa de las señales de escritura en el Banco de Registros (\texttt{e2}).}
-  \label{fig:comp_e2}
 \end{figure}
 
 En la Fig. \ref{fig:good_e2}, se observa la escritura secuencial correcta en la etapa de Writeback, culminando con la escritura de \texttt{15} (\texttt{0x0F}) en el registro destino \texttt{x10} (\texttt{a3 = 10}). Sin embargo, en la Fig. \ref{fig:bad_e2}, la escritura en el registro \texttt{x9} (\texttt{a3 = 9}) nunca se realiza debido a la omision de la instrucción, por lo que su valor permanece en \texttt{0}. Esto altera la ejecución de la instrucción \texttt{add x10, x8, x9}, la cual escribe en Writeback el valor erroneo de \texttt{5} (\texttt{0x05}) en el registro \texttt{x10}.
@@ -2269,6 +2428,506 @@ En la Fig. \ref{fig:good_e2}, se observa la escritura secuencial correcta en la 
 % ============================================================================
 % SECCION 8: JERARQUIA DE ARCHIVOS
 % ============================================================================
+\section{Extension RVC - Segunda Parte (Entrega 3)}
+La segunda parte de la extensión RVC (RISC-V Compressed) introduce soporte completo para operaciones de acceso a memoria, saltos condicionales e incondicionales (directos e indirectos), permitiendo que el procesador ejecute programas complejos con control de flujo y subrutinas codificados enteramente en 16 bits.
+
+\subsection{Explicacion y Mapeo de las Instrucciones de la Segunda Parte}
+Para dar cumplimiento a los requerimientos de la Entrega 3, a continuación se describe el formato de 16 bits, el comportamiento y el mapeo a la versión base de 32 bits (RV32I) de cada una de las 10 instrucciones correspondientes a la segunda parte:
+
+\begin{enumerate}
+    \item \textbf{c.lw (c.lw rd', imm(rs1')):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Carga una palabra de 32 bits desde memoria en el registro restringido \texttt{rd'}. La dirección de memoria se forma sumando un inmediato positivo alineado a palabra (múltiplo de 4) al registro base \texttt{rs1'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{lw rd, imm(rs1)}. Los registros destino \texttt{rd'} y fuente \texttt{rs1'} están restringidos al rango \texttt{x8-x15} (\texttt{cinstr[4:2]} y \texttt{cinstr[9:7]} respectivamente). El inmediato de 7 bits se reconstruye en bits no contiguos: \texttt{imm = {cinstr[5], cinstr[12:10], cinstr[6], 2'b00}}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign imm_lw_sw = {cinstr[5], cinstr[12:10], cinstr[6], 2'b00};
+// En case (cinstr[15:13]) -> 3'b010:
+outstr = {5'b0, imm_lw_sw, rdp_rs1p, 3'b010, rs2p, 7'b0000011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.sw (c.sw rs2', imm(rs1')):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Almacena una palabra de 32 bits desde el registro restringido \texttt{rs2'} en memoria. La dirección de memoria se calcula sumando el inmediato positivo al registro base \texttt{rs1'}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{sw rs2, imm(rs1)}. Utiliza registros restringidos \texttt{x8-x15}. El inmediato de 7 bits se divide en dos campos para ajustarse al formato S-type de RV32I: \texttt{imm[11:5]} y \texttt{imm[4:0]}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b110:
+outstr = {5'b0, imm_lw_sw[6:5], rs2p, rdp_rs1p, 3'b010, imm_lw_sw[4:0], 7'b0100011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.lwsp (c.lwsp rd, imm(sp)):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Carga una palabra desde la pila en el registro completo \texttt{rd}. La dirección de memoria se forma sumando un inmediato positivo al registro Stack Pointer (\texttt{sp = x2}).
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{lw rd, imm(x2)}. Permite cualquier registro destino \texttt{rd} (\texttt{cinstr[11:7]}). El inmediato es de 8 bits scaled por 4: \texttt{imm = {cinstr[3:2], cinstr[12], cinstr[6:4], 2'b00}}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign imm_lwsp  = {cinstr[3:2], cinstr[12], cinstr[6:4], 2'b00};
+// En case (cinstr[15:13]) -> 3'b010 (Cuadrante 2):
+outstr = {4'b0, imm_lwsp, 5'd2, 3'b010, rd_rs1, 7'b0000011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.swsp (c.swsp rs2, imm(sp)):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Guarda una palabra del registro completo \texttt{rs2} en la pila. La dirección se obtiene sumando un inmediato positivo al \texttt{sp}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{sw rs2, imm(x2)}. Permite guardar cualquier registro \texttt{rs2} (\texttt{cinstr[6:2]}). El inmediato de 8 bits se divide según el formato S-type de 32 bits.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign imm_swsp  = {cinstr[8:7], cinstr[12:9], 2'b00};
+// En case (cinstr[15:13]) -> 3'b110 (Cuadrante 2):
+outstr = {4'b0, imm_swsp[7:5], rs2, 5'd2, 3'b010, imm_swsp[4:0], 7'b0100011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.beqz (c.beqz rs1', offset):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Bifurcación condicional relativa al PC. Compara el contenido de \texttt{rs1'} con cero (\texttt{x0}); si son iguales, suma el inmediato con signo al PC.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{beq rs1, x0, offset}. Utiliza el registro restringido \texttt{rs1'} y compara contra \texttt{x0}. El inmediato con signo de 9 bits se escala por 2 y se distribuye según el formato B-type de 32 bits.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign b_imm = {{5{cinstr[12]}}, cinstr[6:5], cinstr[2], cinstr[11:10], cinstr[4:3], 1'b0};
+// En case (cinstr[15:13]) -> 3'b110 (Cuadrante 1):
+outstr = {b_imm[12], b_imm[10:5], 5'b00000, rdp_rs1p, 3'b000, b_imm[4:1], b_imm[11], 7'b1100011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.bnez (c.bnez rs1', offset):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Bifurcación condicional. Compara \texttt{rs1'} con cero; si no son iguales, realiza el salto.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{bne rs1, x0, offset}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b111 (Cuadrante 1):
+outstr = {b_imm[12], b_imm[10:5], 5'b00000, rdp_rs1p, 3'b001, b_imm[4:1], b_imm[11], 7'b1100011};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.j (c.j offset):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Salto incondicional relativo al PC.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{jal x0, offset}. Escribe la dirección de retorno en \texttt{x0} (se descarta). El inmediato con signo de 12 bits se escala por 2 y se mapea según el formato J-type.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+assign j_imm = {{10{cinstr[12]}}, cinstr[8], cinstr[10:9], cinstr[6], cinstr[7], cinstr[2], cinstr[11], cinstr[5:3], 1'b0};
+// En case (cinstr[15:13]) -> 3'b101 (Cuadrante 1):
+outstr = {j_imm[20], j_imm[10:1], j_imm[11], j_imm[19:12], 5'b00000, 7'b1101111};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.jal (c.jal offset):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Salto incondicional y enlace relativo al PC.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{jal x1, offset}. Guarda la dirección de retorno en el registro de enlace \texttt{ra = x1}. Utiliza la misma lógica de inmediato con signo que `c.j`.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b001 (Cuadrante 1):
+outstr = {j_imm[20], j_imm[10:1], j_imm[11], j_imm[19:12], 5'b00001, 7'b1101111};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.jr (c.jr rs1):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Salto indirecto incondicional hacia la dirección almacenada en el registro \texttt{rs1}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{jalr x0, rs1, 0}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 (Cuadrante 2, con cinstr[12] == 0 y cinstr[6:2] == 0):
+outstr = {12'b0, rd_rs1, 3'b000, 5'b00000, 7'b1100111};
+        \end{lstlisting}
+    \end{itemize}
+
+    \item \textbf{c.jalr (c.jalr rs1):}
+    \begin{itemize}
+        \item \textit{Funcionamiento:} Salto indirecto incondicional hacia el registro \texttt{rs1}, guardando la dirección de retorno en \texttt{ra = x1}.
+        \item \textit{Mapeo RVC a RV32I:} Se expande a \texttt{jalr x1, rs1, 0}.
+        \item \textit{Codigo Verilog:}
+        \begin{lstlisting}[style=verilogstyle]
+// En case (cinstr[15:13]) -> 3'b100 (Cuadrante 2, con cinstr[12] == 1 y cinstr[6:2] == 0):
+outstr = {12'b0, rd_rs1, 3'b000, 5'b00001, 7'b1100111};
+        \end{lstlisting}
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Cambios en el Datapath y Justificacion del Desacoplamiento (Decoupling)}
+Para la Entrega 3, es fundamental analizar los cambios necesarios en el Datapath para soportar saltos alineados a media palabra (2-byte boundaries).
+
+\textbf{Justificación Arquitectónica del Desacoplamiento:}
+No se requirieron modificaciones adicionales en la lógica de control de saltos ni en la Hazard Unit para soportar la segunda parte. Esto se debe a la estrategia de **expansión combinacional en tiempo cero en la etapa Fetch**:
+*   Al inflar de inmediato las instrucciones RVC a instrucciones base RV32I en Fetch, una bifurcación condicional (`c.beqz`, `c.bnez`) o salto (`c.j`, `c.jal`) se procesa en el pipeline como un `beq`, `bne` o `jal` estándar.
+*   En la etapa Execute (EX), la ALU calcula el destino del salto de forma ordinaria sumando el PC actual (\texttt{PCE}) y el inmediato extendido (\texttt{ExtImmE}). El incrementador y sumador del PC de la etapa Fetch ya cuenta con el soporte dinámico implementado en la Entrega 2, el cual actualiza el PC según determine el camino de control del pipeline (\texttt{PCSrcE = 1}).
+*   Los saltos a direcciones de 2 bytes (es decir, con \texttt{PC[1] == 1}) funcionan nativamente debido a que el Program Counter (\texttt{PCF}) de 32 bits permite cualquier dirección de byte, y el hardware de Fetch está equipado con el alineador \texttt{actual\_instr = PCF[1] ? ...} que extrae la instrucción correspondiente de la palabra de memoria leída.
+
+\subsection{Tabla de Encodings Completa de RVC (Parte 1 y Parte 2)}
+Se presenta la tabla consolidada de formato de bits para las 20 instrucciones comprimidas de RISC-V implementadas en el procesador segmentado:
+
+\begin{table}[H]
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l|c|c|c|c|c|c|c}
+\toprule
+\textbf{Instrucción} & \textbf{Opcode [1:0]} & \textbf{Funct3 [15:13]} & \textbf{Reg1 [11:7]} & \textbf{Reg2 [6:2]} & \textbf{Restringidos} & \textbf{Funct2/4 [12/11:10]} & \textbf{Formato RVC} \\
+\midrule
+\texttt{c.lw} & \texttt{2'b00} & \texttt{3'b010} & \texttt{rs1'} (9:7) & \texttt{rd'} (4:2) & Sí (x8-x15) & -- & CL \\
+\texttt{c.sw} & \texttt{2'b00} & \texttt{3'b110} & \texttt{rs1'} (9:7) & \texttt{rs2'} (4:2) & Sí (x8-x15) & -- & CS \\
+\texttt{c.lwsp} & \texttt{2'b10} & \texttt{3'b010} & \texttt{rd} (11:7) & -- & No (Completo) & -- & CI \\
+\texttt{c.swsp} & \texttt{2'b10} & \texttt{3'b110} & -- & \texttt{rs2} (6:2) & No (Completo) & -- & CSS \\
+\texttt{c.addi} & \texttt{2'b01} & \texttt{3'b000} & \texttt{rd/rs1} (11:7) & -- & No (Completo) & -- & CI \\
+\texttt{c.slli} & \texttt{2'b10} & \texttt{3'b000} & \texttt{rd/rs1} (11:7) & -- & No (Completo) & -- & CI \\
+\texttt{c.srli} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & -- & Sí (x8-x15) & \texttt{2'b00} (11:10) & CB \\
+\texttt{c.srai} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & -- & Sí (x8-x15) & \texttt{2'b01} (11:10) & CB \\
+\texttt{c.andi} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & -- & Sí (x8-x15) & \texttt{2'b10} (11:10) & CB \\
+\texttt{c.add} & \texttt{2'b10} & \texttt{3'b100} & \texttt{rd/rs1} (11:7) & \texttt{rs2} (6:2) & No (Completo) & \texttt{cinstr[12]=0} & CR \\
+\texttt{c.sub} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & \texttt{rs2'} (4:2) & Sí (x8-x15) & \texttt{cinstr[6:5]=00} & CR \\
+\texttt{c.xor} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & \texttt{rs2'} (4:2) & Sí (x8-x15) & \texttt{cinstr[6:5]=01} & CR \\
+\texttt{c.or} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & \texttt{rs2'} (4:2) & Sí (x8-x15) & \texttt{cinstr[6:5]=10} & CR \\
+\texttt{c.and} & \texttt{2'b01} & \texttt{3'b100} & \texttt{rd'/rs1'} (9:7) & \texttt{rs2'} (4:2) & Sí (x8-x15) & \texttt{cinstr[6:5]=11} & CR \\
+\texttt{c.lui} & \texttt{2'b01} & \texttt{3'b011} & \texttt{rd} (11:7) & -- & No (Completo) & -- & CI \\
+\texttt{c.beqz} & \texttt{2'b01} & \texttt{3'b110} & \texttt{rs1'} (9:7) & -- & Sí (x8-x15) & -- & CB \\
+\texttt{c.bnez} & \texttt{2'b01} & \texttt{3'b111} & \texttt{rs1'} (9:7) & -- & Sí (x8-x15) & -- & CB \\
+\texttt{c.j} & \texttt{2'b01} & \texttt{3'b101} & -- & -- & -- & -- & CJ \\
+\texttt{c.jal} & \texttt{2'b01} & \texttt{3'b001} & -- & -- & -- & -- & CJ \\
+\texttt{c.jr} & \texttt{2'b10} & \texttt{3'b100} & \texttt{rs1} (11:7) & -- & No (Completo) & \texttt{cinstr[12]=0} & CR \\
+\texttt{c.jalr} & \texttt{2'b10} & \texttt{3'b100} & \texttt{rs1} (11:7) & -- & No (Completo) & \texttt{cinstr[12]=1} & CR \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Especificación completa de codificación (encoding) de la extensión RVC para las partes 1 y 2.}
+\label{tab:encodings}
+\end{table}
+
+\subsection{Pruebas de la Entrega 3: Programas de Validacion}
+
+\subsubsection{Test 1: Accesos a Memoria y Stack Pointer (\texttt{test\_e3\_mem.mem})}
+El primer test se enfoca en verificar el correcto funcionamiento de las operaciones de carga y almacenamiento comprimidas y el uso del Stack Pointer (\texttt{c.sw}, \texttt{c.lw}, \texttt{c.swsp}, \texttt{c.lwsp}), evitando dependencias o colisiones con saltos complejos:
+
+\begin{lstlisting}[style=verilogstyle, caption={Programa de Prueba de Memoria y Pila: test\_e3\_mem.mem}]
+// 0x00: addi x8, x0, 0
+00000413
+// 0x04: addi x9, x0, 99
+06300493
+// 0x08: c.sw x9, 0(x8) | c.lw x10, 0(x8)
+4008C004
+// 0x0C: addi x2, x0, 32
+02000113
+// 0x10: c.swsp x10, 0(sp) | c.lwsp x11, 0(sp)
+4582C02A
+// 0x14: sw x11, 200(x0)
+0CB02423
+// 0x18: c.j 0 | c.nop
+0001A001
+\end{lstlisting}
+
+\subsubsection{Test 2: Control de Flujo y Saltos (\texttt{test\_e3\_control.mem})}
+El segundo test evalúa las instrucciones de control de flujo comprimidas, incluyendo bifurcaciones condicionales tomadas y no tomadas, saltos incondicionales y llamadas/retornos de subrutinas (\texttt{c.beqz}, \texttt{c.bnez}, \texttt{c.j}, \texttt{c.jal}, \texttt{c.jr}, \texttt{c.jalr}):
+
+\begin{lstlisting}[style=verilogstyle, caption={Programa de Prueba de Control de Flujo: test\_e3\_control.mem}]
+// 0x00: addi x11, x0, 99
+06300593
+// 0x04: c.beqz x11, 4 | c.bnez x11, 6
+E199C189
+// 0x08: addi x12, x0, 77
+04D00613
+// 0x0C: c.j 4 | c.nop
+0001A011
+// 0x10: addi x13, x0, 42
+02A00693
+// 0x14: addi x14, x0, 44
+02C00713
+// 0x18: c.jal 12 | c.nop
+00012031
+// 0x1C: c.jalr x14 | c.nop
+00019702
+// 0x20: sw x13, 200(x0)
+0CD02423
+// 0x24: c.jr x1 | c.nop
+00018082
+// 0x28: c.nop | c.nop
+00010001
+// 0x2C: c.jr x1 | c.nop
+00018082
+\end{lstlisting}
+\subsubsection{Test 3: Multiplicación de Matrices 2x2 (\texttt{matmul})}
+Este programa valida la capacidad del procesador para ejecutar de forma intercalada, correcta y eficiente instrucciones tanto del ISA base (RV32I) como instrucciones comprimidas (RVC). Consiste en multiplicar dos matrices fijas de 2x2 utilizando sumas repetidas para evitar la necesidad de la extensión M (multiplicación en hardware).
+
+El funcionamiento lógico del algoritmo se detalla en el siguiente pseudocódigo:
+\begin{lstlisting}[style=pseudo, caption={Algoritmo de Multiplicación de Matrices 2x2}]
+// Multiplicación de matrices de 2x2: C = A * B
+// Entrada: Matrices A (A[0][0]=1, A[0][1]=2, A[1][0]=3, A[1][1]=4) 
+//          y B (B[0][0]=5, B[0][1]=6, B[1][0]=7, B[1][1]=8)
+// Salida: Matriz resultante C[2][2]
+C[0][0] = A[0][0]*B[0][0] + A[0][1]*B[1][0]; // 1*5 + 2*7 = 19
+C[0][1] = A[0][0]*B[0][1] + A[0][1]*B[1][1]; // 1*6 + 2*8 = 22
+C[1][0] = A[1][0]*B[0][0] + A[1][1]*B[1][0]; // 3*5 + 4*7 = 43
+C[1][1] = A[1][0]*B[0][1] + A[1][1]*B[1][1]; // 3*6 + 4*8 = 50
+\end{lstlisting}
+
+A continuación, se presentan las implementaciones completas en ensamblador básico y comprimido para esta prueba:
+
+\begin{lstlisting}[style=verilogstyle, caption={Implementación en RISC-V RV32I: matmul\_rv32i.s}]
+# ==============================================================================
+# Archivo: matmul_rv32i.s
+# Descripción: Multiplicación de matrices 2x2 en RV32I sin extensión M.
+# ==============================================================================
+.text
+.globl main
+main:
+    # x8 = Dirección base de matriz A (B[0][0] en offsets)
+    # x9 = Dirección base de matriz B
+    # x10 = Dirección base de matriz C (resultado)
+    
+    # C[0][0] = A[0][0]*B[0][0] + A[0][1]*B[1][0]
+    lw   x11, 0(x8)       # x11 = B[0][0]
+    lw   x12, 4(x8)       # x12 = B[1][0]
+    add  x13, x12, x12    # x13 = 2 * B[1][0]
+    add  x14, x11, x13    # x14 = B[0][0] + 2 * B[1][0] (C[0][0])
+    sw   x14, 0(x10)      # Guardar C[0][0]
+    
+    # C[0][1] = A[0][0]*B[0][1] + A[0][1]*B[1][1]
+    lw   x11, 8(x8)       # x11 = B[0][1]
+    lw   x12, 12(x8)      # x12 = B[1][1]
+    add  x13, x12, x12    # x13 = 2 * B[1][1]
+    add  x14, x11, x13    # x14 = B[0][1] + 2 * B[1][1] (C[0][1])
+    sw   x14, 4(x10)      # Guardar C[0][1]
+
+    # C[1][0] = A[1][0]*B[0][0] + A[1][1]*B[1][0]
+    lw   x11, 0(x8)
+    lw   x12, 4(x8)
+    add  x13, x11, x11
+    add  x13, x13, x11    # x13 = 3 * B[0][0]
+    add  x14, x12, x12
+    add  x14, x14, x12
+    add  x14, x14, x12    # x14 = 4 * B[1][0]
+    add  x15, x13, x14    # C[1][0]
+    sw   x15, 8(x10)
+
+    # C[1][1] = A[1][0]*B[0][1] + A[1][1]*B[1][1]
+    lw   x11, 8(x8)
+    lw   x12, 12(x8)
+    add  x13, x11, x11
+    add  x13, x13, x11    # x13 = 3 * B[0][1]
+    add  x14, x12, x12
+    add  x14, x14, x12
+    add  x14, x14, x12    # x14 = 4 * B[1][1]
+    add  x15, x13, x14    # C[1][1]
+    sw   x15, 12(x10)
+
+    jalr x0, 0(x1)        # Retornar
+\end{lstlisting}
+
+\begin{lstlisting}[style=verilogstyle, caption={Implementación en RISC-V RVC: matmul\_rvc.s}]
+# ==============================================================================
+# Archivo: matmul_rvc.s
+# Descripción: Multiplicación de matrices 2x2 en RVC (comprimido).
+# ==============================================================================
+.text
+.globl main
+main:
+    # C[0][0] = A[0][0]*B[0][0] + A[0][1]*B[1][0]
+    c.lw  x11, 0(x8)
+    c.lw  x12, 4(x8)
+    c.add x13, x12, x12
+    c.add x14, x11, x13
+    c.sw  x14, 0(x10)
+    
+    # C[0][1] = A[0][0]*B[0][1] + A[0][1]*B[1][1]
+    c.lw  x11, 8(x8)
+    c.lw  x12, 12(x8)
+    c.add x13, x12, x12
+    c.add x14, x11, x13
+    c.sw  x14, 4(x10)
+
+    # C[1][0] = A[1][0]*B[0][0] + A[1][1]*B[1][0]
+    c.lw  x11, 0(x8)
+    c.lw  x12, 4(x8)
+    c.add x13, x11, x11
+    c.add x13, x13, x11
+    c.add x14, x12, x12
+    c.add x14, x14, x12
+    c.add x14, x14, x12
+    c.add x15, x13, x14
+    c.sw  x15, 8(x10)
+
+    # C[1][1] = A[1][0]*B[0][1] + A[1][1]*B[1][1]
+    c.lw  x11, 8(x8)
+    c.lw  x12, 12(x8)
+    c.add x13, x11, x11
+    c.add x13, x13, x11
+    c.add x14, x12, x12
+    c.add x14, x14, x12
+    c.add x14, x14, x12
+    c.add x15, x13, x14
+    c.sw  x15, 12(x10)
+
+    c.jr  x1
+\end{lstlisting}
+
+
+La comparación de este algoritmo en ambas versiones muestra los siguientes resultados teóricos y prácticos de rendimiento:
+\begin{itemize}
+  \item \textbf{Tamaño en bytes (Code Density):} La versión RV32I (\texttt{matmul\_rv32i.s}) ocupa 29 instrucciones de 32 bits (116 bytes), mientras que la versión RVC (\texttt{matmul\_rvc.s}) ocupa 29 instrucciones de 16 bits (58 bytes), logrando un **50.0\% de ahorro de espacio**.
+  \item \textbf{Performance (Ciclos de Reloj):} Debido a que la descompresión combinacional se realiza en la etapa Fetch en tiempo cero, ambas versiones ejecutan el algoritmo en el mismo número de ciclos de reloj, sin ninguna penalización de velocidad.
+\end{itemize}
+
+
+
+\subsection{Guia de Capturas y Analisis de Waveforms (GTKWave) para la Entrega 3}
+Para demostrar el correcto funcionamiento de las instrucciones de la Entrega 3, el estudiante debe capturar tres oscilogramas clave detallados a continuación, mostrando las señales correspondientes:
+
+\subsubsection{Captura E3.1: Accesos a Pila y Memoria (Loads y Stores)}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c1.png}
+\caption{Accesos a memoria: Ejecución de c.sw y c.lw con descompresión y escritura de x9 y x10.}
+\label{fig:wave_e3_1_c1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c2.png}
+\caption{Accesos a pila: Inicialización de sp y ejecución de c.swsp y c.lwsp escribiendo en x11.}
+\label{fig:wave_e3_1_c2}
+\end{figure}
+
+\textbf{Accesos a Memoria (c.sw y c.lw):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_1_c1}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{0x08}, y muestra que la señal \texttt{is\_compressed} se activa en \texttt{1} y \texttt{pc\_increment} vale \texttt{2}, lo que hace avanzar el PC de Fetch a \texttt{0x0A} en el siguiente ciclo.
+  \item Muestra que cuando esta instrucción llega a Decode (\texttt{InstrD}), se descomprime a \texttt{0x00942023} (el equivalente de 32 bits para \texttt{c.sw}).
+  \item Enmarca la fila de escritura del banco de registros, validando que el registro \texttt{x9} recibe el valor \texttt{99} (\texttt{0x63}) y el registro \texttt{x10} recibe \texttt{99} en el ciclo de Writeback.
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Aquí se valida la instrucción \texttt{c.sw x9, 0(x8)} y \texttt{c.lw x10, 0(x8)}. Primero se escribe el registro \texttt{x9} con el valor \texttt{99}. Luego, la instrucción \texttt{c.sw} escribe este valor en la memoria de datos (dirección base en \texttt{x8 = 0}). Finalmente, la instrucción comprimida \texttt{c.lw} lee dicho valor de la memoria de datos y lo almacena con éxito en el registro \texttt{x10}, comprobando el correcto direccionamiento e incremento de 2 bytes en el PC.
+
+\textbf{Accesos a la Pila (c.swsp y c.lwsp):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_1_c2}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{0x10}, y muestra que la señal \texttt{is\_compressed} se activa en \texttt{1} y \texttt{pc\_increment} vale \texttt{2}, causando que el PC de Fetch avance a \texttt{0x12}.
+  \item Muestra que cuando esta instrucción llega a Decode (\texttt{InstrD}), se descomprime a \texttt{0x00a12023} (el equivalente de 32 bits para \texttt{c.swsp}).
+  \item Enmarca la señal del registro destino \texttt{a3} en el ciclo de Writeback de \texttt{c.lwsp}, confirmando que el registro \texttt{x11} (\texttt{b}) se escribe con \texttt{99} (\texttt{0x63}).
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Se evalúan las instrucciones relativas al Stack Pointer: \texttt{c.swsp x10, 0(sp)} y \texttt{c.lwsp x11, 0(sp)}. Primero se carga el registro \texttt{x2} (\texttt{sp}) con la dirección de la pila \texttt{32} (\texttt{0x20}). La instrucción \texttt{c.swsp} almacena el valor de \texttt{x10} (\texttt{99}) en la pila, y la instrucción \texttt{c.lwsp} lo recupera de la pila cargándolo en \texttt{x11}, validando las operaciones comprimidas de acceso al Stack Pointer.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_mem/waves_rvc_e3_mem_c3.png}
+\caption{Escritura final y bucle final: Guardado de x11 en dirección 200 y bucle infinito del c.j 0.}
+\label{fig:wave_e3_1_c3}
+\end{figure}
+
+\textbf{Escritura Final y Bucle de Parada (Test de Memoria):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_1_c3}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{0x14}, mostrando que la instrucción de 32 bits \texttt{sw} hace avanzar el PC de Fetch por \texttt{4} hacia \texttt{0x18}.
+  \item Muestra la señal \texttt{ALUResultE} en \texttt{c8} (\texttt{200} en decimal), que corresponde a la dirección de memoria final de verificación.
+  \item Enmarca el patrón cíclico repetitivo en el PC de Fetch: \texttt{18} $\rightarrow$ \texttt{1a} $\rightarrow$ \texttt{1c} $\rightarrow$ \texttt{18} $\rightarrow$ \texttt{1a} $\rightarrow$ \texttt{1c}.
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Aquí se ejecuta la instrucción de verificación final de 32 bits \texttt{sw x11, 200(x0)}. Esta instrucción calcula la dirección de destino \texttt{200} y escribe el valor exitoso \texttt{99} (hex \texttt{63}). Acto seguido, el PC llega a \texttt{0x18} e ingresa al bucle incondicional infinito mediante \texttt{c.j 0}, lo cual hace que el procesador permanezca ciclando de forma segura en las direcciones \texttt{18}, \texttt{1a} y \texttt{1c} indefinidamente, impidiendo la ejecución de instrucciones basura del sistema.
+
+
+
+\subsubsection{Captura E3.2: Bifurcaciones Condicionales y Flush de Burbujas}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c1.png}
+\caption{Bifurcaciones condicionales: Resolución de c.beqz (no tomado) y c.bnez (tomado) con descompresión.}
+\label{fig:wave_e3_2}
+\end{figure}
+
+\textbf{Saltos Condicionales (c.beqz y c.bnez):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_2}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{0x04} y \texttt{0x06}. Muestra que la señal \texttt{is\_compressed} vale \texttt{1} y \texttt{pc\_increment} vale \texttt{2}.
+  \item Muestra que cuando \texttt{c.beqz} llega a la etapa de Execute, no se toma el salto porque el registro \texttt{x11} tiene el valor \texttt{99} (\texttt{0x63}) que se lee en la señal \texttt{wd3}.
+  \item Señala que cuando \texttt{c.bnez} se evalúa en la etapa de Execute, se toma el salto porque \texttt{x11} es distinto de cero. El PC de Fetch salta directamente a la dirección \texttt{0x0C}.
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Aquí se evalúa la instrucción \texttt{c.beqz x11, 4} y \texttt{c.bnez x11, 6} utilizando el registro \texttt{x11 = 99}. Como \texttt{x11} no es cero, \texttt{c.beqz} no se toma y el PC avanza de 2 en 2. Luego, la instrucción \texttt{c.bnez} sí se toma, redirigiendo el PC a \texttt{0x0C} y vaciando (flusheando) del pipeline la instrucción trampa de la dirección \texttt{0x08} que se había leído por error.
+
+
+\subsubsection{Captura E3.3: Saltos Incondicionales y Retornos (c.j, c.jal, c.jr, c.jalr)}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c2.png}
+\caption{Salto incondicional: Ejecución de c.j 4 en 0x0C saltando a 0x10.}
+\label{fig:wave_e3_3_c2}
+\end{figure}
+
+\textbf{Salto Incondicional (c.j):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_3_c2}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{0x0C} y \texttt{0x0E}.
+  \item Señala la redirección de PC hacia la dirección \texttt{0x10} en el ciclo siguiente.
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Aquí se ejecuta la instrucción comprimida de salto incondicional \texttt{c.j 4} en la dirección \texttt{0x0C}. El procesador calcula el salto relativo sumando \texttt{4} al PC actual, por lo que la ejecución salta de inmediato a la dirección \texttt{0x10} y vacía del pipeline la instrucción trampa \texttt{c.nop} en \texttt{0x0E}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../Images/Entrega3/waves_rvc_e3_control/waves_rvc_e3_control_c3.png}
+\caption{Subrutinas y verificación: Ejecución de c.jal, c.jr, c.jalr y escritura final de validación.}
+\label{fig:wave_e3_3_c3}
+\end{figure}
+
+\textbf{Subrutinas y Verificación (c.jal, c.jr, c.jalr, sw):}
+En la forma de onda de la Fig. \ref{fig:wave_e3_3_c3}:
+\begin{itemize}
+  \item Enmarca la señal \texttt{pcF} en \texttt{18}, \texttt{1a}, \texttt{1c} y el salto hacia \texttt{24} (subrutina \texttt{sub\_jal}).
+  \item Señala el guardado del enlace de retorno: el registro \texttt{ra} (\texttt{a3 = 1}) se escribe con la dirección \texttt{0x1A} (\texttt{wd3 = 1a}) y la señal \texttt{we3} se activa en \texttt{1}.
+  \item Enmarca el retorno \texttt{c.jr} en el PC \texttt{24} saltando de regreso hacia \texttt{1a}.
+  \item Enmarca la escritura final en la dirección \texttt{200} de memoria, donde la señal \texttt{ALUResultE} vale \texttt{c8} (debajo del PC \texttt{26}) y la señal \texttt{ResultW} vale \texttt{c8} (debajo del PC \texttt{28}).
+\end{itemize}
+
+\textit{Qué decir en tu informe:} Se valida la ejecución y el enlace de subrutinas comprimidas. La instrucción \texttt{c.jal} en \texttt{0x18} salta a \texttt{0x24} guardando la dirección de retorno \texttt{ra = 0x1A} en el banco de registros. Al ejecutarse \texttt{c.jr ra} en \texttt{0x24}, el PC retorna al flujo principal en \texttt{0x1A}. De manera análoga, la instrucción \texttt{c.jalr} salta a la dirección del registro \texttt{x14} (\texttt{0x2C}) guardando la dirección de retorno \texttt{ra = 0x1E} en \texttt{x1}. Finalmente, se escribe el valor de confirmación en la dirección \texttt{200} (\texttt{c8}) de memoria, demostrando el correcto funcionamiento general.
+
+---
+
+\subsection{Comparativa de Densidad de Codigo y Rendimiento (Benchmarking)}
+
+\subsubsection{Rendimiento de los programas (Ciclos de Reloj)}
+Dado que el descompresor combinacional RVC se encuentra integrado en Fetch y expande las instrucciones en tiempo cero, **no hay pérdidas de rendimiento en ciclos de reloj** respecto a programas puros en RV32I.
+*   Ambos procesadores ejecutan la suma y el cálculo en el mismo número de ciclos, puesto que el pipeline ve la misma secuencia de instrucciones estándar.
+*   La única penalización en ciclos ocurre ante saltos tomados (2 burbujas) e instrucciones load-use (1 burbuja), las cuales son exactamente idénticas tanto para RV32I como para RVC.
+
+\subsubsection{Densidad de Código (Code Density)}
+Para evaluar de forma integral la densidad de código, se comparan los tamaños en bytes de los programas de prueba en sus versiones RV32I y RVC. Los tamaños fueron calculados de forma exacta a partir del conteo real de instrucciones en los archivos fuente:
+\begin{itemize}
+  \item \textbf{test\_rvc\_basic:} 7 instrucciones (2 de 32 bits y 5 de 16 bits = 28 bytes en RV32I vs 20 bytes en RVC).
+  \item \textbf{test\_e3\_mem:} 10 instrucciones (4 de 32 bits y 6 de 16 bits = 40 bytes en RV32I vs 28 bytes en RVC).
+  \item \textbf{test\_e3\_control:} 19 instrucciones (5 de 32 bits y 14 de 16 bits = 76 bytes en RV32I vs 48 bytes en RVC).
+  \item \textbf{matmul:} 29 instrucciones (29 de 32 bits = 116 bytes en RV32I vs 29 de 16 bits = 58 bytes en RVC).
+\end{itemize}
+
+A continuación se detalla la comparativa final de densidad de código:
+
+\begin{table}[H]
+\centering
+\resizebox{0.9\textwidth}{!}{%
+\begin{tabular}{l|c|c|c}
+\toprule
+\textbf{Programa de Prueba} & \textbf{Tamaño RV32I (Bytes)} & \textbf{Tamaño RVC (Bytes)} & \textbf{Ahorro en Bytes (\%)} \\
+\midrule
+\texttt{test\_rvc\_basic} & 28 & 20 & 28.5\% \\
+\texttt{test\_e3\_mem} & 40 & 28 & 30.0\% \\
+\texttt{test\_e3\_control} & 76 & 48 & 36.8\% \\
+\texttt{matmul} (Matrices) & 116 & 58 & 50.0\% \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Comparativa de la densidad de código y ahorro de bytes en memoria de instrucciones para programas RV32I vs. RVC.}
+\label{tab:comparativa_benchmarks}
+\end{table}
+
+Como se observa en la Tabla \ref{tab:comparativa_benchmarks}, la compresión de código en el algoritmo de multiplicación de matrices alcanza un **50.0\% de ahorro en espacio de memoria**. Esto demuestra la gran eficiencia de la arquitectura segmentada combinada con RVC para reducir sustancialmente costos de almacenamiento en sistemas embebidos, sin ninguna pérdida de rendimiento.
+
+
+
+
 \section{Jerarquia de Archivos}
 
 \begin{verbatim}
@@ -2293,11 +2952,20 @@ Microarchitecture-Pipelined/
 |       |-- test_rvc_branches.mem      (Test RVC 2)
 |       |-- test_rvc_memory.mem        (Test RVC 3)
 |       |-- test_rvc_remaining.mem     (Test RVC Cobertura)
+|       |-- test_rvc_remaining.s
+|   |-- Entrega3/
+|       |-- test_e3_mem.mem            (Test RVC Mem E3)
+|       |-- test_e3_mem.s              (Ensamblador Mem E3)
+|       |-- test_e3_control.mem        (Test RVC Control E3)
+|       |-- test_e3_control.s          (Ensamblador Control E3)
+|       |-- matmul_rv32i.s             (Benchmark RV32I)
+|       |-- matmul_rvc.s               (Benchmark RVC)
 |-- Waves/
 |   |-- waves_isa.vcd, waves_forwarding.vcd,
 |   |   waves_rvc_basic.vcd, waves_rvc_branches.vcd,
 |   |   waves_rvc_memory.vcd, waves_rvc_remaining.vcd,
-|   |   waves_rvc_failure.vcd
+|   |   waves_rvc_failure.vcd, waves_rvc_e3_mem.vcd,
+|   |   waves_rvc_e3_control.vcd
 |-- Informe_LaTeX/  informe_pipeline.tex
 \end{verbatim}
 

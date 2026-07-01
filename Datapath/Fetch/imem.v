@@ -4,7 +4,7 @@ module imem(input  [31:0] a,
   reg [31:0] RAM[63:0]; 
 
   initial begin
-      $readmemh("Tests/Entrega2_RVC/test_rvc_basic.mem",RAM);
+      $readmemh("Tests/Entrega3/test_e3_mem.mem",RAM);
   end
 
   assign rd = RAM[a[31:2]]; // word aligned

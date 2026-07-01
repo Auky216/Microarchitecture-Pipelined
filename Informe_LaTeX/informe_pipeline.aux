@@ -9,172 +9,201 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \babel@aux{spanish}{}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Teoría del Procesador Pipeline: Datapath y Control (0.5 pts)}{3}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}¿Qué es un Procesador Pipelined?}{3}{subsection.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Las 5 Etapas del Pipeline}{3}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Diagrama Temporal del Pipeline}{3}{subsection.1.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama temporal: cada instrucción tarda 5 ciclos, pero se completa 1 instrucción por ciclo.}}{4}{figure.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}ISA Implementada: RISC-V RV32I}{4}{subsection.1.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Instrucciones soportadas por el procesador.}}{4}{table.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}El Camino de Control en el Pipeline}{4}{subsection.1.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Implementación de Instrucciones (Cuadro 1) (1.0 pts)}{5}{section.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Instrucciones evaluadas e implementadas en el pipeline y su estado de soporte.}}{6}{table.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Descripción de Cambios en el Código}{7}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Diagrama de Datapath Final (Básico)}{7}{subsection.2.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama del Datapath Pipelined básico del procesador (sin la Hazard Unit).}}{8}{figure.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Los Registros Pipeline}{8}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}¿Qué son y por qué son necesarios?}{8}{subsubsection.2.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{9}{subsubsection.2.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Los tres tipos de flip-flops usados. Observa el triángulo símbolo de la señal de reloj sincronizada por flanco.}}{9}{figure.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{9}{subsubsection.2.3.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Comportamiento de los registros pipeline}{9}{lstlisting.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt  {riscv\_pipeline}}{9}{subsection.2.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Código Verilog del módulo top-level}{9}{lstlisting.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{12}{subsection.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{12}{subsubsection.2.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Etapa Fetch aislada con sus componentes operativos.}}{12}{figure.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}Código Verilog}{12}{subsubsection.2.5.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Código Verilog de la etapa Fetch}{12}{lstlisting.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{14}{subsection.2.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Componentes Activos}{14}{subsection.2.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Etapa Decode aislada. Incluye el banco de registros y unidad de control.}}{14}{figure.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{14}{subsubsection.2.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Tabla de verdad de la unidad de control principal.}}{15}{table.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}Código Verilog de Decode}{15}{subsubsection.2.7.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Código Verilog de la etapa Decode}{15}{lstlisting.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{17}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Componentes Activos}{18}{subsection.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}}{18}{figure.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Código Verilog de la etapa Execute}{18}{subsection.3.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Código Verilog de la etapa Execute}{18}{lstlisting.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{21}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Componentes Activos}{22}{subsection.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}}{22}{figure.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Código Verilog de las etapas Memory y Writeback}{22}{subsection.4.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Código Verilog de la etapa Memory}{22}{lstlisting.6}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}Código Verilog de la etapa Writeback}{23}{lstlisting.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{25}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{25}{subsection.5.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Programa 1: ISA sin dependencias (test\_isa\_sin\_dependencias.mem)}{25}{lstlisting.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{25}{subsection.5.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Waveform del Programa 1 (ISA sin dependencias). Las señales ForwardAE, ForwardBE, StallD y FlushE permanecen en 0 durante toda la ejecución.}}{25}{figure.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{26}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{26}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{26}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{26}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{27}{subsubsection.6.2.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}Programa 2: test\_forwarding.mem (para deshabilitado)}{27}{lstlisting.9}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt  {add} los necesita.}}{27}{figure.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{27}{subsubsection.6.2.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Programa 3: test\_stalling.mem (para deshabilitado)}{28}{lstlisting.10}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Programa 3 SIN Hazard Unit. El \texttt  {add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}}{28}{figure.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{28}{subsubsection.6.2.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}Programa 4: test\_flushing.mem (para deshabilitado)}{29}{lstlisting.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt  {beq}.}}{29}{figure.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{29}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{29}{subsection.7.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Diagrama de la Hazard Unit y sus múltiples conexiones.}}{30}{figure.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{30}{subsection.7.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}Lógica de Forwarding}{30}{lstlisting.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{31}{subsection.7.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}Lógica de detección de Load-Use Hazard}{31}{lstlisting.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{31}{subsection.7.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}Lógica de flush por salto tomado}{31}{lstlisting.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{31}{subsection.7.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{31}{subsection.7.6}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Diagrama del Datapath Pipelined completo del procesador (incluyendo la Hazard Unit).}}{32}{figure.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{33}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{33}{subsection.8.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}Programa 2: test\_forwarding.mem}{33}{lstlisting.15}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Programa 2 CON Hazard Unit. ForwardBE=10 reenvía x3 desde Memory; ForwardAE=01 reenvía x2 desde Writeback.}}{33}{figure.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{33}{subsection.8.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}Programa 3: test\_stalling.mem}{33}{lstlisting.16}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Programa 3 CON Hazard Unit. StallD congela Decode y Fetch durante 1 ciclo; FlushE inserta una burbuja en Execute.}}{34}{figure.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{34}{subsection.8.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}Programa 4: test\_flushing.mem}{34}{lstlisting.17}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Programa 4 CON Hazard Unit. FlushE y FlushD se activan cuando PCSrcE=1, descartando las instrucciones especulativas.}}{34}{figure.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Programa Extra: Set Completo de Operaciones y Validación de la ISA y Hazard Unit}{34}{subsection.8.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}Programa Extra: test\_remaining\_ops.mem}{35}{lstlisting.18}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Formas de onda del Programa Extra. Se verifica el correcto comportamiento temporal y la resolución de dependencias de datos (forwarding) y de control (flushing) para todas las instrucciones RV32I.}}{36}{figure.17}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Extension RVC (16-bits)}{37}{section.9}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresión combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID.}}{37}{figure.18}\protected@file@percent }
-\newlabel{fig:diagrama_fetch_rvc}{{18}{37}{Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresión combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID}{figure.18}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}El Reto Arquitectonico y la Solucion}{37}{subsection.9.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Modificaciones al Código}{37}{subsection.9.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{38}{subsection.9.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Código Verilog de la Extensión RVC}{39}{subsection.9.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}Código Verilog del módulo descompresor RVC}{39}{lstlisting.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Pruebas de la Extension RVC}{42}{subsection.9.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.1}Test RVC Básico (\texttt  {test\_rvc\_basic.mem})}{42}{subsubsection.9.5.1}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}Programa RVC Básico: test\_rvc\_basic.mem}{42}{lstlisting.20}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {18.1}{\ignorespaces Forma de onda general del test básico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final.}}{43}{figure.18.1}\protected@file@percent }
-\newlabel{fig:waves_rvc_basic_general}{{18.1}{43}{Forma de onda general del test básico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final}{figure.18.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {18.2}{\ignorespaces Incremento Dinamico}}{43}{figure.18.2}\protected@file@percent }
-\newlabel{fig:waves_rvc_basic_e1}{{18.2}{43}{Incremento Dinamico}{figure.18.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {18.3}{\ignorespaces Descompresión en Fetch}}{44}{figure.18.3}\protected@file@percent }
-\newlabel{fig:waves_rvc_basic_e2}{{18.3}{44}{Descompresión en Fetch}{figure.18.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {18.4}{\ignorespaces Escritura y Salto}}{44}{figure.18.4}\protected@file@percent }
-\newlabel{fig:waves_rvc_basic_e3}{{18.4}{44}{Escritura y Salto}{figure.18.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.2}Test RVC de Memoria (\texttt  {test\_rvc\_memory.mem})}{45}{subsubsection.9.5.2}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}Programa RVC Memoria: test\_rvc\_memory.mem}{45}{lstlisting.21}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {19.1}{\ignorespaces Forma de onda general del test de memoria RVC, validando la ruta completa de carga y almacenamiento de datos.}}{45}{figure.19.1}\protected@file@percent }
-\newlabel{fig:waves_rvc_memory_general}{{19.1}{45}{Forma de onda general del test de memoria RVC, validando la ruta completa de carga y almacenamiento de datos}{figure.19.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19.2}{\ignorespaces Descompresión de Memorias}}{45}{figure.19.2}\protected@file@percent }
-\newlabel{fig:waves_rvc_memory_e1}{{19.2}{45}{Descompresión de Memorias}{figure.19.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19.3}{\ignorespaces Escritura en Memoria (Store)}}{46}{figure.19.3}\protected@file@percent }
-\newlabel{fig:waves_rvc_memory_e2}{{19.3}{46}{Escritura en Memoria (Store)}{figure.19.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19.4}{\ignorespaces Lectura de Memoria (Load)}}{46}{figure.19.4}\protected@file@percent }
-\newlabel{fig:waves_rvc_memory_e3}{{19.4}{46}{Lectura de Memoria (Load)}{figure.19.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19.5}{\ignorespaces Escritura Final en el Registro}}{47}{figure.19.5}\protected@file@percent }
-\newlabel{fig:waves_rvc_memory_e4}{{19.5}{47}{Escritura Final en el Registro}{figure.19.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.3}Test RVC de Saltos (\texttt  {test\_rvc\_branches.mem})}{47}{subsubsection.9.5.3}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}Programa RVC Saltos: test\_rvc\_branches.mem}{47}{lstlisting.22}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {20.1}{\ignorespaces Forma de onda general del test de saltos RVC, mostrando la ejecución secuencial de las instrucciones y la respuesta del pipeline.}}{48}{figure.20.1}\protected@file@percent }
-\newlabel{fig:waves_rvc_branches_general}{{20.1}{48}{Forma de onda general del test de saltos RVC, mostrando la ejecución secuencial de las instrucciones y la respuesta del pipeline}{figure.20.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {20.2}{\ignorespaces Branch No Tomado}}{48}{figure.20.2}\protected@file@percent }
-\newlabel{fig:waves_rvc_branches_e1}{{20.2}{48}{Branch No Tomado}{figure.20.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {20.3}{\ignorespaces Branch Tomado}}{48}{figure.20.3}\protected@file@percent }
-\newlabel{fig:waves_rvc_branches_e2}{{20.3}{48}{Branch Tomado}{figure.20.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {20.4}{\ignorespaces Activacion de Burbujas}}{49}{figure.20.4}\protected@file@percent }
-\newlabel{fig:waves_rvc_branches_e3}{{20.4}{49}{Activacion de Burbujas}{figure.20.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {20.5}{\ignorespaces Escritura del Registro Destino}}{49}{figure.20.5}\protected@file@percent }
-\newlabel{fig:waves_rvc_branches_e4}{{20.5}{49}{Escritura del Registro Destino}{figure.20.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.4}Test RVC de Cobertura Completa (\texttt  {test\_rvc\_remaining.mem})}{50}{subsubsection.9.5.4}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}Programa RVC Cobertura Completa: test\_rvc\_remaining.mem}{50}{lstlisting.23}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {21.1}{\ignorespaces Forma de onda general del test de cobertura completa, validando las 14 instrucciones RVC restantes.}}{50}{figure.21.1}\protected@file@percent }
-\newlabel{fig:waves_rvc_remaining_general}{{21.1}{50}{Forma de onda general del test de cobertura completa, validando las 14 instrucciones RVC restantes}{figure.21.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Analisis de Performance y Justificacion de la Extension RVC}{52}{subsection.9.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.1}Analisis de Ciclos de Reloj (Timing Analysis)}{52}{subsubsection.9.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.2}Reducción de Tamaño de Código (Code Density)}{52}{subsubsection.9.6.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Comparativa del tamaño de código en memoria entre la implementación RV32I y RVC para el test básico.}}{53}{table.4}\protected@file@percent }
-\newlabel{tab:ahorro_memoria}{{4}{53}{Comparativa del tamaño de código en memoria entre la implementación RV32I y RVC para el test básico}{table.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.3}Guia de Uso: Cuando usar RVC y cuando no}{53}{subsubsection.9.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.7}Analisis de Modos de Fallo de la Extension RVC}{54}{subsection.9.7}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Comparativa de la traza de ejecución (wave-table) entre la ejecución correcta de RVC y la ejecución con fallo de incremento rigido a +4.}}{54}{table.5}\protected@file@percent }
-\newlabel{tab:comparativa_fallo}{{5}{54}{Comparativa de la traza de ejecución (wave-table) entre la ejecución correcta de RVC y la ejecución con fallo de incremento rigido a +4}{table.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.1}Analisis de Consecuencias del Fallo}{54}{subsubsection.9.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.2}Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}{55}{subsubsection.9.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Caso 1: Comportamiento del Program Counter y el Incrementador (e1)}{55}{paragraph*.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {22.1}{\ignorespaces Ejecución Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica.}}{55}{figure.22.1}\protected@file@percent }
-\newlabel{fig:good_e1}{{22.1}{55}{Ejecución Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica}{figure.22.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.2}{\ignorespaces Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02.}}{55}{figure.22.2}\protected@file@percent }
-\newlabel{fig:bad_e1}{{22.2}{55}{Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02}{figure.22.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.3}{\ignorespaces Comparativa del Program Counter y la señal de incremento del PC (\texttt  {e1}).}}{55}{figure.22.3}\protected@file@percent }
-\newlabel{fig:comp_e1}{{22.3}{55}{Comparativa del Program Counter y la señal de incremento del PC (\texttt {e1})}{figure.22.3}{}}
-\@writefile{toc}{\contentsline {paragraph}{Caso 2: Decodificacion de Instrucciones en la etapa Decode (e3)}{55}{paragraph*.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {22.4}{\ignorespaces Ejecución Correcta: Decodificacion secuencial de las tres instrucciones.}}{56}{figure.22.4}\protected@file@percent }
-\newlabel{fig:good_e3}{{22.4}{56}{Ejecución Correcta: Decodificacion secuencial de las tres instrucciones}{figure.22.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.5}{\ignorespaces Ejecución con Fallo: La instrucción comprimida no aparece en Decode.}}{56}{figure.22.5}\protected@file@percent }
-\newlabel{fig:bad_e3}{{22.5}{56}{Ejecución con Fallo: La instrucción comprimida no aparece en Decode}{figure.22.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.6}{\ignorespaces Comparativa de la decodificacion de instrucciones en la etapa Decode (\texttt  {e3}).}}{56}{figure.22.6}\protected@file@percent }
-\newlabel{fig:comp_e3}{{22.6}{56}{Comparativa de la decodificacion de instrucciones en la etapa Decode (\texttt {e3})}{figure.22.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Caso 3: Escritura de Resultados en el Banco de Registros (e2)}{56}{paragraph*.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {22.7}{\ignorespaces Ejecución Correcta: Escritura exitosa de x8=5, x9=10 y x10=15.}}{56}{figure.22.7}\protected@file@percent }
-\newlabel{fig:good_e2}{{22.7}{56}{Ejecución Correcta: Escritura exitosa de x8=5, x9=10 y x10=15}{figure.22.7}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.8}{\ignorespaces Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10.}}{56}{figure.22.8}\protected@file@percent }
-\newlabel{fig:bad_e2}{{22.8}{56}{Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10}{figure.22.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {22.9}{\ignorespaces Comparativa de las señales de escritura en el Banco de Registros (\texttt  {e2}).}}{56}{figure.22.9}\protected@file@percent }
-\newlabel{fig:comp_e2}{{22.9}{56}{Comparativa de las señales de escritura en el Banco de Registros (\texttt {e2})}{figure.22.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}Jerarquia de Archivos}{56}{section.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusiones}{57}{section.11}\protected@file@percent }
-\gdef \@abspage@last{59}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Teoría del Procesador Pipeline: Datapath y Control (0.5 pts)}{4}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}¿Qué es un Procesador Pipelined?}{4}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Las 5 Etapas del Pipeline}{4}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Diagrama Temporal del Pipeline}{4}{subsection.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Diagrama temporal: cada instrucción tarda 5 ciclos, pero se completa 1 instrucción por ciclo.}}{5}{figure.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}ISA Implementada: RISC-V RV32I}{5}{subsection.1.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Instrucciones soportadas por el procesador.}}{5}{table.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}El Camino de Control en el Pipeline}{5}{subsection.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Implementación de Instrucciones (Cuadro 1) (1.0 pts)}{6}{section.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Instrucciones evaluadas e implementadas en el pipeline y su estado de soporte.}}{7}{table.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Descripción de Cambios en el Código}{8}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Diagrama de Datapath Final (Básico)}{8}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Diagrama del Datapath Pipelined básico del procesador (sin la Hazard Unit).}}{9}{figure.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Los Registros Pipeline}{9}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}¿Qué son y por qué son necesarios?}{9}{subsubsection.2.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Tres Tipos de Flip-Flops}{10}{subsubsection.2.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Los tres tipos de flip-flops usados. Observa el triángulo símbolo de la señal de reloj sincronizada por flanco.}}{10}{figure.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}¿Por qué IF/ID usa flopenrc y MEM/WB usa flopr?}{10}{subsubsection.2.3.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Comportamiento de los registros pipeline}{10}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Módulo Top-Level: \texttt  {riscv\_pipeline}}{10}{subsection.2.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}Código Verilog del módulo top-level}{10}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Etapa 1: Fetch (IF)}{13}{subsection.2.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}Componentes Activos}{13}{subsubsection.2.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Etapa Fetch aislada con sus componentes operativos.}}{13}{figure.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}Código Verilog}{13}{subsubsection.2.5.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Código Verilog de la etapa Fetch}{13}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Etapa 2: Decode (ID)}{15}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Componentes Activos}{15}{subsection.2.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Etapa Decode aislada. Incluye el banco de registros y unidad de control.}}{15}{figure.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}Unidad de Control}{15}{subsubsection.2.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Tabla de verdad de la unidad de control principal.}}{16}{table.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}Código Verilog de Decode}{16}{subsubsection.2.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}Código Verilog de la etapa Decode}{16}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Etapa 3: Execute (EX)}{18}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Componentes Activos}{19}{subsection.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Etapa Execute. Muestra los multiplexores de Forwarding integrados antes de la ALU.}}{19}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Código Verilog de la etapa Execute}{19}{subsection.3.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}Código Verilog de la etapa Execute}{19}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Etapas Memory (MEM) y Writeback (WB)}{22}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Componentes Activos}{23}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Etapas Memory y Writeback. La memoria de datos tiene escritura síncrona.}}{23}{figure.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Código Verilog de las etapas Memory y Writeback}{23}{subsection.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Código Verilog de la etapa Memory}{23}{lstlisting.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}Código Verilog de la etapa Writeback}{24}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Programa ISA sin Dependencias (1.0 pts)}{26}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Código Ensamblador}{26}{subsection.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Programa 1: ISA sin dependencias (test\_isa\_sin\_dependencias.mem)}{26}{lstlisting.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Waveform del Programa 1}{26}{subsection.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Waveform del Programa 1 (ISA sin dependencias). Las señales ForwardAE, ForwardBE, StallD y FlushE permanecen en 0 durante toda la ejecución.}}{26}{figure.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Mostrar con Resultados Intermedios que el Programa Funciona Correctamente}{27}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Teoría de Hazard Unit y Evidencia de Fallos (0.5 pts)}{27}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teoría de Control de Riesgos en Procesadores Segmentados}{27}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Evidencia: Sin Hazard Unit los Programas Fallan}{27}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.1}Programa 2 SIN Hazard Unit (Forwarding)}{28}{subsubsection.6.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}Programa 2: test\_forwarding.mem (para deshabilitado)}{28}{lstlisting.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Programa 2 SIN Hazard Unit. La ALU opera con datos vacíos (0x00) porque los registros x2 y x3 aún no se han escrito cuando el \texttt  {add} los necesita.}}{28}{figure.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.2}Programa 3 SIN Hazard Unit (Stalling)}{28}{subsubsection.6.2.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Programa 3: test\_stalling.mem (para deshabilitado)}{29}{lstlisting.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Programa 3 SIN Hazard Unit. El \texttt  {add x4, x3, x2} usa un valor de x3 que aún no ha salido de la memoria.}}{29}{figure.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.2.3}Programa 4 SIN Hazard Unit (Flushing)}{29}{subsubsection.6.2.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}Programa 4: test\_flushing.mem (para deshabilitado)}{30}{lstlisting.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Programa 4 SIN Hazard Unit. Sin forwarding, las instrucciones previas al salto calculan incorrectamente, afectando la comparación del \texttt  {beq}.}}{30}{figure.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Implementación del Hazard Unit (1.0 pts)}{30}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Descripción de Cambios en el Código}{30}{subsection.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Diagrama de la Hazard Unit y sus múltiples conexiones.}}{31}{figure.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Mecanismo 1: Forwarding (Reenvío de Datos)}{31}{subsection.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}Lógica de Forwarding}{31}{lstlisting.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Mecanismo 2: Stall (Load-Use Hazard)}{32}{subsection.7.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}Lógica de detección de Load-Use Hazard}{32}{lstlisting.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Mecanismo 3: Flush (Control Hazard por Saltos)}{32}{subsection.7.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}Lógica de flush por salto tomado}{32}{lstlisting.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Especificación de Señales de Control de Riesgos}{32}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Diagrama de Datapath Final (con Hazard Unit)}{32}{subsection.7.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Diagrama del Datapath Pipelined completo del procesador (incluyendo la Hazard Unit).}}{33}{figure.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Programas de Prueba (CON Hazard Unit) (1.0 pts)}{34}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Programa 2: Forwarding}{34}{subsection.8.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}Programa 2: test\_forwarding.mem}{34}{lstlisting.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Programa 2 CON Hazard Unit. ForwardBE=10 reenvía x3 desde Memory; ForwardAE=01 reenvía x2 desde Writeback.}}{34}{figure.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Programa 3: Stalling}{34}{subsection.8.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}Programa 3: test\_stalling.mem}{34}{lstlisting.16}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Programa 3 CON Hazard Unit. StallD congela Decode y Fetch durante 1 ciclo; FlushE inserta una burbuja en Execute.}}{35}{figure.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Programa 4: Flushing}{35}{subsection.8.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}Programa 4: test\_flushing.mem}{35}{lstlisting.17}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Programa 4 CON Hazard Unit. FlushE y FlushD se activan cuando PCSrcE=1, descartando las instrucciones especulativas.}}{35}{figure.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Programa Extra: Set Completo de Operaciones y Validación de la ISA y Hazard Unit}{35}{subsection.8.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}Programa Extra: test\_remaining\_ops.mem}{36}{lstlisting.18}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Formas de onda del Programa Extra. Se verifica el correcto comportamiento temporal y la resolución de dependencias de datos (forwarding) y de control (flushing) para todas las instrucciones RV32I.}}{37}{figure.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Extension RVC (16-bits)}{38}{section.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresión combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID.}}{38}{figure.18}\protected@file@percent }
+\newlabel{fig:diagrama_fetch_rvc}{{18}{38}{Diagrama de hardware de la etapa de Fetch modificada para la extension RVC, mostrando la descompresión combinacional de 16 a 32 bits y el camino de incremento dinamico del PC hasta el registro de acoplamiento IF/ID}{figure.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}El Reto Arquitectonico y la Solucion}{38}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Modificaciones al Código}{38}{subsection.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Justificacion: Unidad de Riesgos (Hazard Unit)}{39}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Código Verilog de la Extensión RVC}{40}{subsection.9.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}Código Verilog del módulo descompresor RVC}{40}{lstlisting.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Explicacion Detallada de Cada Instruccion RVC (10 Instrucciones de la Parte 1)}{43}{subsection.9.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Cambios en el Datapath para la Adaptacion de RVC}{46}{subsection.9.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.7}Pruebas de la Extension RVC}{47}{subsection.9.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.1}Test RVC Básico (\texttt  {test\_rvc\_basic.mem})}{47}{subsubsection.9.7.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}Programa RVC Básico: test\_rvc\_basic.mem}{47}{lstlisting.20}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18.1}{\ignorespaces Forma de onda general del test básico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final.}}{48}{figure.18.1}\protected@file@percent }
+\newlabel{fig:waves_rvc_basic_general}{{18.1}{48}{Forma de onda general del test básico RVC, mostrando el avance completo del programa desde la salida de reset hasta la escritura final}{figure.18.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18.2}{\ignorespaces Incremento Dinamico}}{48}{figure.18.2}\protected@file@percent }
+\newlabel{fig:waves_rvc_basic_e1}{{18.2}{48}{Incremento Dinamico}{figure.18.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18.3}{\ignorespaces Descompresión en Fetch}}{49}{figure.18.3}\protected@file@percent }
+\newlabel{fig:waves_rvc_basic_e2}{{18.3}{49}{Descompresión en Fetch}{figure.18.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18.4}{\ignorespaces Escritura y Salto}}{49}{figure.18.4}\protected@file@percent }
+\newlabel{fig:waves_rvc_basic_e3}{{18.4}{49}{Escritura y Salto}{figure.18.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.2}Test RVC de Memoria (\texttt  {test\_rvc\_memory.mem})}{50}{subsubsection.9.7.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}Programa RVC Memoria: test\_rvc\_memory.mem}{50}{lstlisting.21}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {19.1}{\ignorespaces Forma de onda general del test de memoria RVC, validando la ruta completa de carga y almacenamiento de datos.}}{50}{figure.19.1}\protected@file@percent }
+\newlabel{fig:waves_rvc_memory_general}{{19.1}{50}{Forma de onda general del test de memoria RVC, validando la ruta completa de carga y almacenamiento de datos}{figure.19.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19.2}{\ignorespaces Descompresión de Memorias}}{50}{figure.19.2}\protected@file@percent }
+\newlabel{fig:waves_rvc_memory_e1}{{19.2}{50}{Descompresión de Memorias}{figure.19.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19.3}{\ignorespaces Escritura en Memoria (Store)}}{51}{figure.19.3}\protected@file@percent }
+\newlabel{fig:waves_rvc_memory_e2}{{19.3}{51}{Escritura en Memoria (Store)}{figure.19.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19.4}{\ignorespaces Lectura de Memoria (Load)}}{51}{figure.19.4}\protected@file@percent }
+\newlabel{fig:waves_rvc_memory_e3}{{19.4}{51}{Lectura de Memoria (Load)}{figure.19.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19.5}{\ignorespaces Escritura Final en el Registro}}{52}{figure.19.5}\protected@file@percent }
+\newlabel{fig:waves_rvc_memory_e4}{{19.5}{52}{Escritura Final en el Registro}{figure.19.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.3}Test RVC de Saltos (\texttt  {test\_rvc\_branches.mem})}{52}{subsubsection.9.7.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}Programa RVC Saltos: test\_rvc\_branches.mem}{52}{lstlisting.22}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {20.1}{\ignorespaces Forma de onda general del test de saltos RVC, mostrando la ejecución secuencial de las instrucciones y la respuesta del pipeline.}}{53}{figure.20.1}\protected@file@percent }
+\newlabel{fig:waves_rvc_branches_general}{{20.1}{53}{Forma de onda general del test de saltos RVC, mostrando la ejecución secuencial de las instrucciones y la respuesta del pipeline}{figure.20.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20.2}{\ignorespaces Branch No Tomado}}{53}{figure.20.2}\protected@file@percent }
+\newlabel{fig:waves_rvc_branches_e1}{{20.2}{53}{Branch No Tomado}{figure.20.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20.3}{\ignorespaces Branch Tomado}}{53}{figure.20.3}\protected@file@percent }
+\newlabel{fig:waves_rvc_branches_e2}{{20.3}{53}{Branch Tomado}{figure.20.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20.4}{\ignorespaces Activacion de Burbujas}}{54}{figure.20.4}\protected@file@percent }
+\newlabel{fig:waves_rvc_branches_e3}{{20.4}{54}{Activacion de Burbujas}{figure.20.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20.5}{\ignorespaces Escritura del Registro Destino}}{54}{figure.20.5}\protected@file@percent }
+\newlabel{fig:waves_rvc_branches_e4}{{20.5}{54}{Escritura del Registro Destino}{figure.20.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.4}Test RVC de Cobertura Completa (\texttt  {test\_rvc\_remaining.mem})}{55}{subsubsection.9.7.4}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}Programa RVC Cobertura Completa: test\_rvc\_remaining.mem}{55}{lstlisting.23}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {21.1}{\ignorespaces Forma de onda general del test de cobertura completa, validando las 14 instrucciones RVC restantes.}}{55}{figure.21.1}\protected@file@percent }
+\newlabel{fig:waves_rvc_remaining_general}{{21.1}{55}{Forma de onda general del test de cobertura completa, validando las 14 instrucciones RVC restantes}{figure.21.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.8}Analisis de Performance y Justificacion de la Extension RVC}{57}{subsection.9.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.1}Analisis de Ciclos de Reloj (Timing Analysis)}{57}{subsubsection.9.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.2}Reducción de Tamaño de Código (Code Density)}{57}{subsubsection.9.8.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Comparativa del tamaño de código en memoria entre la implementación RV32I y RVC para el test básico.}}{58}{table.4}\protected@file@percent }
+\newlabel{tab:ahorro_memoria}{{4}{58}{Comparativa del tamaño de código en memoria entre la implementación RV32I y RVC para el test básico}{table.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.3}Guia de Uso: Cuando usar RVC y cuando no}{58}{subsubsection.9.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.9}Analisis de Modos de Fallo de la Extension RVC}{59}{subsection.9.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Comparativa de la traza de ejecución (wave-table) entre la ejecución correcta de RVC y la ejecución con fallo de incremento rigido a +4.}}{59}{table.5}\protected@file@percent }
+\newlabel{tab:comparativa_fallo}{{5}{59}{Comparativa de la traza de ejecución (wave-table) entre la ejecución correcta de RVC y la ejecución con fallo de incremento rigido a +4}{table.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.1}Analisis de Consecuencias del Fallo}{59}{subsubsection.9.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.2}Comparativa Visual de Oscilogramas (Correcto vs. Fallo)}{60}{subsubsection.9.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22.1}{\ignorespaces Ejecución Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica.}}{60}{figure.22.1}\protected@file@percent }
+\newlabel{fig:good_e1}{{22.1}{60}{Ejecución Correcta: El PC avanza de 0 a 2 y luego a 4 de manera dinamica}{figure.22.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22.2}{\ignorespaces Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02.}}{60}{figure.22.2}\protected@file@percent }
+\newlabel{fig:bad_e1}{{22.2}{60}{Ejecución con Fallo: El PC salta de 0 directamente a 4, omitiendo la dirección 0x02}{figure.22.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22.3}{\ignorespaces Ejecución Correcta: Decodificacion secuencial de las tres instrucciones.}}{60}{figure.22.3}\protected@file@percent }
+\newlabel{fig:good_e3}{{22.3}{60}{Ejecución Correcta: Decodificacion secuencial de las tres instrucciones}{figure.22.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22.4}{\ignorespaces Ejecución con Fallo: La instrucción comprimida no aparece en Decode.}}{60}{figure.22.4}\protected@file@percent }
+\newlabel{fig:bad_e3}{{22.4}{60}{Ejecución con Fallo: La instrucción comprimida no aparece en Decode}{figure.22.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22.5}{\ignorespaces Ejecución Correcta: Escritura exitosa de x8=5, x9=10 y x10=15.}}{61}{figure.22.5}\protected@file@percent }
+\newlabel{fig:good_e2}{{22.5}{61}{Ejecución Correcta: Escritura exitosa de x8=5, x9=10 y x10=15}{figure.22.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22.6}{\ignorespaces Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10.}}{61}{figure.22.6}\protected@file@percent }
+\newlabel{fig:bad_e2}{{22.6}{61}{Ejecución con Fallo: Escritura ausente en x9 y suma corrupta en x10}{figure.22.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Extension RVC - Segunda Parte (Entrega 3)}{61}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Explicacion y Mapeo de las Instrucciones de la Segunda Parte}{61}{subsection.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}Cambios en el Datapath y Justificacion del Desacoplamiento (Decoupling)}{64}{subsection.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.3}Tabla de Encodings Completa de RVC (Parte 1 y Parte 2)}{64}{subsection.10.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Especificación completa de codificación (encoding) de la extensión RVC para las partes 1 y 2.}}{65}{table.6}\protected@file@percent }
+\newlabel{tab:encodings}{{6}{65}{Especificación completa de codificación (encoding) de la extensión RVC para las partes 1 y 2}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.4}Pruebas de la Entrega 3: Programas de Validacion}{65}{subsection.10.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.4.1}Test 1: Accesos a Memoria y Stack Pointer (\texttt  {test\_e3\_mem.mem})}{65}{subsubsection.10.4.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}Programa de Prueba de Memoria y Pila: test\_e3\_mem.mem}{65}{lstlisting.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.4.2}Test 2: Control de Flujo y Saltos (\texttt  {test\_e3\_control.mem})}{65}{subsubsection.10.4.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}Programa de Prueba de Control de Flujo: test\_e3\_control.mem}{66}{lstlisting.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.4.3}Test 3: Multiplicación de Matrices 2x2 (\texttt  {matmul})}{66}{subsubsection.10.4.3}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}Algoritmo de Multiplicación de Matrices 2x2}{66}{lstlisting.26}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}Implementación en RISC-V RV32I: matmul\_rv32i.s}{66}{lstlisting.27}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}Implementación en RISC-V RVC: matmul\_rvc.s}{67}{lstlisting.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.5}Guia de Capturas y Analisis de Waveforms (GTKWave) para la Entrega 3}{69}{subsection.10.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.5.1}Captura E3.1: Accesos a Pila y Memoria (Loads y Stores)}{69}{subsubsection.10.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Accesos a memoria: Ejecución de c.sw y c.lw con descompresión y escritura de x9 y x10.}}{69}{figure.22}\protected@file@percent }
+\newlabel{fig:wave_e3_1_c1}{{22}{69}{Accesos a memoria: Ejecución de c.sw y c.lw con descompresión y escritura de x9 y x10}{figure.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Accesos a pila: Inicialización de sp y ejecución de c.swsp y c.lwsp escribiendo en x11.}}{69}{figure.23}\protected@file@percent }
+\newlabel{fig:wave_e3_1_c2}{{23}{69}{Accesos a pila: Inicialización de sp y ejecución de c.swsp y c.lwsp escribiendo en x11}{figure.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Escritura final y bucle final: Guardado de x11 en dirección 200 y bucle infinito del c.j 0.}}{70}{figure.24}\protected@file@percent }
+\newlabel{fig:wave_e3_1_c3}{{24}{70}{Escritura final y bucle final: Guardado de x11 en dirección 200 y bucle infinito del c.j 0}{figure.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.5.2}Captura E3.2: Bifurcaciones Condicionales y Flush de Burbujas}{71}{subsubsection.10.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Bifurcaciones condicionales: Resolución de c.beqz (no tomado) y c.bnez (tomado) con descompresión.}}{71}{figure.25}\protected@file@percent }
+\newlabel{fig:wave_e3_2}{{25}{71}{Bifurcaciones condicionales: Resolución de c.beqz (no tomado) y c.bnez (tomado) con descompresión}{figure.25}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.5.3}Captura E3.3: Saltos Incondicionales y Retornos (c.j, c.jal, c.jr, c.jalr)}{72}{subsubsection.10.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Salto incondicional: Ejecución de c.j 4 en 0x0C saltando a 0x10.}}{72}{figure.26}\protected@file@percent }
+\newlabel{fig:wave_e3_3_c2}{{26}{72}{Salto incondicional: Ejecución de c.j 4 en 0x0C saltando a 0x10}{figure.26}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Subrutinas y verificación: Ejecución de c.jal, c.jr, c.jalr y escritura final de validación.}}{72}{figure.27}\protected@file@percent }
+\newlabel{fig:wave_e3_3_c3}{{27}{72}{Subrutinas y verificación: Ejecución de c.jal, c.jr, c.jalr y escritura final de validación}{figure.27}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.6}Comparativa de Densidad de Codigo y Rendimiento (Benchmarking)}{73}{subsection.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.1}Rendimiento de los programas (Ciclos de Reloj)}{73}{subsubsection.10.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {10.6.2}Densidad de Código (Code Density)}{73}{subsubsection.10.6.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Comparativa de la densidad de código y ahorro de bytes en memoria de instrucciones para programas RV32I vs. RVC.}}{74}{table.7}\protected@file@percent }
+\newlabel{tab:comparativa_benchmarks}{{7}{74}{Comparativa de la densidad de código y ahorro de bytes en memoria de instrucciones para programas RV32I vs. RVC}{table.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Jerarquia de Archivos}{74}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Conclusiones}{75}{section.12}\protected@file@percent }
+\gdef \@abspage@last{77}

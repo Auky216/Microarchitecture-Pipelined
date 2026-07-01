@@ -1,0 +1,415 @@
+=========================================================
+Compilando los modulos del procesador...
+=========================================================
+=========================================================
+Simulando...
+=========================================================
+WARNING: ./Datapath/Fetch/imem.v:7: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
+WARNING: ./Datapath/Fetch/imem.v:7: $readmemh(Tests/Entrega3/test_e3_control.mem): Not enough words in the file for the requested range [0:63].
+VCD info: dumpfile waves.vcd opened for output.
+============================================================
+CICLO 0
+  [IF ] PC=00000000  Instr=06300593
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 1
+  [IF ] PC=00000004  Instr=00058163
+  [ID ] Instr=06300593  PC+4=00000004  rs1=x0 rs2=x3 rd=x11
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 2
+  [IF ] PC=00000006  Instr=00059363
+  [ID ] Instr=00058163  PC+4=00000006  rs1=x11 rs2=x0 rd=x2
+  [EX ] Instr=06300593  ALUResult=00000063  WriteData=00000000  Zero=0  PCSrc=0  rd=x11
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 3
+  [IF ] PC=00000008  Instr=04d00613
+  [ID ] Instr=00059363  PC+4=00000008  rs1=x11 rs2=x0 rd=x6
+  [EX ] Instr=00058163  ALUResult=00000063  WriteData=00000000  Zero=0  PCSrc=0  rd=x2
+  [MEM] Instr=06300593  ALUResult=00000063  WriteData=00000000  MemWrite=0  rd=x11
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 4
+  [IF ] PC=0000000c  Instr=0040006f
+  [ID ] Instr=04d00613  PC+4=0000000c  rs1=x0 rs2=x13 rd=x12
+  [EX ] Instr=00059363  ALUResult=00000063  WriteData=00000000  Zero=0  PCSrc=1  rd=x6
+  [MEM] Instr=00058163  ALUResult=00000063  WriteData=00000000  MemWrite=0  rd=x2
+  [WB ] Instr=06300593  Result=00000063  rd=x11
+============================================================
+============================================================
+CICLO 5
+  [IF ] PC=0000000c  Instr=0040006f
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00059363  ALUResult=00000063  WriteData=00000000  MemWrite=0  rd=x6
+  [WB ] Instr=00058163  Result=00000063  rd=x2
+============================================================
+============================================================
+CICLO 6
+  [IF ] PC=0000000e  Instr=00000013
+  [ID ] Instr=0040006f  PC+4=0000000e  rs1=x0 rs2=x4 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00059363  Result=00000063  rd=x6
+============================================================
+============================================================
+CICLO 7
+  [IF ] PC=00000010  Instr=02a00693
+  [ID ] Instr=00000013  PC+4=00000010  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=0040006f  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=1  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 8
+  [IF ] PC=00000010  Instr=02a00693
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=0040006f  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 9
+  [IF ] PC=00000014  Instr=02c00713
+  [ID ] Instr=02a00693  PC+4=00000014  rs1=x0 rs2=x10 rd=x13
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0040006f  Result=0000000e  rd=x0
+============================================================
+============================================================
+CICLO 10
+  [IF ] PC=00000018  Instr=00c000ef
+  [ID ] Instr=02c00713  PC+4=00000018  rs1=x0 rs2=x12 rd=x14
+  [EX ] Instr=02a00693  ALUResult=0000002a  WriteData=00000000  Zero=0  PCSrc=0  rd=x13
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 11
+  [IF ] PC=0000001a  Instr=00000013
+  [ID ] Instr=00c000ef  PC+4=0000001a  rs1=x0 rs2=x12 rd=x1
+  [EX ] Instr=02c00713  ALUResult=0000002c  WriteData=00000000  Zero=0  PCSrc=0  rd=x14
+  [MEM] Instr=02a00693  ALUResult=0000002a  WriteData=00000000  MemWrite=0  rd=x13
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 12
+  [IF ] PC=0000001c  Instr=000700e7
+  [ID ] Instr=00000013  PC+4=0000001c  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00c000ef  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=1  rd=x1
+  [MEM] Instr=02c00713  ALUResult=0000002c  WriteData=00000000  MemWrite=0  rd=x14
+  [WB ] Instr=02a00693  Result=0000002a  rd=x13
+============================================================
+============================================================
+CICLO 13
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00c000ef  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x1
+  [WB ] Instr=02c00713  Result=0000002c  rd=x14
+============================================================
+============================================================
+CICLO 14
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00c000ef  Result=0000001a  rd=x1
+============================================================
+============================================================
+CICLO 15
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001a  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 16
+  [IF ] PC=0000001a  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001a  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 17
+  [IF ] PC=0000001c  Instr=000700e7
+  [ID ] Instr=00000013  PC+4=0000001c  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+============================================================
+CICLO 18
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=000700e7  PC+4=0000001e  rs1=x14 rs2=x0 rd=x1
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 19
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=000700e7  ALUResult=0000002c  WriteData=00000000  Zero=0  PCSrc=1  rd=x1
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 20
+  [IF ] PC=0000002c  Instr=00008067
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=000700e7  ALUResult=0000002c  WriteData=00000000  MemWrite=0  rd=x1
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 21
+  [IF ] PC=0000002e  Instr=00000013
+  [ID ] Instr=00008067  PC+4=0000002e  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=000700e7  Result=0000001e  rd=x1
+============================================================
+============================================================
+CICLO 22
+  [IF ] PC=00000030  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000030  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 23
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 24
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=0000002e  rd=x0
+============================================================
+============================================================
+CICLO 25
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=0cd02423  PC+4=00000024  rs1=x0 rs2=x13 rd=x8
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 26
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  Zero=0  PCSrc=0  rd=x8
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 27
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  MemWrite=1  rd=x8
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 28
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0cd02423  Result=000000c8  rd=x8
+============================================================
+============================================================
+CICLO 29
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+============================================================
+CICLO 30
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=0cd02423  PC+4=00000024  rs1=x0 rs2=x13 rd=x8
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 31
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  Zero=0  PCSrc=0  rd=x8
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 32
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  MemWrite=1  rd=x8
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 33
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0cd02423  Result=000000c8  rd=x8
+============================================================
+============================================================
+CICLO 34
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+============================================================
+CICLO 35
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=0cd02423  PC+4=00000024  rs1=x0 rs2=x13 rd=x8
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 36
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  Zero=0  PCSrc=0  rd=x8
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 37
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  MemWrite=1  rd=x8
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 38
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0cd02423  Result=000000c8  rd=x8
+============================================================
+============================================================
+CICLO 39
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+============================================================
+CICLO 40
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=0cd02423  PC+4=00000024  rs1=x0 rs2=x13 rd=x8
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 41
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  Zero=0  PCSrc=0  rd=x8
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 42
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  MemWrite=1  rd=x8
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 43
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0cd02423  Result=000000c8  rd=x8
+============================================================
+============================================================
+CICLO 44
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+============================================================
+CICLO 45
+  [IF ] PC=00000024  Instr=00008067
+  [ID ] Instr=0cd02423  PC+4=00000024  rs1=x0 rs2=x13 rd=x8
+  [EX ] Instr=00000013  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 46
+  [IF ] PC=00000026  Instr=00000013
+  [ID ] Instr=00008067  PC+4=00000026  rs1=x1 rs2=x0 rd=x0
+  [EX ] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  Zero=0  PCSrc=0  rd=x8
+  [MEM] Instr=00000013  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00000000  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 47
+  [IF ] PC=00000028  Instr=00000013
+  [ID ] Instr=00000013  PC+4=00000028  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00008067  ALUResult=0000001e  WriteData=00000000  Zero=0  PCSrc=1  rd=x0
+  [MEM] Instr=0cd02423  ALUResult=000000c8  WriteData=0000002a  MemWrite=1  rd=x8
+  [WB ] Instr=00000013  Result=00000000  rd=x0
+============================================================
+============================================================
+CICLO 48
+  [IF ] PC=0000001e  Instr=00000013
+  [ID ] Instr=00000000  PC+4=00000000  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00008067  ALUResult=0000001e  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=0cd02423  Result=000000c8  rd=x8
+============================================================
+============================================================
+CICLO 49
+  [IF ] PC=00000020  Instr=0cd02423
+  [ID ] Instr=00000013  PC+4=00000020  rs1=x0 rs2=x0 rd=x0
+  [EX ] Instr=00000000  ALUResult=00000000  WriteData=00000000  Zero=1  PCSrc=0  rd=x0
+  [MEM] Instr=00000000  ALUResult=00000000  WriteData=00000000  MemWrite=0  rd=x0
+  [WB ] Instr=00008067  Result=00000026  rd=x0
+============================================================
+*** SIMULACION MINI-TEST COMPLETADA ***
+./tb.v:47: $finish called at 525000 (1ps)
+============================================================
+=========================================================
+Simulacion terminada. La onda se guardo en Waves/waves.vcd
+=========================================================
